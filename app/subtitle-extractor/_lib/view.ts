@@ -6,6 +6,10 @@
  * (`build/04-drop-to-download.md`) 실출력에 맞춰 다시 본다.
  *
  * 규칙 층 출력을 화면 사정으로 비틀지 않는다 — 필요한 모양은 화면 쪽에서 유도한다.
+ *
+ * **`rules.ts`와 이름이 겹친다.** `Dropped`·`UnknownColor`가 양쪽에 있고 `Dropped.paragraph`는
+ * 뜻이 정반대다 — 여기서는 문단 전문(string), `rules.ts`에서는 문단 인덱스(number).
+ * 04에서 이 파일을 다시 볼 때 한쪽으로 정리한다. 그때까지는 import 대상을 확인할 것.
  */
 
 export type Verdict = "subtitle" | "mixed" | "directive" | "black";
