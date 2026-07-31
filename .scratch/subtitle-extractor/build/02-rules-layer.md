@@ -10,7 +10,7 @@
 **Blocked by:** 01 — 프로토타입 이식 · 삭제 · `git init` (저장소가 안전해지기 전에는 아무것도
 커밋하지 않는다. 이 티켓의 테스트 파일에는 원고 조각이 박힌다).
 
-**Status:** ready-for-agent
+**Status:** resolved — 커밋 `23ea2ca`
 
 ## 경계
 
