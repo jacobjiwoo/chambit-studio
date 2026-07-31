@@ -21,7 +21,7 @@
 
 | # | 티켓 | Blocked by | Status |
 |---|---|---|---|
-| 01 | [프로토타입 이식 · 삭제 · 정적 export · `git init`](01-prototype-port-and-git-init.md) | — | ready-for-agent |
+| 01 | [프로토타입 이식 · 삭제 · 정적 export · `git init`](01-prototype-port-and-git-init.md) | — | **resolved** |
 | 02 | [Vitest + 규칙 층](02-rules-layer.md) | 01 | ready-for-agent |
 | 03 | [파서 층 + 전 파이프라인 바이트 대조](03-parser-and-corpus.md) | 02 | ready-for-agent |
 | 04 | [올린다 → 받는다](04-drop-to-download.md) | 03 | ready-for-agent |
