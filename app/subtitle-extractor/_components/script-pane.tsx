@@ -1,6 +1,7 @@
 "use client";
 
-import type { Block, Doc, Dropped, UnknownColor } from "../_lib/view";
+import type { Dropped, UnknownColor } from "../_lib/rules";
+import type { Block, Doc } from "../_lib/view";
 
 /**
  * 왼쪽 원고 전문.
@@ -39,7 +40,7 @@ export function ScriptPane({
           onClick={() => b.index && onSelect(b.index)}
           registerDropped={(el, fragment) => {
             const i = dropped.findIndex(
-              (d) => d.fragment === fragment && d.paragraph === b.text,
+              (d) => d.fragment === fragment && d.paragraph === b.paragraph,
             );
             if (i >= 0) registerMark(`d${i}`, el);
           }}

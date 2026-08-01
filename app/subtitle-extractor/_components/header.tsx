@@ -14,18 +14,19 @@ export function TitleBar() {
  *
  * 검은 히어로 배너는 2단에서 원고와 자막을 세로로 밀어낸다. 헤더에 경쟁자가 없으므로
  * 얇아도 받기 버튼이 주인공이다.
+ *
+ * 어느 화면에서든 **지금 보고 있는 파일이 무엇인지** 보여준다 — 원고 여러 편을 연달아
+ * 처리할 때 헷갈리지 않아야 한다. (받기 옆에 설 미리보기 버튼은 07이 얹는다.)
  */
 export function Header({
   filename,
   count,
   onBack,
-  onPreview,
   onDownload,
 }: {
   filename: string;
   count: number;
   onBack: () => void;
-  onPreview: () => void;
   onDownload: () => void;
 }) {
   return (
@@ -44,12 +45,6 @@ export function Header({
         <span className="text-sm text-neutral-500">
           자막 <b className="text-neutral-900">{count}장</b> 준비됨
         </span>
-        <button
-          onClick={onPreview}
-          className="rounded-xl px-4 py-3 font-medium text-neutral-600 ring-1 ring-neutral-300 transition hover:bg-neutral-50"
-        >
-          미리보기
-        </button>
         <button
           onClick={onDownload}
           className="rounded-xl bg-neutral-900 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-neutral-700"

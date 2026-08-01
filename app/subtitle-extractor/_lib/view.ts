@@ -1,15 +1,15 @@
 /**
- * 화면이 쓰는 모양 — **잠정이다.**
+ * 화면이 쓰는 모양.
  *
- * 프로토타입이 화면을 그리려고 발명한 타입이라 규칙 층의 진짜 출력과 일치하는지 검증된 적이
- * 없다. 지금 확정된 타입은 `StyledRun` 하나뿐이며, 여기 있는 것들은 규칙 층이 서는 날
- * (`build/04-drop-to-download.md`) 실출력에 맞춰 다시 본다.
+ * 04가 문서 상태를 세우면서 정리한 것 — **규칙 층 출력을 화면 사정으로 비틀지 않는다.**
+ * 걸러낸 것과 모르는 색은 `rules.ts`의 타입을 그대로 쓴다. 여기 같은 이름의 타입이 따로
+ * 있었고 `Dropped.paragraph`가 한쪽은 문단 전문, 한쪽은 문단 인덱스라 뜻이 정반대였다.
+ * 화면이 필요로 하는 모양은 규칙 층 출력에서 **유도**하지, 나란히 두고 고르지 않는다.
  *
- * 규칙 층 출력을 화면 사정으로 비틀지 않는다 — 필요한 모양은 화면 쪽에서 유도한다.
- *
- * **`rules.ts`와 이름이 겹친다.** `Dropped`·`UnknownColor`가 양쪽에 있고 `Dropped.paragraph`는
- * 뜻이 정반대다 — 여기서는 문단 전문(string), `rules.ts`에서는 문단 인덱스(number).
- * 04에서 이 파일을 다시 볼 때 한쪽으로 정리한다. 그때까지는 import 대상을 확인할 것.
+ * 아래 `Doc`/`Block`/`Verdict`는 **아직 잠정이다.** 프로토타입이 원고 패널을 그리려고
+ * 발명한 모양이고, 04의 화면(헤더 + 자막 장)은 이것들을 하나도 쓰지 않아 규칙 층 실출력과
+ * 대조된 적이 없다. 원고 패널이 서는 날(`build/05-script-pane.md`) `StyledRun[]`에서
+ * 유도하며 다시 본다.
  */
 
 export type Verdict = "subtitle" | "mixed" | "directive" | "black";
@@ -30,35 +30,6 @@ export type Doc = {
   blocks: Block[];
   subtitles: string[];
 };
-
-/** 빨강도 검정도 아닌 색 — 화면의 노출 의무 2. */
-export type UnknownColor = {
-  color: string;
-  text: string;
-  /** 원고의 어느 문단에 있는가 — 화면이 "원고에서 보기"로 데려갈 좌표 */
-  paragraph: number;
-};
-
-/** 규칙이 버린 빨간 조각 — 문단을 맥락으로 달고 다닌다. 화면의 노출 의무 1. */
-export type Dropped = {
-  fragment: string;
-  paragraph: string;
-  /** 목록에서 이 조각이 원래 있던 자리 (앞선 자막 장 번호) */
-  after: number;
-};
-
-export function droppedInOrder(doc: Doc): Dropped[] {
-  const out: Dropped[] = [];
-  let after = 0;
-  for (const b of doc.blocks) {
-    if (b.verdict === "subtitle") after = b.index ?? after;
-    const fragments = b.redFragments ?? (b.verdict === "directive" ? [b.text] : []);
-    for (const fragment of fragments) {
-      out.push({ fragment, paragraph: b.text, after });
-    }
-  }
-  return out;
-}
 
 export function charCount(s: string): number {
   return [...s].length;

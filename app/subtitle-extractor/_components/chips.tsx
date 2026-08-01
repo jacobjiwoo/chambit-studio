@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Dropped, UnknownColor } from "../_lib/view";
+import type { Dropped, UnknownColor } from "../_lib/rules";
 
 /**
  * 노출 의무 둘을 **칩 한 줄**로 합친다.
