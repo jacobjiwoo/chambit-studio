@@ -26,6 +26,19 @@ export type StyledRun = {
   paragraph: number;
 };
 
+/**
+ * 자막 한 장. **제가 나온 문단을 달고 다닌다.**
+ *
+ * 규칙 2가 "그 문단이 자막 한 장"이라 했으므로 문단이 곧 한 장의 신원이고, 걸러낸 것·모르는
+ * 색이 이미 그렇게 달고 나오는 것과 같은 모양이다. 화면 사정으로 붙인 것이 아니다 — 규칙 5가
+ * dedupe를 금지하는 이상 **문구로는 어느 문단에서 왔는지 되찾을 수 없다.**
+ */
+export type Subtitle = {
+  /** 나비CG 파일에 그대로 들어갈 한 줄 */
+  text: string;
+  paragraph: number;
+};
+
 /** 빨갛지만 자막이 되지 못한 조각. 왜 빠졌는지는 문단을 봐야 알 수 있다. */
 export type Dropped = {
   fragment: string;
@@ -46,7 +59,7 @@ export type UnknownColor = {
  * 조용히 버리지 않는다.
  */
 export type Extraction = {
-  subtitles: string[];
+  subtitles: Subtitle[];
   dropped: Dropped[];
   unknownColors: UnknownColor[];
 };
@@ -58,7 +71,7 @@ const BLACK = "#000000";
 const DIRECTIVE = /^<[^<>]*>$/;
 
 export function toSubtitles(runs: StyledRun[]): Extraction {
-  const subtitles: string[] = [];
+  const subtitles: Subtitle[] = [];
   const dropped: Dropped[] = [];
   const unknownColors: UnknownColor[] = [];
 
@@ -102,7 +115,8 @@ export function toSubtitles(runs: StyledRun[]): Extraction {
       continue;
     }
 
-    subtitles.push(line); // 규칙 5 — 쪼개지 않고, 중복을 지우지 않고, 순서 그대로
+    // 규칙 5 — 쪼개지 않고, 중복을 지우지 않고, 순서 그대로
+    subtitles.push({ text: line, paragraph });
   }
 
   return { subtitles, dropped, unknownColors };

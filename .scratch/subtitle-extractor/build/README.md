@@ -25,7 +25,7 @@
 | 02 | [Vitest + 규칙 층](02-rules-layer.md) | 01 | **resolved** |
 | 03 | [파서 층 + 전 파이프라인 바이트 대조](03-parser-and-corpus.md) | 02 | **resolved** |
 | 04 | [올린다 → 받는다](04-drop-to-download.md) | 03 | **resolved** |
-| 05 | [원고 패널 2단 + 상호 하이라이트](05-script-pane.md) | 04 | ready-for-agent |
+| 05 | [원고 패널 2단 + 상호 하이라이트](05-script-pane.md) | 04 | **resolved** |
 | 06 | [노출 의무: 칩 한 줄 + 원고 표기 3종](06-exposure-chips.md) | 05 | ready-for-agent |
 | 07 | [미리보기 모달](07-preview-modal.md) | 04 | ready-for-agent |
 | 08 | [잘 안 되는 날](08-failure-states.md) | 04 | ready-for-agent |

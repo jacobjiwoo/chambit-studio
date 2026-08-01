@@ -27,7 +27,10 @@ describe("자막 장", () => {
 
     expect(toSubtitles(runs)).toEqual({
       subtitles: [
-        "“십자가의 도가 멸망하는 자들에게는 미련한 것이요 구원을 받는 우리에게는 하나님의 능력이라” (고린도전서 1:18)",
+        {
+          text: "“십자가의 도가 멸망하는 자들에게는 미련한 것이요 구원을 받는 우리에게는 하나님의 능력이라” (고린도전서 1:18)",
+          paragraph: 12,
+        },
       ],
       dropped: [],
       unknownColors: [],
@@ -46,7 +49,7 @@ describe("자막 장", () => {
     ];
 
     // 조각별로 strip한 뒤 join하면 `우리일까보냐그러나`로 단어가 붙어버린다
-    expect(toSubtitles(runs).subtitles).toEqual([
+    expect(toSubtitles(runs).subtitles.map((s) => s.text)).toEqual([
       "“다른 이들도 너희에게 이런 권리를 가졌거든 하물며 우리일까보냐 그러나 우리가 이 권리를 쓰지 아니하고 범사에 참는 것은 그리스도의 복음에 아무 장애가 없게 하려 함이로다” (고린도전서 9:12)",
     ]);
   });
@@ -57,7 +60,9 @@ describe("자막 장", () => {
       { text: "복음을 위하여 기꺼이 종이 되어야 합니다.\n", color: R, paragraph: 51 },
     ];
 
-    expect(toSubtitles(runs).subtitles).toEqual(["둘째, 복음을 위하여 기꺼이 종이 되어야 합니다."]);
+    expect(toSubtitles(runs).subtitles.map((s) => s.text)).toEqual([
+      "둘째, 복음을 위하여 기꺼이 종이 되어야 합니다.",
+    ]);
   });
 
   it("[6] 중복 자막을 둘 다 유지하고, 순서는 문단 오름차순이다", () => {
@@ -69,11 +74,23 @@ describe("자막 장", () => {
 
     // 글자 그대로 같은 두 장이 둘 다 나가고(dedupe 금지), 배열에 담긴 순서가 아니라
     // 문단 번호 순으로 줄을 선다
-    expect(toSubtitles(runs).subtitles).toEqual([
+    expect(toSubtitles(runs).subtitles.map((s) => s.text)).toEqual([
       "“십자가의 도가 … 하나님의 능력이라” (고린도전서 1:18)",
       "“십자가의 도가 … 하나님의 능력이라” (고린도전서 1:18)",
       "“너는 무엇을 능력이라고 생각하느냐?”",
     ]);
+  });
+
+  it("자막 한 장이 제가 나온 문단을 달고 나온다 — 같은 문구가 두 번 나와도 각자", () => {
+    const runs: StyledRun[] = [
+      { text: "“십자가의 도가 … 하나님의 능력이라” (고린도전서 1:18)\n", color: R, paragraph: 12 },
+      { text: "“너는 무엇을 능력이라고 생각하느냐?”\n", color: R, paragraph: 40 },
+      { text: "“십자가의 도가 … 하나님의 능력이라” (고린도전서 1:18)\n", color: R, paragraph: 34 },
+    ];
+
+    // 규칙 2가 "그 문단이 자막 한 장"이라 했으므로 문단이 곧 한 장의 신원이다. 원고 패널과
+    // 자막 장을 잇는 유일한 끈이고, dedupe가 금지된 이상 문구로는 짝을 찾을 수 없다
+    expect(toSubtitles(runs).subtitles.map((s) => s.paragraph)).toEqual([12, 34, 40]);
   });
 
   it("[7] 긴 자막을 쪼개지 않는다 — 절 번호가 있어도", () => {
@@ -85,7 +102,7 @@ describe("자막 장", () => {
       },
     ];
 
-    expect(toSubtitles(runs).subtitles).toEqual([
+    expect(toSubtitles(runs).subtitles.map((s) => s.text)).toEqual([
       "“6 지혜를 버리지 말라 … 그가 너를 영화롭게 하리라” (잠언 4:6~8)",
     ]);
   });
@@ -100,7 +117,7 @@ describe("자막 장", () => {
     ];
 
     // "/" 뒤 공백 두 칸이 살아 있다 (원고 자체의 오타이지만 정리하지 않는다)
-    expect(toSubtitles(runs).subtitles).toEqual([
+    expect(toSubtitles(runs).subtitles.map((s) => s.text)).toEqual([
       "“나는 최고의 선수를 찾는 것이 아니라, …” /  허브 브룩스(Herb Brooks)",
     ]);
   });
@@ -157,7 +174,7 @@ describe("[9] 미발동 방어 조항 — 실물에 사례가 없다. 규칙의 
 
     // 공백만인 조각은 색을 따지지 않는다 — 이 예외가 없으면 이 자막이 소리 없이 사라진다
     expect(toSubtitles(runs)).toEqual({
-      subtitles: ["“자막 본문입니다”"],
+      subtitles: [{ text: "“자막 본문입니다”", paragraph: 3 }],
       dropped: [],
       unknownColors: [],
     });

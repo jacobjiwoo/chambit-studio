@@ -42,7 +42,7 @@ async function extract(name: string) {
   if (!result.ok) throw new Error(`파싱 거부: ${result.reason}`);
 
   const { subtitles, dropped, unknownColors } = toSubtitles(result.runs);
-  const nabi = new Uint8Array(await toNabiTxt(subtitles).arrayBuffer());
+  const nabi = new Uint8Array(await toNabiTxt(subtitles.map((s) => s.text)).arrayBuffer());
   return { subtitles, dropped, unknownColors, nabi };
 }
 

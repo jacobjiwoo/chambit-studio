@@ -6,21 +6,25 @@ import { DropZone } from "./_components/drop-zone";
 import { Notice } from "./_components/notice";
 import { Result } from "./_components/result";
 import { parseHwp, type RejectReason } from "./_lib/hwp";
-import { toSubtitles, type Extraction } from "./_lib/rules";
+import { toSubtitles, type Extraction, type StyledRun } from "./_lib/rules";
 
 /**
  * 문서 상태 — 파일 하나를 열어 본 **결과**다. 열린 것과 열리지 않은 것을 함께 담으므로
  * 이름이 `Opened`가 아니다. 담기는 값은 **파서와 규칙 층의 출력 그대로다.**
  *
- * 프로토타입이 화면을 그리려고 발명한 `Doc`/`Block`/`Verdict`는 여기 없다. 이 화면이
- * 필요로 하는 것은 파일 이름과 규칙 층이 뱉은 셋뿐이고, 그 이상의 모양이 필요해지면
- * 규칙 층 출력에서 화면 쪽이 유도한다 — 규칙 층 출력을 화면 사정으로 비틀지 않는다.
+ * 프로토타입이 화면을 그리려고 발명한 `Doc`/`Block`/`Verdict`는 여기 없다. 화면이 필요로
+ * 하는 모양은 규칙 층 출력에서 화면 쪽이 유도한다(`view.ts`의 `toScript`) — 규칙 층 출력을
+ * 화면 사정으로 비틀지 않는다.
+ *
+ * 조각(`runs`)까지 함께 드는 이유는 원고 패널이 **자막이 되지 못한 문단을 포함한 원고
+ * 전문**을 그리기 때문이다. 규칙 층 출력만으로는 원고를 되살릴 수 없다 — 그쪽에는 살아남은
+ * 것만 담겨 있다.
  *
  * 거부를 같은 상태에 담는 이유는 파서가 이미 사유를 갈라 놓았기 때문이다. `ok`가 갈리는
  * 유니온이라 자막이 없는 화면과 열리지 않은 화면을 헷갈릴 수 없다.
  */
 type Attempt = { filename: string } & (
-  | ({ ok: true } & Extraction)
+  | ({ ok: true; runs: StyledRun[] } & Extraction)
   | { ok: false; reason: RejectReason }
 );
 
@@ -55,7 +59,7 @@ export default function SubtitleExtractorPage() {
     const parsed = parseHwp(bytes);
     setAttempt(
       parsed.ok
-        ? { filename: file.name, ok: true, ...toSubtitles(parsed.runs) }
+        ? { filename: file.name, ok: true, runs: parsed.runs, ...toSubtitles(parsed.runs) }
         : { filename: file.name, ok: false, reason: parsed.reason },
     );
   }
@@ -80,6 +84,7 @@ export default function SubtitleExtractorPage() {
   return (
     <Result
       filename={attempt.filename}
+      runs={attempt.runs}
       subtitles={attempt.subtitles}
       onBack={() => setAttempt(null)}
     />
