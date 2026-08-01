@@ -16,17 +16,22 @@ export function TitleBar() {
  * 얇아도 받기 버튼이 주인공이다.
  *
  * 어느 화면에서든 **지금 보고 있는 파일이 무엇인지** 보여준다 — 원고 여러 편을 연달아
- * 처리할 때 헷갈리지 않아야 한다. (받기 옆에 설 미리보기 버튼은 07이 얹는다.)
+ * 처리할 때 헷갈리지 않아야 한다.
+ *
+ * 미리보기는 받기 **바로 옆**에 선다. 확인이 받기로 가는 길에 있어야 하기 때문이다. 다만
+ * 받기가 화면에서 가장 눈에 띄는 것은 그대로다 — 잘 돌아가는 날의 마지막 걸음은 받기다.
  */
 export function Header({
   filename,
   count,
   onBack,
+  onPreview,
   onDownload,
 }: {
   filename: string;
   count: number;
   onBack: () => void;
+  onPreview: () => void;
   onDownload: () => void;
 }) {
   return (
@@ -45,6 +50,12 @@ export function Header({
         <span className="text-sm text-neutral-500">
           자막 <b className="text-neutral-900">{count}장</b> 준비됨
         </span>
+        <button
+          onClick={onPreview}
+          className="rounded-xl px-4 py-3 text-sm font-medium text-neutral-600 ring-1 ring-neutral-300 transition hover:bg-neutral-100 hover:text-neutral-900"
+        >
+          미리보기
+        </button>
         <button
           onClick={onDownload}
           className="rounded-xl bg-neutral-900 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-neutral-700"

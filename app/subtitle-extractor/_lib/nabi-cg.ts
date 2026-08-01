@@ -9,8 +9,21 @@
  *   자막 장 구분 빈 줄 하나
  *   파일 끝     개행 없이 텍스트로 끝남
  */
+
+/**
+ * 파일의 **본문** — BOM 앞의 그 글자들이다.
+ *
+ * 미리보기 모달이 이것을 띄운다. 받기 전 마지막 확인이 파일과 다른 것을 보여주면 확인이
+ * 아니므로, 장을 이어 붙이는 자리는 여기 **하나뿐이다** — 화면이 제 나름대로 이어 붙이면
+ * 규격이 바뀌는 날 미리보기만 옛 모습으로 남는다.
+ */
+export function toNabiBody(subtitles: string[]): string {
+  return subtitles.join("\r\n\r\n");
+}
+
+/** 본문 앞에 BOM을 세워 실제로 떨굴 파일을 만든다. */
 export function toNabiTxt(subtitles: string[]): Blob {
-  return new Blob(["﻿" + subtitles.join("\r\n\r\n")], {
+  return new Blob(["﻿" + toNabiBody(subtitles)], {
     type: "text/plain;charset=utf-8",
   });
 }

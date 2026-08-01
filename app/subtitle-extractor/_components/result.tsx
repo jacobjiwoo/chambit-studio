@@ -8,6 +8,7 @@ import { toScript } from "../_lib/view";
 import { Chips } from "./chips";
 import type { Picked, Revealed } from "./follow";
 import { Header } from "./header";
+import { PreviewModal } from "./preview-modal";
 import { ScriptPane } from "./script-pane";
 import { SubtitlePane } from "./subtitle-pane";
 
@@ -58,6 +59,14 @@ export function Result({
    */
   const [revealed, setRevealed] = useState<Revealed>(null);
 
+  /**
+   * 미리보기 모달이 열려 있는가.
+   *
+   * `picked`·`revealed`와 같은 이유로 여기 산다 — 문서 상태는 파일 하나의 결과이고 이것은
+   * 담당자가 지금 무엇을 하고 있는지라, 수명도 주인도 다르다.
+   */
+  const [previewing, setPreviewing] = useState(false);
+
   const fromScript = useCallback((subtitle: number) => setPicked({ subtitle, from: "script" }), []);
   const fromSubtitle = useCallback(
     (subtitle: number) => setPicked({ subtitle, from: "subtitle" }),
@@ -68,13 +77,19 @@ export function Result({
 
   const name = downloadName(filename);
 
+  const texts = subtitles.map((s) => s.text);
+
+  /** 받기 통로는 하나다 — 헤더의 버튼과 모달 안의 버튼이 **문자 그대로 같은 함수**다. */
+  const download = () => downloadNabiTxt(texts, name);
+
   return (
     <div className="flex h-screen flex-col bg-white">
       <Header
         filename={filename}
         count={subtitles.length}
         onBack={onBack}
-        onDownload={() => downloadNabiTxt(subtitles.map((s) => s.text), name)}
+        onPreview={() => setPreviewing(true)}
+        onDownload={download}
       />
 
       {/* 할 말이 없는 날엔 이 줄이 통째로 없다 — `Chips`가 스스로 판단한다 */}
@@ -86,6 +101,15 @@ export function Result({
         <ScriptPane lines={script} picked={picked} revealed={revealed} onSelect={fromScript} />
         <SubtitlePane subtitles={subtitles} picked={picked} onSelect={fromSubtitle} />
       </div>
+
+      {previewing && (
+        <PreviewModal
+          name={name}
+          subtitles={texts}
+          onDownload={download}
+          onClose={() => setPreviewing(false)}
+        />
+      )}
     </div>
   );
 }

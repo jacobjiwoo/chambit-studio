@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { downloadName, toNabiTxt } from "./nabi-cg";
+import { downloadName, toNabiBody, toNabiTxt } from "./nabi-cg";
 
 const BOM = [0xef, 0xbb, 0xbf];
 
@@ -43,6 +43,19 @@ describe("나비CG 임포트 파일", () => {
     // ignoreBOM이 없으면 디코더가 BOM을 먹어 규격의 절반이 조용히 사라진다
     const decoder = new TextDecoder("utf-8", { ignoreBOM: true });
     expect(decoder.decode(await toNabiTxt([text]).arrayBuffer())).toBe("﻿" + text);
+  });
+});
+
+describe("미리보기가 띄우는 원문", () => {
+  // 받기 전 마지막 확인이 파일과 다른 것을 보여주는 것은 확인이 아니다. 위의 규격 검사들은
+  // 전부 `toNabiTxt`를 겨누므로, 미리보기가 그 파일에 매여 있다는 것은 여기서만 지켜진다
+  it("파일 본문과 글자 하나까지 같다 — BOM만 없다", async () => {
+    const subtitles = ["십자가의 도가 우리에게는", "하나님의 능력이라", "그러므로"];
+    // ignoreBOM이 없으면 디코더가 BOM을 먹어 비교의 절반이 조용히 사라진다
+    const decoder = new TextDecoder("utf-8", { ignoreBOM: true });
+    const file = decoder.decode(await toNabiTxt(subtitles).arrayBuffer());
+
+    expect(file).toBe("﻿" + toNabiBody(subtitles));
   });
 });
 
