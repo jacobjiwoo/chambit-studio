@@ -9,7 +9,7 @@
 
 **Blocked by:** 04 — 올린다 → 받는다.
 
-**Status:** resolved
+**Status:** resolved — 커밋 `6002bfd`
 
 ## 세부
 
