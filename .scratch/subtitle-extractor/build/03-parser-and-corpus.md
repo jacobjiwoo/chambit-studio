@@ -6,7 +6,7 @@
 
 **Blocked by:** 02 — Vitest + 규칙 층 (파서의 출력을 태울 규칙 층이 있어야 파이프라인이 닫힌다).
 
-**Status:** ready-for-agent
+**Status:** resolved — 커밋 `fcf0630`
 
 ## 파서 층
 
