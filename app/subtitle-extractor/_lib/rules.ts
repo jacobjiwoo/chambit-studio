@@ -67,6 +67,21 @@ export type Extraction = {
 const RED = "#FF0000";
 const BLACK = "#000000";
 
+/** 규칙이 색을 보는 눈. 규칙 1과 6이 색으로 가르는 것은 이 셋뿐이다. */
+export type Ink = "red" | "black" | "unknown";
+
+/**
+ * 색값 하나를 규칙의 눈으로 읽는다.
+ *
+ * **내보내는 이유는 원고 패널의 표기가 이 판정 위에 서기 때문이다.** 걸러낸 빨강의 취소선과
+ * 모르는 색의 물결 밑줄은 조각의 잉크가 무엇인지를 알아야 그을 수 있는데, 화면이 `#FF0000`을
+ * 제 손으로 다시 비교하면 규칙이 두 벌이 된다 — 규칙 1이 흔들리는 날 칩은 "모르는 색 2곳"이라
+ * 말하는데 원고에는 밑줄이 하나만 그어지고, 담당자는 나머지 한 곳을 영영 찾지 못한다.
+ */
+export function inkOf(color: string): Ink {
+  return color === RED ? "red" : color === BLACK ? "black" : "unknown";
+}
+
 /** 꺾쇠로만 이루어진 줄은 자막이 아니라 담당자가 자신에게 남긴 연출 지시문이다. */
 const DIRECTIVE = /^<[^<>]*>$/;
 
@@ -82,7 +97,7 @@ export function toSubtitles(runs: StyledRun[]): Extraction {
     else paragraphs.set(run.paragraph, [run]);
 
     // 규칙 6 — 엄격한 빨강 판정의 실패 방식은 자막이 소리 없이 사라지는 것이다
-    if (run.color !== RED && run.color !== BLACK && run.text.trim()) {
+    if (inkOf(run.color) === "unknown" && run.text.trim()) {
       unknownColors.push({
         text: run.text.trim(),
         color: run.color,
@@ -101,9 +116,11 @@ export function toSubtitles(runs: StyledRun[]): Extraction {
     // `… 우리일까보냐 ` + `그러나 우리가 …`가 붙어 단어가 뭉개진다
     const line = group.map((run) => run.text).join("").trim();
 
-    if (!meaningful.every((run) => run.color === RED)) {
+    if (!meaningful.every((run) => inkOf(run.color) === "red")) {
       for (const run of meaningful) {
-        if (run.color === RED) dropped.push({ fragment: run.text.trim(), paragraph, context: line });
+        if (inkOf(run.color) === "red") {
+          dropped.push({ fragment: run.text.trim(), paragraph, context: line });
+        }
       }
       continue;
     }

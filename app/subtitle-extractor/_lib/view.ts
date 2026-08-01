@@ -9,10 +9,23 @@
  * **화면이 그 이름으로 갈라지는 자리가 없다** — 원고 패널이 문단 하나를 두고 묻는 것은
  * "이게 몇 번 자막이 됐나" 하나뿐이라 `subtitle: number | null`이면 끝난다.
  */
-import type { StyledRun, Subtitle } from "./rules";
+import { inkOf, type StyledRun, type Subtitle } from "./rules";
 
-/** 색을 지닌 조각 하나 — 원고 그대로 그린다 */
-type Fragment = { text: string; color: string };
+/**
+ * 규칙이 이 조각을 어떻게 다뤘는가 — 원고 패널이 표기를 가르는 근거다.
+ *
+ * - `plain` — 자막이 된 빨강, 그리고 검정. 규칙이 손대지 않았다
+ * - `dropped` — 빨갛지만 자막이 되지 못했다
+ * - `unknown` — 빨강도 검정도 아니라 규칙이 읽지 못했다
+ *
+ * 편집을 막은 대가는 **노출**로 갚는다. 규칙이 버린 것을 화면이 숨기면 담당자가 규칙의 실수를
+ * 알아챌 통로가 남지 않는다. 셋이 각각 **어떻게 보이는지**는 그것을 그리는 쪽이 정한다
+ * (`script-pane.tsx`의 `MARKING`).
+ */
+export type Marking = "plain" | "dropped" | "unknown";
+
+/** 색을 지닌 조각 하나 — 원고 그대로 그리되 규칙이 어떻게 다뤘는지를 함께 단다 */
+type Fragment = { text: string; color: string; marking: Marking };
 
 /**
  * 원고 패널의 한 줄 = 문단 하나.
@@ -38,20 +51,46 @@ export function toScript(runs: StyledRun[], subtitles: Subtitle[]): ScriptLine[]
   const chapterOf = new Map<number, number>();
   subtitles.forEach((s, i) => chapterOf.set(s.paragraph, i + 1));
 
-  const lines = new Map<number, Fragment[]>();
-  for (const { text, color, paragraph } of runs) {
-    const line = lines.get(paragraph);
-    if (line) line.push({ text, color });
-    else lines.set(paragraph, [{ text, color }]);
+  const lines = new Map<number, StyledRun[]>();
+  for (const run of runs) {
+    const line = lines.get(run.paragraph);
+    if (line) line.push(run);
+    else lines.set(run.paragraph, [run]);
   }
 
   return [...lines.keys()]
     .sort((a, b) => a - b)
-    .map((paragraph) => ({
-      paragraph,
-      runs: dropParagraphBreak(lines.get(paragraph)!),
-      subtitle: chapterOf.get(paragraph) ?? null,
-    }));
+    .map((paragraph) => {
+      const subtitle = chapterOf.get(paragraph) ?? null;
+      const fragments = lines
+        .get(paragraph)!
+        .map(({ text, color }) => ({ text, color, marking: markingOf(color, text, subtitle) }));
+
+      return { paragraph, runs: dropParagraphBreak(fragments), subtitle };
+    });
+}
+
+/**
+ * 조각 하나의 표기를 정한다.
+ *
+ * **"이 문단이 자막인가"는 여기서 다시 판정하지 않는다** — 그 답은 `subtitle`에 이미 규칙 층이
+ * 실어 보냈다. 이 함수가 하는 일은 그 답과 조각의 잉크(`inkOf`, 규칙 층의 눈)를 맞춰 보는
+ * 것뿐이라 규칙이 두 벌이 되지 않는다.
+ *
+ * 걸러낸 빨강을 `Dropped.fragment`와 **문구로 맞추지 않는 이유**는 규칙 4가 걸러낸 것을 문단
+ * 전문 한 덩어리로 내놓기 때문이다 — 꺾쇠 지시문이 조각 둘로 쪼개져 있는 날 어느 조각도
+ * 문구와 맞지 않아 취소선이 통째로 사라진다. "자막이 되지 못한 문단의 빨강"이면 충분하고, 그
+ * 집합이 곧 `dropped`다.
+ *
+ * 공백만인 조각은 어느 쪽으로도 표기하지 않는다 — 그을 글자가 없고, 규칙 층도 같은 이유로
+ * 이런 조각을 세지 않는다(규칙 2·6).
+ */
+function markingOf(color: string, text: string, subtitle: number | null): Marking {
+  if (!text.trim()) return "plain";
+
+  const ink = inkOf(color);
+  if (ink === "unknown") return "unknown";
+  return ink === "red" && subtitle === null ? "dropped" : "plain";
 }
 
 /**

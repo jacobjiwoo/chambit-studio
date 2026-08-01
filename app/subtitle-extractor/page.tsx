@@ -86,6 +86,8 @@ export default function SubtitleExtractorPage() {
       filename={attempt.filename}
       runs={attempt.runs}
       subtitles={attempt.subtitles}
+      dropped={attempt.dropped}
+      unknownColors={attempt.unknownColors}
       onBack={() => setAttempt(null)}
     />
   );

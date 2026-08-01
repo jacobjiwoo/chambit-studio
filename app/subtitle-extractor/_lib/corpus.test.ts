@@ -36,12 +36,16 @@ const present = [`${CROSS}.hwp`, `${CROSS}-nabi.txt`, `${WISDOM}.hwp`, `${GOSPEL
   (name) => existsSync(FIXTURES + name),
 );
 
-/** 원고 하나를 끝까지 태운다 — 앱이 담당자에게 넘겨줄 바이트가 그대로 나온다. */
-async function extract(name: string) {
+/** 원고 하나를 열어 조각을 꺼낸다. */
+function open(name: string) {
   const result = parseHwp(readFileSync(FIXTURES + name));
   if (!result.ok) throw new Error(`파싱 거부: ${result.reason}`);
+  return result.runs;
+}
 
-  const { subtitles, dropped, unknownColors } = toSubtitles(result.runs);
+/** 원고 하나를 끝까지 태운다 — 앱이 담당자에게 넘겨줄 바이트가 그대로 나온다. */
+async function extract(name: string) {
+  const { subtitles, dropped, unknownColors } = toSubtitles(open(name));
   const nabi = new Uint8Array(await toNabiTxt(subtitles.map((s) => s.text)).arrayBuffer());
   return { subtitles, dropped, unknownColors, nabi };
 }
@@ -76,5 +80,27 @@ suite("원고 대조", () => {
     expect(subtitles).toHaveLength(19);
     expect(dropped).toEqual([]);
     expect(unknownColors).toEqual([]);
+  });
+
+  it("모르는 색 하나가 자막 한 장을 삼켜도 그 사실이 조용히 지나가지 않는다", () => {
+    // 프로토타입에서 실제로 재현된 사고다(8장 → 7장). 자막이 된 문단의 조각 하나가 빨강에서
+    // 살짝 어긋나면 그 문단은 통째로 자막이 되지 못하고, **화면은 멀쩡해 보인다** — 담당자가
+    // 방송 중이 아니라 준비 중에 알아챌 통로는 칩 한 줄뿐이다.
+    //
+    // 실물 원고를 물들여 재현한다. 원고 3편 모두 색이 검정·빨강 둘뿐이라(전수 조사) 이
+    // 실패 방식을 덮는 fixture가 저장소에도 로컬에도 없다
+    const runs = open(`${CROSS}.hwp`);
+    const before = toSubtitles(runs).subtitles;
+
+    const victim = before[0].paragraph;
+    const stain = runs.findIndex((run) => run.paragraph === victim && run.text.trim());
+    const stained = runs.map((run, i) => (i === stain ? { ...run, color: "#FF0100" } : run));
+
+    const { subtitles, unknownColors } = toSubtitles(stained);
+
+    expect(subtitles).toHaveLength(before.length - 1);
+    // 칩 한 줄이 뜨는 조건이 이것이다 — 여기가 비면 사라진 한 장이 어디에도 남지 않는다
+    expect(unknownColors).toHaveLength(1);
+    expect(unknownColors[0]).toMatchObject({ color: "#FF0100", paragraph: victim });
   });
 });
