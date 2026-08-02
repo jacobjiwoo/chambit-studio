@@ -9,7 +9,13 @@
  * 근거는 `.scratch/subtitle-extractor/build/08-failure-states.md`.
  */
 import type { RejectReason } from "./hwp";
-import type { UnknownColor } from "./rules";
+import { RED, type Extraction } from "./rules";
+
+/**
+ * 안내의 급함. 빨강은 고쳐야 할 일, 노랑은 확인할 일이다. 잘 돌아가는 날의 결과 화면은
+ * 아예 색이 없으므로 셋이 색으로 갈린다.
+ */
+export type Tone = "red" | "amber";
 
 /**
  * 화면 하나가 할 말 전부.
@@ -24,8 +30,7 @@ export type Guidance = {
   body: string;
   /** 담당자가 지금 할 일. **여기가 비면 담당자는 막힌 채로 끝난다** */
   next: string;
-  /** 빨강은 고쳐야 할 일, 노랑은 확인할 일이다 */
-  tone: "red" | "amber";
+  tone: Tone;
 };
 
 /**
@@ -37,10 +42,10 @@ export type Guidance = {
 const REJECT: Record<RejectReason, Guidance> = {
   "not-hwp": {
     title: "한글 원고(.hwp) 파일이 아닙니다",
-    // 확장자를 믿지 않고 내용으로 판정하므로, 이름이 `.hwp`인 파일도 여기로 온다.
-    // 담당자가 보기엔 "hwp를 올렸는데 hwp가 아니라고 한다"이므로 그 경우를 먼저 짚는다
+    // 확장자를 믿지 않고 내용으로 판정하므로 이름이 `.hwp`인 파일도 여기로 온다. 흔한
+    // 쪽(다른 파일을 올렸다)을 먼저 말하고, 담당자가 "hwp를 올렸는데?" 하는 경우를 뒤에 짚는다
     body:
-      "파일 이름이 .hwp여도 내용이 한글 문서가 아니면 열 수 없습니다. " +
+      "다른 형식의 파일이거나, 이름만 .hwp이고 내용은 한글 문서가 아닌 파일입니다. " +
       "메신저로 주고받는 사이에 파일이 바뀌었을 수 있습니다.",
     next: "목사님께 받은 한글 원고(.hwp)를 그대로 올려 주세요.",
     tone: "red",
@@ -84,36 +89,53 @@ export function rejectGuidance(reason: RejectReason): Guidance {
 /**
  * 빈 결과 안내 — **실패가 아니다.**
  *
- * 빨간 글자가 하나도 없는 원고는 파싱이 성공했고 자막이 0장인 것이다. 첫마디가 "원고는
- * 정상적으로 열렸습니다"인 이유는 그것이 사실이기 때문이고, 그래야 담당자가 문제를 파일이
- * 아니라 **원고의 색 표시**에서 찾는다. 순서가 뒤집히면 앱이 고장난 줄 알고 손으로 돌아간다.
+ * 자막이 0장인 원고는 파싱이 성공한 것이다. 첫마디가 "원고는 정상적으로 열렸습니다"인 이유는
+ * 그것이 사실이기 때문이고, 그래야 담당자가 문제를 파일이 아니라 **원고의 색 표시**에서
+ * 찾는다. 순서가 뒤집히면 앱이 고장난 줄 알고 손으로 돌아간다.
  *
- * 모르는 색을 함께 받는 이유는 자막 0장의 **가장 흔한 원인**이기 때문이다 — 빨갛게 칠했다고
- * 믿는 색이 `#FF0000`에서 살짝 어긋나 있다. 색값을 보여 주지 않으면 담당자는 원고를 눈으로
- * 훑으며 "분명히 빨간데"를 반복한다.
+ * **추출 결과를 통째로 받는 이유는 원인을 규칙 층에게 물어야 하기 때문이다.** 자막 0장은
+ * 세 가지 원고에서 나온다.
+ *
+ *   - 빨간 글자가 아예 없다
+ *   - 빨간 글자는 있는데 검은 글 사이에 껴 있다(규칙 2) → `dropped`
+ *   - 빨갛게 칠했다고 믿는 색이 `#FF0000`에서 어긋나 있다(규칙 6) → `unknownColors`
+ *
+ * 셋을 뭉뚱그려 "빨간 글자가 한 곳도 없습니다"라고 답하면, 눈앞에 빨간 글자가 보이는 담당자는
+ * 안내와 원고가 어긋나 앱을 믿지 못하고 정작 고쳐야 할 것을 끝내 듣지 못한다. 이 화면에는
+ * 칩 한 줄(`chips.tsx`)이 없으므로 규칙 층이 걸러낸 것을 담당자가 볼 통로가 여기뿐이다.
  */
-export function emptyGuidance(unknownColors: UnknownColor[]): Guidance {
-  const title = "원고는 정상적으로 열렸습니다";
+export function emptyGuidance({ dropped, unknownColors }: Extraction): Guidance {
+  /** 짚을 수 있는 원인들. 하나만 고치면 자막이 여전히 0장인 원고가 있으므로 전부 말한다 */
+  const causes: string[] = [];
+  const actions: string[] = [];
 
-  if (unknownColors.length === 0) {
-    return {
-      title,
-      body: "다만 자막으로 쓸 빨간 글자가 한 곳도 없어서 자막이 0장입니다.",
-      next: "원고에서 자막으로 쓸 문단이 빨간색으로 칠해져 있는지 한글에서 확인한 뒤 다시 올려 주세요.",
-      tone: "amber",
-    };
+  if (dropped.length > 0) {
+    causes.push(`빨간 글자가 ${dropped.length}곳 있지만 문단 전체가 빨간 문단이 하나도 없습니다`);
+    // 규칙 2 — 자막의 단위는 문단이다. 검은 글 사이에 낀 빨강은 자막이 되지 않는다
+    actions.push(
+      "자막은 문단 전체가 빨간 문단에서만 나옵니다. 검은 글 사이에 낀 빨간 글자는 자막이 되지 않으니, 한글에서 자막으로 쓸 문단을 문단째 빨간색으로 칠해 주세요.",
+    );
   }
 
-  // 같은 색이 여러 곳이어도 색값은 한 번씩만 — 목록이 길어지면 읽히지 않는다
-  const colors = [...new Set(unknownColors.map((c) => c.color))];
+  if (unknownColors.length > 0) {
+    causes.push(`검정도 빨강도 아닌 색이 ${unknownColors.length}곳 있습니다`);
+    // 같은 색이 여러 곳이어도 색값은 한 번씩만 — 같은 값이 늘어서면 읽히지 않는다
+    const colors = [...new Set(unknownColors.map((c) => c.color))];
+    actions.push(
+      `그 ${colors.length}가지 색(${colors.join(" · ")})은 자막으로 쓰는 빨강(${RED})과 다릅니다. 한글에서 해당 부분을 빨간색으로 다시 칠해 주세요.`,
+    );
+  }
 
   return {
-    title,
+    title: "원고는 정상적으로 열렸습니다",
     body:
-      `다만 자막으로 쓸 빨간 글자가 한 곳도 없어서 자막이 0장입니다. ` +
-      `대신 검정도 빨강도 아닌 색이 ${unknownColors.length}곳 있습니다.`,
-    // 자막이 되는 빨강은 #FF0000 정확히 하나다(규칙 1). 비슷한 빨강은 자막이 되지 않는다
-    next: `그 ${colors.length}가지 색(${colors.join(" · ")})이 자막으로 쓰는 빨강(#FF0000)과 다릅니다. 한글에서 해당 부분을 빨간색으로 다시 칠하고 저장한 뒤 올려 주세요.`,
+      causes.length === 0
+        ? "다만 자막으로 쓸 빨간 글자가 한 곳도 없어서 자막이 0장입니다."
+        : `다만 자막이 0장입니다 — ${causes.join(", ")}.`,
+    next:
+      actions.length === 0
+        ? `원고에서 자막으로 쓸 문단이 빨간색(${RED})으로 칠해져 있는지 한글에서 확인한 뒤 다시 올려 주세요.`
+        : `${actions.join(" ")} 고친 원고를 저장해 다시 올려 주세요.`,
     tone: "amber",
   };
 }

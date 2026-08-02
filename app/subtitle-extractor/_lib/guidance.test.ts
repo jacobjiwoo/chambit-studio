@@ -10,7 +10,12 @@ import { describe, expect, it } from "vitest";
 
 import { emptyGuidance, rejectGuidance } from "./guidance";
 import type { RejectReason } from "./hwp";
-import type { UnknownColor } from "./rules";
+import type { Dropped, Extraction, UnknownColor } from "./rules";
+
+/** 자막이 0장인 추출 결과. 그날 원고에 무엇이 남아 있었는지만 갈아 끼운다 */
+function empty(rest: Partial<Extraction> = {}): Extraction {
+  return { subtitles: [], dropped: [], unknownColors: [], ...rest };
+}
 
 /**
  * 파서가 내놓는 사유 전부. `rejectGuidance`가 `Record<RejectReason, …>` 위에 서 있으므로
@@ -81,20 +86,38 @@ describe("거부 안내", () => {
 
 describe("빈 결과 안내", () => {
   it("실패가 아니라 노랑이다 — 셋이 톤으로 갈린다", () => {
-    expect(emptyGuidance([]).tone).toBe("amber");
+    expect(emptyGuidance(empty()).tone).toBe("amber");
   });
 
   it("「원고는 정상적으로 열렸습니다」를 먼저 말한다", () => {
     // 이 순서가 뒤집히면 담당자는 앱이 고장난 줄 알고 손으로 돌아간다. 문제는 파일이
     // 아니라 원고의 색 표시에 있다
-    expect(emptyGuidance([]).title).toMatch(/^원고는 정상적으로 열렸습니다/);
+    expect(emptyGuidance(empty()).title).toMatch(/^원고는 정상적으로 열렸습니다/);
   });
 
-  it("다음 행동이 원고의 빨간색 표시를 가리킨다", () => {
-    const { body, next } = emptyGuidance([]);
+  it("빨간 글자가 아예 없으면 그렇게 말하고 색 표시를 가리킨다", () => {
+    const { body, next } = emptyGuidance(empty());
 
-    expect(body).toContain("자막");
+    expect(body).toContain("빨간 글자가 한 곳도 없");
     expect(next).toContain("빨간색");
+  });
+
+  it("빨간 글자가 있는데 자막이 0장이면 **없다고 말하지 않는다**", () => {
+    // 검은 글 사이에 낀 빨강은 자막이 되지 못한다(규칙 2). 그런 원고에 "빨간 글자가 한
+    // 곳도 없다"고 답하면 담당자는 자기 눈에 보이는 빨강과 안내가 어긋나 앱을 믿지 못하고,
+    // 정작 고쳐야 할 것(문단째 칠하기)은 끝내 듣지 못한다
+    const dropped: Dropped[] = [
+      { fragment: "우리는 하나다", paragraph: 4, context: "그때 감독은 우리는 하나다 라고 했습니다." },
+      { fragment: "함께 갑시다", paragraph: 9, context: "그리고 함께 갑시다 라고 덧붙였습니다." },
+    ];
+
+    const { title, body, next } = emptyGuidance(empty({ dropped }));
+
+    expect(title).toMatch(/^원고는 정상적으로 열렸습니다/);
+    expect(body).not.toContain("한 곳도 없");
+    expect(body).toContain("2");
+    // 고칠 방법이 이것 하나다 — 문단 전체를 빨갛게 칠한다
+    expect(next).toContain("문단 전체");
   });
 
   it("빨강이 아닌 색이 있으면 그 수와 색값을 알려 준다", () => {
@@ -107,7 +130,7 @@ describe("빈 결과 안내", () => {
       { text: "셋째 줄", color: "#C00000", paragraph: 9 },
     ];
 
-    const { title, body, next } = emptyGuidance(unknownColors);
+    const { title, body, next } = emptyGuidance(empty({ unknownColors }));
 
     // 열린 것은 열린 것이다 — 원인을 짚어도 첫마디는 바뀌지 않는다
     expect(title).toMatch(/^원고는 정상적으로 열렸습니다/);
@@ -118,9 +141,22 @@ describe("빈 결과 안내", () => {
     expect(next.match(/#FF0100/g)).toHaveLength(1);
   });
 
-  it("빨강이 아닌 색이 없으면 색값 이야기를 꺼내지 않는다", () => {
-    const { body, next } = emptyGuidance([]);
+  it("원인이 둘이면 둘 다 말한다 — 하나만 고치면 자막은 여전히 0장이다", () => {
+    const guidance = emptyGuidance(
+      empty({
+        dropped: [{ fragment: "우리는 하나다", paragraph: 4, context: "검은 글 속의 빨강." }],
+        unknownColors: [{ text: "저 줄", color: "#C00000", paragraph: 6 }],
+      }),
+    );
 
-    expect(`${body}${next}`).not.toContain("#");
+    expect(guidance.body).not.toContain("한 곳도 없");
+    expect(guidance.next).toContain("문단 전체");
+    expect(guidance.next).toContain("#C00000");
+  });
+
+  it("짚을 원인이 없으면 색값을 늘어놓지 않는다 — 빨강 하나만 가리킨다", () => {
+    const { body, next } = emptyGuidance(empty());
+
+    expect(`${body}${next}`.match(/#[0-9A-F]{6}/g)).toEqual(["#FF0000"]);
   });
 });

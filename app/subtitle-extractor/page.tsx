@@ -80,12 +80,13 @@ export default function SubtitleExtractorPage() {
     );
   }
 
-  // 빨간 글자가 하나도 없는 원고는 **실패가 아니다.** 파싱은 성공했고 자막이 0장이다.
-  // 결과 화면으로 보내면 빈 오른쪽 패널만 남아 담당자는 앱이 고장난 줄 알고 손으로 돌아간다
+  // 자막이 0장인 원고는 **실패가 아니다.** 파싱은 성공했다. 결과 화면으로 보내면 빈 오른쪽
+  // 패널만 남아 담당자는 앱이 고장난 줄 알고 손으로 돌아간다. 원인(빨강이 아예 없는지, 검은
+  // 글 사이에 껴 있는지, 색이 어긋났는지)은 추출 결과가 쥐고 있으므로 통째로 넘긴다
   if (attempt.subtitles.length === 0) {
     return (
       <Notice
-        guidance={emptyGuidance(attempt.unknownColors)}
+        guidance={emptyGuidance(attempt)}
         file={attempt.filename}
         onBack={() => setAttempt(null)}
       />

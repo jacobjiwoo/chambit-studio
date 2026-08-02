@@ -13,7 +13,6 @@ import * as CFB from "cfb";
 import { describe, expect, it } from "vitest";
 
 import { parseHwp } from "./hwp";
-import { toSubtitles } from "./rules";
 
 const HWPTAG_CHAR_SHAPE = 21;
 const HWPTAG_PARA_TEXT = 67;
@@ -219,16 +218,15 @@ describe("성공", () => {
     });
   });
 
-  it("빨간 글자가 하나도 없는 원고는 **거부가 아니라** 자막 0장이다", () => {
+  it("빨간 글자가 하나도 없는 원고도 **거부가 아니다**", () => {
     // 08이 세우는 갈림길의 뿌리다. 여기서 `ok: false`가 나오면 화면은 아무리 잘 만들어도
-    // 멀쩡한 원고를 빨간 실패 화면으로 맞이한다
+    // 멀쩡한 원고를 빨간 실패 화면으로 맞이한다. 그 조각들이 자막 0장이 되는 것은 규칙
+    // 층의 일이고(`rules.test.ts`), 파서는 색을 판정하지 않는다
     const noRed = hwp([BLACK], [[{ text: "검은 글만 있는 원고입니다", shape: 0 }]]);
 
-    const result = parseHwp(noRed);
-
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.runs).not.toEqual([]);
-    expect(toSubtitles(result.runs).subtitles).toEqual([]);
+    expect(parseHwp(noRed)).toEqual({
+      ok: true,
+      runs: [{ text: "검은 글만 있는 원고입니다", color: BLACK, paragraph: 0 }],
+    });
   });
 });

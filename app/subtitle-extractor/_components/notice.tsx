@@ -1,20 +1,15 @@
 "use client";
 
-import type { Guidance } from "../_lib/guidance";
+import type { Guidance, Tone } from "../_lib/guidance";
 import { TitleBar } from "./header";
 
 /**
- * 잘 안 되는 날의 화면 — 거부와 빈 결과.
+ * 톤이 **어떻게 보이는지**. 무엇이 어느 톤인지는 여기서 정하지 않는다(`guidance.ts`).
  *
- * **문구도 톤도 고르지 않는다.** 둘 다 `guidance.ts`가 파서·규칙 층의 출력에서 유도해
- * 넘겨준다. 화면이 톤을 따로 고르면 거부를 노랑으로, 빈 결과를 빨강으로 칠하는 날이 오고
- * 그날 담당자는 급한 일과 급하지 않은 일을 구분할 수 없다.
- *
- * 여기서 정하는 것은 **그 톤이 어떻게 보이는지**뿐이다. 빨강은 고쳐야 할 일이라 아이콘부터
- * 테두리까지 물들이고, 노랑은 확인할 일이라 한 톤 낮다. 잘 돌아가는 날의 결과 화면은 아예
- * 색이 없다(`result.tsx`) — 셋이 색으로 갈린다.
+ * 빨강은 고쳐야 할 일이라 아이콘부터 테두리까지 물들이고, 노랑은 확인할 일이라 한 톤 낮다.
+ * 잘 돌아가는 날의 결과 화면은 아예 색이 없다(`result.tsx`) — 셋이 색으로 갈린다.
  */
-const TONE = {
+const TONE: Record<Tone, Record<"icon" | "badge" | "title" | "card" | "next", string>> = {
   red: {
     icon: "✕",
     badge: "bg-red-100 text-red-700",
@@ -29,9 +24,14 @@ const TONE = {
     card: "border-amber-200",
     next: "border-amber-200 bg-amber-50 text-amber-900",
   },
-} as const;
+};
 
 /**
+ * 잘 안 되는 날의 화면 — 거부와 빈 결과.
+ *
+ * **문구도 톤도 고르지 않는다.** 둘 다 `guidance.ts`가 파서·규칙 층의 출력에서 유도해
+ * 넘겨준다(그 이유는 그쪽에 적혀 있다).
+ *
  * 어느 화면에서든 **다음 행동**을 주고 막힌 채로 끝내지 않는다. 다음 행동이 따로 선 상자에
  * 앉는 이유는 그것이 담당자가 이 화면에서 유일하게 가져갈 것이기 때문이다 — 설명에 섞으면
  * 읽히지 않는다.
