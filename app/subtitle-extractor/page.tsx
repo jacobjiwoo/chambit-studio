@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DropZone } from "./_components/drop-zone";
 import { Notice } from "./_components/notice";
 import { Result } from "./_components/result";
+import { emptyGuidance, rejectGuidance } from "./_lib/guidance";
 import { parseHwp, type RejectReason } from "./_lib/hwp";
 import { toSubtitles, type Extraction, type StyledRun } from "./_lib/rules";
 
@@ -66,15 +67,25 @@ export default function SubtitleExtractorPage() {
 
   if (attempt === null) return <DropZone onFile={open} />;
 
-  // 사유별로 갈린 안내와 빈 결과의 다른 톤은 08이 세운다. 그때까지도 막힌 채로 끝나지
-  // 않도록 다음 행동은 지금부터 준다 — 거부된 파일에 아무 일도 일어나지 않는 화면이
-  // 담당자에게는 앱이 고장난 것과 구별되지 않는다
+  // 파일 하나가 갈리는 세 갈래가 여기 다 있다 — 거부 · 빈 결과 · 정상. 화면 셋이 톤으로
+  // 갈리지만 **그 톤을 여기서 고르지 않는다.** 문구와 톤은 `guidance.ts`가 파서·규칙 층의
+  // 출력에서 유도한다(사유별로 다른 말이 나오는지는 눈으로 확인할 수 없다)
   if (!attempt.ok) {
     return (
       <Notice
-        tone="red"
-        title="이 파일에서는 자막을 뽑을 수 없습니다"
-        body="목사님께 받은 한글 원고(.hwp)가 맞는지 확인한 뒤 다시 올려 주세요."
+        guidance={rejectGuidance(attempt.reason)}
+        file={attempt.filename}
+        onBack={() => setAttempt(null)}
+      />
+    );
+  }
+
+  // 빨간 글자가 하나도 없는 원고는 **실패가 아니다.** 파싱은 성공했고 자막이 0장이다.
+  // 결과 화면으로 보내면 빈 오른쪽 패널만 남아 담당자는 앱이 고장난 줄 알고 손으로 돌아간다
+  if (attempt.subtitles.length === 0) {
+    return (
+      <Notice
+        guidance={emptyGuidance(attempt.unknownColors)}
         file={attempt.filename}
         onBack={() => setAttempt(null)}
       />
