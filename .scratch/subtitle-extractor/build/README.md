@@ -29,4 +29,8 @@
 | 06 | [노출 의무: 칩 한 줄 + 원고 표기 3종](06-exposure-chips.md) | 05 | **resolved** |
 | 07 | [미리보기 모달](07-preview-modal.md) | 04 | **resolved** |
 | 08 | [잘 안 되는 날](08-failure-states.md) | 04 | **resolved** |
-| 09 | [배포](09-deploy.md) | 04 | ready-for-human |
+| 09 | [배포](09-deploy.md) | 04 | **resolved** |
+
+**티켓 9개 전부 resolved.** 도구가 `chambitstudio.com`에서 돌고 있고 방송실 PC에서 실제 원고로
+올린다 → 받는다가 확인됐다. 여기서부터 나오는 것은 실전 운용이 알려 주는 것들이며, 이 목록에
+미리 적어 둘 수 있는 것이 아니다.

@@ -6,8 +6,8 @@
 **Blocked by:** 04 — 올린다 → 받는다. (「올린다 → 받는다」가 돌아가는 순간 실전 투입이 가능하다.
 05~08은 배포된 앱 위로 얹힌다. 도메인 구매·전파 리드타임도 일찍 시작되는 편이 낫다.)
 
-**Status:** ready-for-human — 도메인 결제와 Cloudflare 대시보드 연결은 사람 손이 필요하다.
-`output: 'export'`는 01에서 이미 켜져 있고, 테스트 스크립트 순서는 에이전트가 할 수 있다.
+**Status:** resolved — 커밋 `a46b80c`(테스트 게이트) · `50c6e22`(저장소 공개). 도메인 결제와
+Cloudflare 대시보드 연결, 방송실 PC 확인은 사람이 했다.
 
 ## 결정된 값
 
@@ -36,14 +36,14 @@
 저장소가 public이 되는 순간 원고 유출은 "되돌리기 어렵다"에서 **"불가능하다"**로 바뀐다 —
 fork·검색 인덱스·캐시가 남는다. push 전에 커밋 히스토리 전체를 한 번 더 본다.
 
-- [ ] `chambitstudio.com`을 자동갱신 ON · 등록 연수 최대로 확보했다
+- [x] `chambitstudio.com`을 자동갱신 ON · 등록 연수 최대로 확보했다
 - [x] GitHub `jacobjiwoo/chambit-studio` public 저장소에 push돼 있다
 - [x] push 전에 **커밋 히스토리 전체**에 설교 원고 전문(`.hwp`, `fixtures.json`)이 없음을
       확인했다 — 첫 커밋뿐 아니라 모든 커밋
-- [ ] Cloudflare Pages가 저장소에 연결돼 `main` push에 빌드·배포된다
-- [ ] 빌드 명령이 **테스트를 먼저 돌리고** 실패하면 배포되지 않는다
-- [ ] `chambitstudio.com`이 CF Pages를 가리키고 HTTPS로 열린다
-- [ ] 방송실 PC의 Edge/Chrome에서 설치 없이 열리고, 실제 `.hwp`로 올린다 → 받는다가 동작한다
+- [x] Cloudflare Pages가 저장소에 연결돼 `main` push에 빌드·배포된다
+- [x] 빌드 명령이 **테스트를 먼저 돌리고** 실패하면 배포되지 않는다
+- [x] `chambitstudio.com`이 CF Pages를 가리키고 HTTPS로 열린다
+- [x] 방송실 PC의 Edge/Chrome에서 설치 없이 열리고, 실제 `.hwp`로 올린다 → 받는다가 동작한다
 
 ## 공개하며 확인한 것
 
@@ -58,3 +58,29 @@ fork·검색 인덱스·캐시가 남는다. push 전에 커밋 히스토리 전
 `corpus.test.ts`의 파일명 상수는 **로컬 `fixtures/`의 실제 파일명이어야** 원고를 찾는다.
 설교 제목과 날짜가 드러나지만, 바꾸면 이 컴퓨터에서만 아는 이름이 되어 원고를 새로 받을 때마다
 손이 간다. 그 값을 치를 만한 위험이 아니라고 봤다.
+
+## 짓고 나서
+
+**Cloudflare가 신규 프로젝트를 Workers로 몰고 있어 Pages 플로우를 찾아 들어가야 했다.**
+Deploy command가 필수로 뜨는 화면은 Workers Builds이고, 그 길로 가면 `wrangler.jsonc`가
+저장소에 필요하다. Pages 탭의 Connect to Git으로 들어가면 Build command와 출력 디렉터리만
+물어보고 배포 명령이 없다 — 산출물 디렉터리를 CF가 알아서 올린다.
+
+**프리셋이 테스트 게이트를 덮어쓴다.** `Next.js (Static HTML Export)`를 고르는 순간 Build
+command가 `npx next build`로 자동으로 채워지고, 그러면 Vitest가 빌드 앞에서 사라진다. 그래도
+빌드는 똑같이 성공하므로 **로그에서 `Tests 71 passed`를 보지 않으면 게이트가 없어진 줄 모른다.**
+프리셋을 고른 뒤 `pnpm build`로 되돌려야 한다. (`Next.js` 프리셋은 서버 런타임을 붙이는
+것이므로 `output: 'export'`와 아예 맞지 않는다.)
+
+**도메인을 CF Registrar에서 사면 DNS를 손으로 만들 일이 없다.** 존이 같은 계정에 있어
+Custom domains에서 도메인만 넣으면 CNAME과 인증서까지 CF가 만든다. 확인한 결과 apex가
+HTTPS 200, 인증서는 Google Trust Services 발급이다. `www`는 별도 커스텀 도메인으로 하나 더
+붙여야 한다 — 없으면 담당자가 습관적으로 `www`를 칠 때 DNS 단계에서 막힌다.
+
+**배포본이 최신인지는 번들에서 확인했다.** JS 청크를 내려받아 티켓 08의 문구(사유별 거부 넷,
+"원고는 정상적으로 열렸습니다", 코드 리뷰가 고친 "문단 전체가 빨간 문단이 하나도 없습니다")를
+찾았다. 배포가 성공했다는 것과 **내가 방금 짠 것이 올라갔다**는 것은 다른 사실이다.
+
+**비용은 도메인 갱신비뿐이다.** 정적 자산 요청은 모든 플랜에서 무료·무제한이고, 유료로 넘어가는
+축인 Pages Functions를 이 앱은 하나도 쓰지 않는다(원고 처리가 전부 브라우저 안에 있다). 빌드
+500회/월에 파일 51개 · 1.2 MB짜리 사이트라 무료 티어를 벗어날 길이 없다.
