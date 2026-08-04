@@ -1,0 +1,127 @@
+/*
+ * 본문 마크다운이 입는 옷. **문서 프레임워크도 타이포그래피 플러그인도 안 얹는다** —
+ * 그림 0장·코드 블록 0개짜리 사이트라 필요한 것이 이 한 파일뿐이고, `app/docs/nabi-cg/`
+ * 폴더 하나에 앉는다는 규약이 스타일에도 그대로 걸린다(지울 때 폴더를 지운다).
+ *
+ * 요소 선택자로만 쓴다 — 본문은 `react-markdown`이 만들므로 클래스를 붙일 자리가 없다.
+ */
+
+.doc-prose {
+  color: #262626;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.doc-prose > :first-child {
+  margin-top: 0;
+}
+
+.doc-prose p,
+.doc-prose ul,
+.doc-prose ol,
+.doc-prose blockquote {
+  margin: 0.9rem 0;
+}
+
+/* H2가 작업을 가른다 — 위에 선을 그어 훑을 때 경계가 먼저 보이게 한다 */
+.doc-prose h2 {
+  margin: 2.75rem 0 1rem;
+  border-top: 1px solid #f5f5f5;
+  padding-top: 1.5rem;
+  color: #171717;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.doc-prose h3 {
+  margin: 1.9rem 0 0.6rem;
+  color: #171717;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.doc-prose ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.doc-prose ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+}
+
+.doc-prose li {
+  margin: 0.35rem 0;
+}
+
+.doc-prose li > ul,
+.doc-prose li > ol {
+  margin: 0.35rem 0;
+}
+
+.doc-prose strong {
+  color: #171717;
+  font-weight: 700;
+}
+
+.doc-prose em {
+  color: #525252;
+  font-style: italic;
+}
+
+/* 화면에 그대로 보이는 이름과 단축키가 여기 들어간다 — 문장에서 떠 있어야 눈에 걸린다 */
+.doc-prose code {
+  border-radius: 4px;
+  background: #f5f5f5;
+  padding: 0.1em 0.35em;
+  color: #171717;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  white-space: nowrap;
+}
+
+/* 레퍼런스 표. 좁은 화면에서는 표만 옆으로 스크롤한다 — 페이지가 가로로 안 늘어난다 */
+.doc-prose table {
+  display: block;
+  margin: 1.1rem 0;
+  border-collapse: collapse;
+  width: 100%;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.doc-prose th,
+.doc-prose td {
+  border: 1px solid #e5e5e5;
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-prose th {
+  background: #fafafa;
+  color: #171717;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.doc-prose a {
+  color: #171717;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.doc-prose blockquote {
+  border-left: 3px solid #e5e5e5;
+  padding-left: 1rem;
+  color: #525252;
+}
+
+.doc-prose hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+}
