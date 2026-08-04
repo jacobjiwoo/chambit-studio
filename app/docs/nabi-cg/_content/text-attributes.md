@@ -102,6 +102,6 @@ Height를 키우면 줄끼리 붙으므로, Height를 건드렸다면 Leading도
 
 ## 관련
 
-- 도형 크기 조절 → `도형 속성`
+- 도형 크기 조절 → [도형 속성](/docs/nabi-cg/shape-attributes)
 - 여러 객체를 한꺼번에 바꾸기 → `객체 편집`의 속성 일괄 지정
 - 같은 서식을 저장해 두고 재사용 → `Style Catalog`

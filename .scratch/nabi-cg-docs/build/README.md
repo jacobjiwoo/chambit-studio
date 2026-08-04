@@ -24,12 +24,16 @@
 | 04 | [문장별 출처 사이드카 + `[추론]` 인라인 배지](04-sidecar-and-badge.md) | 02 | **resolved** |
 | 05 | [검색: 색인 굽기 + `Ctrl+K` 모달 (게이트 1)](05-search.md) | 02 | **resolved** |
 | 06 | [버전 추적: History 파일 + 게이트 4·5·6](06-version-tracking.md) | 04 | ready-for-agent |
-| 07 | [본문: 도형 속성](07-content-shape-attributes.md) | 03, 04 | ready-for-agent |
+| 07 | [본문: 도형 속성](07-content-shape-attributes.md) | 03, 04 | ready-for-human |
 | 08 | [본문: 텍스트 임포트 + Style Catalog](08-content-text-import-and-style-catalog.md) | 01, 03, 04 | ready-for-agent |
 | 09 | [본문: 객체 편집](09-content-object-editing.md) | 01, 03, 04 | ready-for-agent |
 | 10 | [본문: 단축키 (치트시트형)](10-content-shortcuts.md) | 01, 04, 06 | ready-for-agent |
 | 11 | [본문: 송출 §6](11-content-playback.md) | 01, 04, 06 | ready-for-agent |
 | 12 | [안내문 4개 + 2차 자리](12-notices-and-phase-two-slots.md) | 05 | ready-for-agent |
+
+**07이 `ready-for-human`인 것은 본문이 안 열려서가 아니다.** 페이지는 떠 있고 열한 항목 중 열이
+닫혔다. 남은 하나가 **기준값 블록**인데 그 입력(값 4칸)이 01에서만 나온다 — 07이 아니라 01·03이
+움직여야 닫힌다.
 
 ## 사람이 해야 하는 것은 01 하나다
 

@@ -139,6 +139,100 @@ describe("글자 속성 페이지", () => {
   });
 });
 
+describe("도형 속성 페이지", () => {
+  const shape = page("shape-attributes");
+  const body = shape?.body ?? "";
+
+  it("마크다운 한 장에서 렌더돼 나온다", () => {
+    expect(shape).toBeDefined();
+    expect(shape?.title).toBe("도형 속성");
+    expect(shape?.lede).toBe("배경판·하단바의 크기와 색");
+    expect(body.length).toBeGreaterThan(1000);
+  });
+
+  it("기본형 슬롯 다섯을 갖췄다", () => {
+    const sections = h2(body);
+
+    // ①② H1 기능 이름 + 해주는 일 한 줄 — 사이드바와 **같은 문자열**이라 nav에서 온다
+    expect(shape?.title).toBeTruthy();
+    expect(shape?.lede).toBeTruthy();
+
+    // ③ 어디서 여는가 — 본문 첫 줄이고 제목이 아니다
+    expect(body.split("\n")[0]).not.toMatch(/^#/);
+    expect(body.split("\n")[0]).toContain("Attributes");
+
+    // ④ H2 작업들 — 기능 이름 나열이 아니라 하려는 일로 갈린다. `Shape Type`이 아니라
+    // *"자막이 길어져 배경판을 늘려야 할 때"*가 제목이다
+    expect(sections[0]).toBe("자막이 길어져 배경판을 늘려야 할 때");
+    expect(sections.indexOf("자막이 길어져 배경판을 늘려야 할 때")).toBeLessThan(
+      sections.indexOf("나머지 속성"),
+    );
+
+    // ⑤ H2 나머지 속성(레퍼런스 표) / H2 관련 — 이 순서로 끝난다
+    expect(sections.slice(-2)).toEqual(["나머지 속성", "관련"]);
+  });
+
+  it("손대는 순서가 번호로 붙어 있다 — 도형이 먼저고 글자가 나중이다", () => {
+    for (const n of [1, 2]) {
+      expect(body).toMatch(new RegExp(`^### ${n}\\. `, "m"));
+    }
+  });
+
+  it("첫 등장 병기가 들어갔다 — 화면의 영문과 머릿속 한글이 둘 다 색인에 든다", () => {
+    for (const pair of ["Shape Type(도형 종류)", "Pen Size(선 굵기)", "Alpha(투명도)"]) {
+      expect(body, pair).toContain(pair);
+    }
+  });
+
+  it("아이콘을 생김새가 아니라 경로로 가리킨다", () => {
+    // 매뉴얼은 *"도형 모드 아이콘을 선택하고"*라고만 쓴다 — 글로만 읽는 독자는 그 아이콘을
+    // 못 찾는다. 단축키가 있으면 단축키가 경로다(`R` = 도형 입력모드, 원본 p.108)
+    expect(body).toMatch(/도형 입력모드/);
+    expect(body).toContain("`R`");
+    // *"빨간 OnAir 버튼"* 같은 생김새 문장은 PDF에서 안 나오므로 쓰지 않는다
+    expect(body).not.toMatch(/빨간|녹색|파란/);
+  });
+
+  it("`Custom 도형`이 이 페이지에 없다 — 2차로 내렸다", () => {
+    // *"곡선 조절은 손으로 끌어보면서 익히는 것이라 문장으로는 감이 안 온다."*
+    expect(body).not.toContain("Custom");
+    expect(body).not.toContain("프레임 포인트");
+  });
+
+  // 「그림이 0장이다」는 이 페이지만의 조건이 아니라 본문 규칙 셋째라 §실물 소스에서 전 페이지에 건다
+
+  it("`H2 관련`에서 글자 속성으로 **링크**가 나간다 — 크기 조절이 글자↔도형을 넘나든다", () => {
+    const related = body.slice(body.lastIndexOf("## 관련"));
+    expect(related).toContain(`[글자 속성](${page("text-attributes")!.href})`);
+  });
+
+  it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
+    const entries = docs.sidecar.filter((e) => e.slug === "shape-attributes");
+    const kinds = new Set(entries.map((e) => e.tag.kind));
+
+    expect(kinds).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(entries.length).toBeGreaterThan(10);
+  });
+
+  it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §4.3은 p.80–83이다", () => {
+    // 프로토타입 43은 이 절을 `p.109–111`로 적었는데 그건 **PDF 쪽 번호**다(인쇄 번호 +29).
+    // 나머지 태그와 섞이면 검수자가 매번 어느 자를 쓸지 되묻는다 — 자는 인쇄 번호 하나다
+    const pages = docs.sidecar
+      .filter((e) => e.slug === "shape-attributes" && e.tag.kind === "원본")
+      .map((e) => (e.tag as { kind: "원본"; page: number }).page);
+
+    expect(pages.length).toBeGreaterThan(0);
+    // §4.3 도형 객체 속성(80–83) · §4.5 Color(89–92) · §7.2 편집 단축키(108)
+    const cited = [...new Set(pages)].sort((a, b) => a - b);
+    expect(cited.every((p) => (p >= 80 && p <= 83) || (p >= 89 && p <= 92) || p === 108)).toBe(true);
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+});
+
 describe("본문이 아직 없는 항목", () => {
   it("사이드바에는 서지만 페이지로는 안 나온다", () => {
     const dir = sandbox({
@@ -237,5 +331,25 @@ describe("실물 소스", () => {
   it("`_content`의 마크다운이 하나도 안 빠지고 페이지가 된다", () => {
     const files = readdirSync(CONTENT_DIR).filter((n) => n.endsWith(".md"));
     expect(docs.pages).toHaveLength(files.length);
+  });
+
+  it("그림이 0장이다 — 본문 규칙 셋째", () => {
+    // 스크린샷을 다시 부르는 순간 04(공개 범위)에 연쇄한다. 한 장이 새는 것을 눈으로
+    // 잡을 수는 없으므로 여기서 막는다
+    for (const p of docs.pages) {
+      expect(p.body, p.slug).not.toMatch(/!\[|<img/);
+    }
+  });
+
+  it("페이지끼리 거는 링크가 본문 있는 페이지만 가리킨다", () => {
+    // `output: 'export'`라 본문 없는 슬러그는 **라우트 자체가 안 만들어진다** — 사이드바는
+    // 그 줄을 링크가 아닌 회색 줄로 세워 막지만, 본문 안에서 건 링크는 그대로 404가 된다.
+    // 07이 `글자 속성`으로 링크를 걸면서 생긴 자리이고 08–11이 같은 자리를 네 번 더 지난다
+    const ready = new Set(docs.pages.map((p) => p.href));
+    for (const p of docs.pages) {
+      for (const [, href] of p.body.matchAll(/\]\((\/docs\/nabi-cg[^)#]*)\)/g)) {
+        expect(ready, `${p.slug} → ${href}`).toContain(href);
+      }
+    }
   });
 });
