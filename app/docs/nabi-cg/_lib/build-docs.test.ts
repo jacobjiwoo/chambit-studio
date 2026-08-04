@@ -8,14 +8,13 @@
  * 재현된 사고다.** 그래서 실물 소스를 그대로 태워 보고(위쪽), 소스가 잘못됐을 때 빌드가
  * 멈추는지도 함께 본다(아래쪽, 임시 폴더).
  */
-import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readdirSync } from "node:fs";
 
 import { afterAll, describe, expect, it } from "vitest";
 
 import { LANDING, NAV } from "../_meta/nav";
 import { BADGE_HREF, buildDocs, CONTENT_DIR } from "./build-docs";
+import { cleanupSandboxes, sandbox } from "./test-sandbox";
 
 const docs = buildDocs(CONTENT_DIR);
 
@@ -174,21 +173,7 @@ describe("소스가 잘못되면 빌드가 멈춘다", () => {
   });
 });
 
-const made: string[] = [];
-
-/** 소스 폴더 하나를 손으로 짓는다 — 실물 `_content`를 안 건드리고 소스 사고를 재현한다. */
-function sandbox(files: Record<string, string>): string {
-  const dir = mkdtempSync(join(tmpdir(), "nabi-docs-"));
-  made.push(dir);
-  for (const [name, body] of Object.entries(files)) {
-    writeFileSync(join(dir, name), body);
-  }
-  return dir;
-}
-
-afterAll(() => {
-  for (const dir of made) rmSync(dir, { recursive: true, force: true });
-});
+afterAll(cleanupSandboxes);
 
 describe("사이드카 — 문장별 출처 태그", () => {
   // 문법: `문장이다.[태그]` — 공백 없이 바로 붙인다. 04 티켓 §태그 다섯.
