@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>나비CG 문서 — 검색 동작 시안 S1 / S2 (티켓 10)</title>
+<style>
+  :root { --line:#d8d8d4; --ink:#1c1c1a; --dim:#6b6b66; --bg:#fbfbf9; --acc:#8a4b2a; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.7 -apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; color:var(--ink); background:#efeeea; }
+  .wrap { max-width:1120px; margin:0 auto; padding:26px 20px 70px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--dim); font-size:13px; margin:0 0 18px; }
+  .switch { display:flex; gap:8px; margin-bottom:8px; }
+  .switch button { font:inherit; font-size:13.5px; padding:7px 16px; border:1px solid #c4c3be; background:#fff; border-radius:6px; cursor:pointer; }
+  .switch button.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .hint { font-size:12.5px; color:var(--dim); margin:0 0 16px; }
+  .hint code { background:#e6e5e0; padding:1px 6px; border-radius:3px; cursor:pointer; }
+
+  .browser { border:1px solid #c9c9c4; border-radius:8px; overflow:hidden; background:var(--bg); box-shadow:0 2px 14px rgba(0,0,0,.07); position:relative; }
+  .chrome { background:#e4e3de; border-bottom:1px solid var(--line); padding:7px 12px; font-size:12px; color:var(--dim); display:flex; gap:8px; align-items:center; }
+  .dot { width:9px; height:9px; border-radius:50%; background:#c6c5c0; display:inline-block; }
+  .url { background:#fff; border:1px solid var(--line); border-radius:4px; padding:2px 10px; flex:1; }
+
+  .cols { display:grid; grid-template-columns:300px 1fr; min-height:430px; }
+  aside { border-right:1px solid var(--line); padding:16px 14px; background:#f6f5f2; overflow:hidden; }
+  .sbox { width:100%; border:1px solid #c4c3be; border-radius:6px; padding:7px 11px; font:inherit; font-size:13.5px; background:#fff; margin-bottom:14px; }
+  .sbox:focus { outline:none; border-color:var(--acc); box-shadow:0 0 0 2px rgba(138,75,42,.13); }
+  .grp { font-size:11px; letter-spacing:.06em; color:#9a9993; margin:16px 4px 7px; }
+  .grp:first-child { margin-top:0; }
+  .navitem { padding:5px 8px; border-radius:5px; font-size:13.5px; cursor:pointer; }
+  .navitem:hover { background:#eae6de; }
+  .navitem.on { background:#e7e2d9; font-weight:600; }
+  .navitem .one { display:block; font-size:11.5px; color:var(--dim); font-weight:400; line-height:1.55; margin-top:1px; }
+  .navitem .crumb { display:block; font-size:11px; color:#9a9993; font-weight:400; }
+  mark { background:#f6e2b8; color:var(--acc); font-weight:600; padding:0 1px; border-radius:2px; }
+  .empty { font-size:12.5px; color:var(--dim); padding:6px 8px; }
+
+  main { padding:24px 32px; }
+  main h2 { font-size:20px; margin:0 0 3px; }
+  main .lede { color:var(--dim); font-size:13.5px; margin:0 0 18px; }
+  main h3 { font-size:14.5px; margin:20px 0 7px; }
+  main p { font-size:13.5px; margin:0 0 9px; }
+  .foot { border-top:1px solid var(--line); padding:12px 32px; font-size:11px; color:#9a9993; background:#f6f5f2; }
+
+  /* 모달 (S2) */
+  .veil { position:absolute; inset:0; background:rgba(30,30,28,.34); display:none; }
+  .veil.show { display:block; }
+  .modal { position:absolute; left:80px; right:80px; top:64px; background:#fff; border:1px solid #b9b8b3; border-radius:9px; box-shadow:0 12px 38px rgba(0,0,0,.26); overflow:hidden; display:none; }
+  .modal.show { display:block; }
+  .modal input { width:100%; border:0; border-bottom:1px solid var(--line); padding:14px 17px; font:inherit; font-size:15.5px; }
+  .modal input:focus { outline:none; }
+  .mlist { padding:6px; max-height:320px; overflow:auto; }
+  .mrow { display:grid; grid-template-columns:210px 1fr; gap:12px; padding:7px 10px; border-radius:5px; font-size:13px; cursor:pointer; }
+  .mrow:hover, .mrow.on { background:#f0ece4; }
+  .mrow b { font-weight:600; }
+  .mrow em { font-style:normal; color:var(--dim); font-size:12.5px; }
+  .mfoot { border-top:1px solid var(--line); padding:7px 14px; font-size:11.5px; color:#9a9993; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>검색 동작 시안 — 실제로 쳐 보세요</h1>
+<p class="sub">티켓 10 · 골격은 B(사이드바가 발견 면) 확정 · 아래 버튼으로 두 방식을 바꿔 가며 같은 질의를 쳐 보면 됩니다</p>
+
+<div class="switch">
+  <button id="b1" class="on">S1 — 사이드바가 결과 패널로</button>
+  <button id="b2">S2 — 화면 가운데 모달</button>
+</div>
+<p class="hint">
+  눌러서 넣기 →
+  <code data-q="자간">자간</code>
+  <code data-q="Kerning">Kerning</code>
+  <code data-q="Ctrl+H">Ctrl+H</code>
+  <code data-q="크기">크기</code>
+  <code data-q="배경판">배경판</code>
+  <code data-q="줄간격">줄간격</code>
+  <code data-q="송출">송출</code>
+  <code data-q="스타일">스타일</code>
+  <code data-q="임포트">임포트</code>
+  &nbsp;· S2는 <b>Ctrl+K</b> 또는 검색창 클릭으로 열리고 <b>Esc</b>로 닫힙니다
+</p>
+
+<div class="browser" id="browser">
+  <div class="chrome"><i class="dot"></i><i class="dot"></i><span class="url">chambitstudio.com/docs/nabi-cg/글자속성</span></div>
+  <div class="cols">
+    <aside>
+      <input class="sbox" id="sbox" placeholder="검색…   Ctrl K" autocomplete="off">
+      <div id="sidebody"></div>
+    </aside>
+    <main>
+      <h2>글자 속성</h2>
+      <p class="lede">자막이 안 들어갈 때 폭·자간·크기를 줄인다</p>
+      <h3>자막이 한 줄에 안 들어갈 때</h3>
+      <p>손대는 순서가 있다 — 위에서부터 시도하고, 안 되면 다음으로 내려간다.</p>
+      <p><b>1. Width를 줄인다</b> — 높이는 그대로 두고 폭만 좁히는 것이라 줄이 흐트러지지 않는다. 넓히기 <code>Ctrl+J</code> / 좁히기 <code>Ctrl+K</code>.</p>
+      <p><b>2. Kerning(자간)을 좁힌다</b> — 글자와 글자 사이 간격이다. 벌리기 <code>Ctrl+H</code> / 모으기 <code>Ctrl+L</code>.</p>
+      <h3>글씨가 잘 안 보일 때</h3>
+      <p><b>Bold</b>는 서체에 굵은 버전이 있을 때만 먹는다. 없으면 <b>Thickness(굵기)</b>를 쓴다.</p>
+    </main>
+  </div>
+  <div class="foot">출처 · compix 나비CG 사용자 매뉴얼 &nbsp;|&nbsp; 기준 버전 · 나비CG 2.5 &nbsp;|&nbsp; 이 문서는 compix의 공식 문서가 아닙니다 &nbsp;|&nbsp; 원본 매뉴얼 →</div>
+
+  <div class="veil" id="veil"></div>
+  <div class="modal" id="modal">
+    <input id="mbox" placeholder="찾는 기능 이름을 그대로 치세요 — 자간, Kerning, 임포트…" autocomplete="off">
+    <div class="mlist" id="mlist"></div>
+    <div class="mfoot">↑↓ 이동 · Enter 열기 · Esc 닫기</div>
+  </div>
+</div>
+
+<p class="hint" id="verdict" style="margin-top:14px;"></p>
+</div>
+
+<script>
+/* ── 1차 7개 섹션의 표본 코퍼스 (실제 본문이 아니라 시안용 표본) ───────────── */
+const NAV = [
+  { g:"하루의 순서", t:"텍스트 임포트",   one:"원고 txt를 페이지로 한 번에 앉힌다" },
+  { g:"하루의 순서", t:"글자 속성",       one:"자막이 안 들어갈 때 폭·자간·크기를 줄인다", cur:true },
+  { g:"하루의 순서", t:"도형 속성",       one:"배경판·하단바의 크기와 색" },
+  { g:"하루의 순서", t:"객체 편집",       one:"여러 개를 한 번에 고르고 맞춘다" },
+  { g:"하루의 순서", t:"Style Catalog",  one:"같은 서식을 저장해 두고 재사용" },
+  { g:"하루의 순서", t:"송출",           one:"In / Out / Run Mode / Take In·Out" },
+  { g:"한 장짜리",   t:"단축키",         one:"편집 단축키 한 장" },
+];
+
+const DOCS = [
+  ["텍스트 임포트","원고 파일 불러오기","메모장으로 저장한 원고 텍스트 파일을 Ctrl+T로 불러오면 한 줄이 한 페이지가 된다. 임포트한 뒤에는 페이지 리스트에서 순서를 바꿀 수 있다."],
+  ["텍스트 임포트","구분자와 페이지 나누기","빈 줄을 만나면 페이지가 나뉜다. 한 페이지에 두 줄을 넣으려면 원고에서 줄바꿈만 하고 빈 줄을 두지 않는다."],
+  ["글자 속성","자막이 한 줄에 안 들어갈 때","Width는 글자 높이에 대한 폭의 비율이다. 100%가 기본이고 10%~800%까지 간다. 높이는 그대로 두고 폭만 좁히는 것이라 줄이 흐트러지지 않는다. 넓히기 Ctrl+J, 좁히기 Ctrl+K. 다음은 Kerning(자간)으로, 글자와 글자 사이 간격이다. 벌리기 Ctrl+H, 모으기 Ctrl+L. 그다음이 Space(띄어쓰기 폭), 마지막이 Height(글자 크기)로 확대 Ctrl+I, 축소 Ctrl+M."],
+  ["글자 속성","글씨가 잘 안 보일 때","Bold는 서체에 굵은 버전이 있을 때만 먹는다. 굵은 버전이 없는 서체라면 Thickness(굵기)를 쓴다. 서체와 무관하게 획 자체를 두껍게 만든다. Outline은 글자 속을 비우고 윤곽선만 남기므로 Thickness와 같이 쓴다."],
+  ["글자 속성","나머지 속성","Leading(줄 간격)은 한 객체 안에 두 줄 이상 있을 때 줄과 줄 사이를 조절한다. Height 크기를 키웠다면 줄 간격도 같이 봐야 한다. Alpha(투명도)는 글자를 반투명하게 만든다. Italic은 오른쪽으로 기울인다."],
+  ["도형 속성","배경판 크기 바꾸기","자막 배경판이나 하단바의 Height와 Width를 조절한다. 도형을 먼저 늘리고 화면이 다 차면 글자 크기로 간다."],
+  ["도형 속성","색과 테두리","Shape Type에서 도형 종류를 고른다. 이름에 Framed가 붙으면 속이 빈 테두리 도형이다. Pen Size가 테두리 굵기, Arc Height가 모서리 둥글기다."],
+  ["객체 편집","여러 개를 한 번에 고르기","Ctrl+B 일괄 지정을 쓰면 같은 종류의 객체를 한 번에 선택해 크기나 색을 한꺼번에 바꿀 수 있다. 페이지마다 같은 손질을 반복하지 않아도 된다."],
+  ["객체 편집","정렬과 위치 고정","여러 객체를 골라 왼쪽·가운데 정렬을 맞춘다. 위치 고정을 걸면 실수로 끌려가지 않는다. Snap On/Off는 Alt+; 이다."],
+  ["Style Catalog","서식을 저장해 두고 재사용","자주 쓰는 서식을 Style Catalog에 등록해 두고 다른 페이지에 끌어다 적용한다. Char Style에는 서체·크기·자간·줄 간격까지 함께 저장된다. Color Style은 색, Shape Style은 도형 서식이다."],
+  ["송출","Playback — 내보내고 지우기","In은 송출, Out은 송출 종료다. Clear는 송출을 멈춘 뒤 화면에 남은 것을 지운다. Skip은 현재 송출 중인 PGM을 Out 시킨다."],
+  ["송출","Run Setting — 어떻게 넘길 것인가","Manual(In/Out)을 비롯해 여섯 가지 모드가 있다. 시작 페이지와 끝 페이지를 정하고 Loop를 걸면 그 구간을 반복한다."],
+  ["송출","Take In / Out","현재 페이지를 바로 내보내는 경로는 Ctrl+Enter(키패드)다. 툴바 아이콘은 같은 일을 하는 다른 경로일 뿐이다."],
+  ["단축키","7.2 편집","자간 벌리기 Ctrl+H, 자간 모으기 Ctrl+L, 글자 폭 넓히기 Ctrl+J, 좁히기 Ctrl+K, 글자 크기 확대 Ctrl+I, 축소 Ctrl+M, 되돌리기 Ctrl+Z, 다시 실행 Ctrl+Y."],
+  ["단축키","7.5 송출","송출 Enter(키패드), Cut 0(키패드), 스크롤 가속 +, 스크롤 감속 -, 스크롤 일시 정지 *."],
+  ["단축키","7.7 기타","옵션 F8, 페이지모드 전환 Ctrl+Alt+M, 객체정보 F1, 페이지 이동 F4."],
+];
+
+/* ── 토크나이저: 어절 + 2-gram (08이 고른 경로의 축소판) ───────────────────── */
+function grams(s){
+  const out=[]; const w=s.toLowerCase().split(/[\s,·]+/).filter(Boolean);
+  for(const t of w){ out.push(t); for(let i=0;i<t.length-1;i++) out.push(t.slice(i,i+2)); }
+  return [...new Set(out)];
+}
+function search(q){
+  q=q.trim(); if(!q) return [];
+  const words=q.toLowerCase().split(/\s+/).filter(Boolean);
+  const toks=grams(q);
+  return DOCS.map(([sec,sub,body])=>{
+    const hay=(sec+" "+sub+" "+body).toLowerCase();
+    // 모든 검색 어절이 (통째로든 2-gram 조합으로든) 걸려야 결과에 든다
+    const ok=words.every(w=> hay.includes(w) || grams(w).every(g=>hay.includes(g)) );
+    if(!ok) return null;
+    let score=0;
+    for(const t of toks){ if((sec+" "+sub).toLowerCase().includes(t)) score+=3; if(hay.includes(t)) score+=1; }
+    // 문맥 잘라내기
+    const best=toks.filter(t=>t.length>=2).sort((a,b)=>b.length-a.length).find(t=>body.toLowerCase().includes(t))||words[0];
+    let i=body.toLowerCase().indexOf(best); if(i<0) i=0;
+    const from=Math.max(0,i-34), to=Math.min(body.length,i+64);
+    const ctx=(from>0?"…":"")+body.slice(from,to)+(to<body.length?"…":"");
+    return {sec,sub,ctx,score};
+  }).filter(Boolean).sort((a,b)=>b.score-a.score).slice(0,7);
+}
+const OPEN="\u0001", CLOSE="\u0002";
+function hl(text,q){
+  const toks=grams(q).filter(t=>t.length>=2).sort((a,b)=>b.length-a.length);
+  let out=text;
+  for(const t of toks.slice(0,4)){
+    const re=new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi");
+    out=out.replace(re, m=> (m.indexOf(OPEN)>=0 ? m : OPEN+m+CLOSE));
+  }
+  return out.split(OPEN).join("<mark>").split(CLOSE).join("</mark>");
+}
+
+/* ── 렌더 ─────────────────────────────────────────────────────────────────── */
+const sidebody=document.getElementById("sidebody"), sbox=document.getElementById("sbox");
+const modal=document.getElementById("modal"), veil=document.getElementById("veil"),
+      mbox=document.getElementById("mbox"), mlist=document.getElementById("mlist");
+let mode=1;
+
+function navHTML(){
+  let h="", g="";
+  for(const n of NAV){ if(n.g!==g){ g=n.g; h+=`<div class="grp">${g}</div>`; }
+    h+=`<div class="navitem${n.cur?" on":""}">${n.t}<em class="one">${n.one}</em></div>`; }
+  return h;
+}
+function resHTML(rs,q){
+  if(!rs.length) return `<div class="grp">결과 0</div><div class="empty">걸리는 게 없습니다. 다른 이름으로 쳐 보세요.</div>`;
+  return `<div class="grp">결과 ${rs.length}</div>`+rs.map(r=>
+    `<div class="navitem"><span class="crumb">${r.sec} › ${r.sub}</span><em class="one">${hl(r.ctx,q)}</em></div>`).join("");
+}
+function paintSide(){
+  const q=sbox.value;
+  sidebody.innerHTML = (mode===1 && q.trim()) ? resHTML(search(q),q) : navHTML();
+  verdict();
+}
+function paintModal(){
+  const q=mbox.value, rs=search(q);
+  mlist.innerHTML = !q.trim()
+    ? `<div class="empty">기능 이름이나 단축키를 치세요.</div>`
+    : (rs.length? rs.map((r,i)=>`<div class="mrow${i?"":" on"}"><b>${r.sec} › ${r.sub}</b><em>${hl(r.ctx,q)}</em></div>`).join("")
+                : `<div class="empty">걸리는 게 없습니다.</div>`);
+  verdict();
+}
+function verdict(){
+  const q=(mode===1?sbox.value:mbox.value).trim();
+  document.getElementById("verdict").innerHTML = q
+    ? `질의 <b>“${q}”</b> · 결과 ${search(q).length}건 — 어절+2-gram 토크나이저(08이 고른 경로)의 축소판으로 돌린 것입니다.`
+    : "";
+}
+
+function setMode(m){
+  mode=m; b1.classList.toggle("on",m===1); b2.classList.toggle("on",m===2);
+  closeModal(); sbox.value=""; mbox.value=""; paintSide();
+  sbox.placeholder = m===1 ? "검색…   Ctrl K" : "검색…   Ctrl K  (누르면 창이 열립니다)";
+}
+function openModal(){ if(mode!==2) return; modal.classList.add("show"); veil.classList.add("show"); mbox.focus(); paintModal(); }
+function closeModal(){ modal.classList.remove("show"); veil.classList.remove("show"); }
+
+b1.onclick=()=>setMode(1); b2.onclick=()=>setMode(2);
+sbox.addEventListener("input",paintSide);
+sbox.addEventListener("focus",()=>{ if(mode===2){ sbox.blur(); openModal(); } });
+mbox.addEventListener("input",paintModal);
+veil.onclick=closeModal;
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){ e.preventDefault(); mode===2?openModal():sbox.focus(); }
+  if(e.key==="Escape"){ if(mode===2) closeModal(); else { sbox.value=""; paintSide(); } }
+});
+document.querySelectorAll("[data-q]").forEach(el=>el.onclick=()=>{
+  const q=el.dataset.q;
+  if(mode===1){ sbox.value=q; sbox.focus(); paintSide(); }
+  else { openModal(); mbox.value=q; paintModal(); }
+});
+paintSide();
+</script>
+</body>
+</html>
