@@ -7,9 +7,8 @@
  * _meta/*        ┘                      ↑02    ↑05    ↑02    ↑04
  * ```
  *
- * 지금 나오는 것은 `pages`·`nav`·`sidecar` 셋이다. 색인은 05가 **같은 함수에** 붙는다.
- * 게이트 여섯이 전부 이 함수의 산출물에 대한 `expect()`가 되므로, 토크나이저·치환기·태그 파서에
- * 별도 테스트를 두지 않는다 — 전부 이 아래에 있다.
+ * 산출물 넷이 전부 나온다. 게이트 여섯이 전부 이 함수의 산출물에 대한 `expect()`가 되므로,
+ * 토크나이저·치환기·태그 파서에 별도 테스트를 두지 않는다 — 전부 이 아래에 있다.
  *
  * **본문은 여기서 문자열로 나오고 렌더는 Server Component가 한다.** `output: 'export'`라 HTML이
  * 빌드 타임에 구워져 나가고 `react-markdown`이 브라우저로 안 간다.
@@ -18,6 +17,8 @@ import { readFileSync, readdirSync } from "node:fs";
 import { basename, join } from "node:path";
 
 import { LANDING, NAV, type NavEntry } from "../_meta/nav";
+import { anchorOf } from "./anchor";
+import { bake, type IndexEntry } from "./search";
 
 /** 문서 뿌리. 둘째 문서는 `/docs/handover/`로 **옆에** 서면 되고 여기 URL은 안 깨진다. */
 const BASE = "/docs/nabi-cg";
@@ -64,7 +65,13 @@ export type SidecarEntry = { slug: string; sentence: string; tag: SidecarTag };
 
 export type Sidecar = SidecarEntry[];
 
-export type Docs = { pages: DocPage[]; nav: DocNavItem[]; sidecar: Sidecar };
+/**
+ * 검색 색인 — **문자열 하나이고, 이게 그대로 브라우저로 내려가는 바이트**다.
+ * `search-index.json/route.ts`가 이걸 정적 파일로 내보내고 게이트 1이 이걸 태워 재현율을 잰다.
+ */
+export type SearchIndex = string;
+
+export type Docs = { pages: DocPage[]; nav: DocNavItem[]; sidecar: Sidecar; index: SearchIndex };
 
 /**
  * **문장별 출처 태그 — 마크다운 문법 한 줄.**
@@ -152,6 +159,82 @@ function renderBody(body: string): string {
   return body.replace(TAG, (_, inner: string) => (inner === "추론" ? `[확인 전](${BADGE_HREF})` : ""));
 }
 
+/** 색인·사이드카는 태그가 지워진 본문을 본다 — `[원본 p.74]`가 색인에 들어가면 `원본`과 `74`가
+ * 검색어가 되고 결과 문맥에도 튀어나온다. */
+const untagged = (body: string) => body.replace(TAG, "");
+
+/** 소제목 줄. 페이지 안쪽을 작업으로 가른 자리가 그대로 색인의 칸이 된다. */
+const HEADING = /^(#{2,3})\s+(.*)$/;
+/** 표 구분줄(`|---|---|`)은 글자가 아니다. */
+const TABLE_RULE = /^\s*\|?[\s:|-]+\|?\s*$/;
+
+/**
+ * 줄 안의 마크다운 기호를 걷어낸다 — **`react-markdown`이 화면에 남기는 글자와 같아야 한다.**
+ * 소제목이 이 함수를 지나 앵커가 되므로(`anchorOf`), 여기서 화면과 어긋나면 검색 결과가 그
+ * 자리를 못 찾고 페이지 맨 위에 떨어진다.
+ */
+const inline = (line: string) => line.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[*_`]/g, "");
+
+/**
+ * 마크다운 기호를 걷어낸 평문. 결과 줄의 **매치 문맥**이 여기서 잘려 나가므로, 화면에 안 보이는
+ * 기호가 남으면 문맥에도 그대로 뜬다.
+ */
+function plain(block: string): string {
+  return block
+    .split("\n")
+    .filter((line) => !TABLE_RULE.test(line))
+    .map((line) => inline(line.replace(/^\s*(?:[-*]\s+|\d+\.\s+|>\s?)/, "").replace(/\|/g, " ")))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * 한 페이지를 색인의 칸들로 가른다. **칸이 페이지가 아니라 섹션인 이유**는 결과 줄이
+ * `섹션 › 소제목`이기 때문이다 — 페이지 단위로 색인하면 여덟 줄이 전부 같은 제목으로 뜬다.
+ *
+ * 첫 칸(소제목 없음)에는 **제목과 사이드바 한 줄 설명**이 함께 들어간다. 그 한 줄이 이 사이트의
+ * 발견 면 전부인데 색인에서 빠지면 검색으로는 영영 안 만난다.
+ */
+function indexPage(entry: NavEntry, href: string, body: string): IndexEntry[] {
+  const entries: IndexEntry[] = [];
+  let heading = "";
+  let buffer: string[] = [];
+
+  const flush = () => {
+    const anchor = heading ? anchorOf(heading) : "";
+    const at = anchor ? `${href}#${anchor}` : href;
+    // 칸의 첫 글자는 **그 칸이 화면에서 불리는 이름**이다(소제목, 첫 칸은 제목 + 한 줄 설명).
+    // 소제목에서 걸린 질의도 문맥에 하이라이트가 뜨려면 문맥의 원본에 그 이름이 들어 있어야 한다
+    const text = [heading || `${entry.title} ${entry.lede}`, plain(buffer.join("\n"))]
+      .filter(Boolean)
+      .join(" ");
+    buffer = [];
+
+    if (!text) return;
+    if (entries.some((e) => e.href === at)) {
+      throw new Error(
+        `_content/${entry.slug ? `${entry.slug}.md` : LANDING_FILE}: 소제목 '${heading}'이 한 페이지에 두 번 있다 — 검색 결과 두 줄이 같은 자리를 가리킨다.`,
+      );
+    }
+
+    entries.push({ slug: entry.slug, section: entry.title, heading, href: at, text });
+  };
+
+  for (const line of body.split("\n")) {
+    const match = HEADING.exec(line);
+    if (match) {
+      flush();
+      heading = inline(match[2]).trim();
+    } else {
+      buffer.push(line);
+    }
+  }
+  flush();
+
+  return entries;
+}
+
 /**
  * 실물 소스 폴더.
  *
@@ -212,11 +295,19 @@ export function buildDocs(contentDir: string): Docs {
     body: renderBody(bodies.get(entry.slug)!),
   }));
 
+  // 본문이 저장소에 있는 페이지만 색인에 든다 — 그래서 게이트 1의 유예가 저절로 풀린다.
+  // 07–11이 본문을 넣는 순간 그 페이지를 겨냥한 질의가 다음 빌드부터 92%를 함께 지킨다
+  const index = bake(
+    ready.flatMap((entry) =>
+      indexPage(entry, hrefOf(entry.slug), untagged(bodies.get(entry.slug)!)),
+    ),
+  );
+
   const nav = NAV.map((entry) => ({
     ...entry,
     href: hrefOf(entry.slug),
     ready: bodies.has(entry.slug),
   }));
 
-  return { pages, nav, sidecar };
+  return { pages, nav, sidecar, index };
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { DocNavItem } from "../_lib/build-docs";
+import { SearchBox } from "./search-box";
 
 /**
  * 사이드바가 곧 발견 면이다(골격 B).
@@ -16,6 +17,10 @@ import type { DocNavItem } from "../_lib/build-docs";
 export function Sidebar({ nav, current }: { nav: DocNavItem[]; current: string }) {
   return (
     <nav className="shrink-0 border-b border-neutral-200 px-4 py-6 md:w-[300px] md:border-r md:border-b-0">
+      {/* 검색은 *찾기*, 아래 일곱 줄은 *발견*이다. 검색창이 위에 서지만 결과는 여기 안 뜬다 —
+          모달(S2)로 열려서 사이드바가 끝까지 발견 전용으로 남는다 */}
+      <SearchBox />
+
       <ul className="space-y-0.5">
         {nav.map((item) => (
           <li key={item.slug}>

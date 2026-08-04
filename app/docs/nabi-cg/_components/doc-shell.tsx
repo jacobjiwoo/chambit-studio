@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import { anchorOf } from "../_lib/anchor";
 import { BADGE_HREF, type DocNavItem, type DocPage } from "../_lib/build-docs";
 import "./doc-prose.css";
 import { Footer } from "./footer";
@@ -20,6 +21,32 @@ function DocLink({ href, children, node, ...rest }: JSX.IntrinsicElements["a"] &
       {children}
     </a>
   );
+}
+
+/** hast 노드 하나에서 글자만 걷어 온다 — 색인이 본 소제목과 **같은 문자열**이어야 앵커가 맞다. */
+function textOf(node: unknown): string {
+  const element = node as { value?: string; children?: unknown[] };
+  if (typeof element?.value === "string") return element.value;
+  return (element?.children ?? []).map(textOf).join("");
+}
+
+/**
+ * 소제목에 앵커를 박는다. **검색 결과가 떨어지는 자리가 여기다** — `_lib/anchor.ts`의 함수
+ * 하나를 색인 쪽과 나눠 쓰므로, 소제목을 고치면 `#`와 `id`가 **함께** 바뀐다.
+ */
+function heading(Tag: "h2" | "h3") {
+  // `node`는 여기서 앵커를 뽑는 데 쓰고 DOM으로는 안 넘긴다
+  return function Heading({
+    children,
+    node,
+    ...rest
+  }: JSX.IntrinsicElements["h2"] & { node?: unknown }) {
+    return (
+      <Tag id={anchorOf(textOf(node))} {...rest}>
+        {children}
+      </Tag>
+    );
+  };
 }
 
 /**
@@ -46,7 +73,10 @@ export function DocShell({ page, nav }: { page: DocPage; nav: DocNavItem[] }) {
 
           <div className="doc-prose mt-8">
             {/* 빌드 타임에 HTML로 구워진다 — `react-markdown`은 브라우저로 안 간다 */}
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ a: DocLink }}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{ a: DocLink, h2: heading("h2"), h3: heading("h3") }}
+            >
               {page.body}
             </ReactMarkdown>
           </div>
