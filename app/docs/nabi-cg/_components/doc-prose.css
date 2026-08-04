@@ -4,6 +4,8 @@
  * 폴더 하나에 앉는다는 규약이 스타일에도 그대로 걸린다(지울 때 폴더를 지운다).
  *
  * 요소 선택자로만 쓴다 — 본문은 `react-markdown`이 만들므로 클래스를 붙일 자리가 없다.
+ * 예외 하나가 `.doc-badge`다. 04가 `[추론]` 태그를 `components.a`로 갈아 끼우는 그 한 자리에만
+ * 클래스를 심는다 — `sup`을 본문에서 따로 안 쓰므로 재사용과 안 부딪힌다.
  */
 
 .doc-prose {
@@ -124,4 +126,19 @@
   margin: 2rem 0;
   border: 0;
   border-top: 1px solid #e5e5e5;
+}
+
+/* M1 — 문장 끝 「확인 전」 배지. 페이지 배너도 문단 세로선도 없다, 이 한 글자 크기 표시뿐이다.
+   검수가 진행되면 하나씩 사라지는 것이 정상 동작이라 0개인 상태가 조용해야 한다. */
+.doc-prose sup.doc-badge {
+  display: inline-block;
+  margin-left: 0.3em;
+  border-radius: 999px;
+  background: #fff4de;
+  padding: 0.05em 0.55em;
+  color: #92400e;
+  font-size: 0.7em;
+  font-weight: 700;
+  font-style: normal;
+  white-space: nowrap;
 }

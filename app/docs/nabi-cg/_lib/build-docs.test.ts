@@ -15,7 +15,7 @@ import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 
 import { LANDING, NAV } from "../_meta/nav";
-import { buildDocs, CONTENT_DIR } from "./build-docs";
+import { BADGE_HREF, buildDocs, CONTENT_DIR } from "./build-docs";
 
 const docs = buildDocs(CONTENT_DIR);
 
@@ -125,6 +125,19 @@ describe("글자 속성 페이지", () => {
       expect(attrs?.body).toMatch(new RegExp(`^### ${n}\\. `, "m"));
     }
   });
+
+  it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
+    const entries = docs.sidecar.filter((e) => e.slug === "text-attributes");
+    const kinds = new Set(entries.map((e) => e.tag.kind));
+
+    expect(kinds).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(entries.length).toBeGreaterThan(10);
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(attrs?.body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(attrs?.body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
 });
 
 describe("본문이 아직 없는 항목", () => {
@@ -175,6 +188,64 @@ function sandbox(files: Record<string, string>): string {
 
 afterAll(() => {
   for (const dir of made) rmSync(dir, { recursive: true, force: true });
+});
+
+describe("사이드카 — 문장별 출처 태그", () => {
+  // 문법: `문장이다.[태그]` — 공백 없이 바로 붙인다. 04 티켓 §태그 다섯.
+  it("문단·목록·인용에서 다섯 태그를 걷고 문장을 정확히 자른다", () => {
+    const dir = sandbox({
+      "index.md": "랜딩",
+      "text-attributes.md": [
+        "첫 문장이다.[원본 p.74] 둘째 문장은 메운 자리다.[추론]",
+        "",
+        "- 목록 문장이다.[운영]",
+        "",
+        "> 인용 문장이다.[화면 2026.02]",
+        "",
+        "빈 슬롯이다.[운영 지식 필요]",
+      ].join("\n"),
+    });
+    const { sidecar } = buildDocs(dir);
+    const entries = sidecar.filter((e) => e.slug === "text-attributes");
+
+    expect(entries).toEqual([
+      { slug: "text-attributes", sentence: "첫 문장이다.", tag: { kind: "원본", page: 74 } },
+      { slug: "text-attributes", sentence: "둘째 문장은 메운 자리다.", tag: { kind: "추론" } },
+      { slug: "text-attributes", sentence: "목록 문장이다.", tag: { kind: "운영" } },
+      { slug: "text-attributes", sentence: "인용 문장이다.", tag: { kind: "화면", build: "2026.02" } },
+      { slug: "text-attributes", sentence: "빈 슬롯이다.", tag: { kind: "운영 지식 필요" } },
+    ]);
+  });
+
+  it("`[운영]`과 `[화면]`을 각각 걸러 볼 수 있다 — 두 시계의 인덱스", () => {
+    const dir = sandbox({
+      "index.md": "랜딩",
+      "text-attributes.md": "우리 값이다.[운영] 화면 사실이다.[화면 2026.02] 원본 사실이다.[원본 p.9]",
+    });
+    const { sidecar } = buildDocs(dir);
+
+    expect(sidecar.filter((e) => e.tag.kind === "운영")).toHaveLength(1);
+    expect(sidecar.filter((e) => e.tag.kind === "화면")).toHaveLength(1);
+  });
+
+  it("`[추론]`만 화면 배지로 바뀌고 나머지 넷은 본문에서 흔적 없이 사라진다", () => {
+    const dir = sandbox({
+      "index.md": "랜딩",
+      "text-attributes.md":
+        "원본 문장.[원본 p.1] 추론 문장.[추론] 빈 슬롯.[운영 지식 필요] 운영 문장.[운영] 화면 문장.[화면 2026.02]",
+    });
+    const { pages } = buildDocs(dir);
+    const body = pages.find((p) => p.slug === "text-attributes")!.body;
+
+    expect(body).not.toContain("[원본");
+    expect(body).not.toContain("[운영 지식 필요]");
+    expect(body).not.toContain("[운영]");
+    expect(body).not.toContain("[화면");
+    expect(body).not.toContain("[추론]");
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    // 문장 본문 자체는 살아남는다 — 지워지는 것은 태그뿐이다
+    expect(body).toContain("추론 문장.");
+  });
 });
 
 describe("실물 소스", () => {

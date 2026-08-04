@@ -1,10 +1,26 @@
+import type { JSX } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import type { DocNavItem, DocPage } from "../_lib/build-docs";
+import { BADGE_HREF, type DocNavItem, type DocPage } from "../_lib/build-docs";
 import "./doc-prose.css";
 import { Footer } from "./footer";
 import { Sidebar } from "./sidebar";
+
+/**
+ * `[추론]`이 04에서 `[확인 전](#unconfirmed)` 링크로 바뀌어 내려온다 — 이 컴포넌트가 그 한 자리만
+ * 배지로 갈아 끼운다. 본문에 실제 링크가 생기면(08의 `/subtitle-extractor`) 나머지는 그대로 `<a>`다.
+ */
+// `node`는 react-markdown이 항상 끼워 넣는 hast 노드다. DOM `<a>`로 새지 않도록 걷어내기만 한다.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function DocLink({ href, children, node, ...rest }: JSX.IntrinsicElements["a"] & { node?: unknown }) {
+  if (href === BADGE_HREF) return <sup className="doc-badge">확인 전</sup>;
+  return (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  );
+}
 
 /**
  * 문서 페이지 한 장의 틀 — 사이드바 일곱 줄, 본문, 푸터 네 줄.
@@ -30,7 +46,9 @@ export function DocShell({ page, nav }: { page: DocPage; nav: DocNavItem[] }) {
 
           <div className="doc-prose mt-8">
             {/* 빌드 타임에 HTML로 구워진다 — `react-markdown`은 브라우저로 안 간다 */}
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{page.body}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ a: DocLink }}>
+              {page.body}
+            </ReactMarkdown>
           </div>
         </main>
       </div>

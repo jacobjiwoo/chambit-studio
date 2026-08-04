@@ -21,7 +21,7 @@
 | 01 | [방송실 PC 실측 한 번](01-field-measurement.md) | — | ready-for-agent |
 | 02 | [뼈대: `/docs/nabi-cg/`에 글자 속성 한 장이 뜬다](02-skeleton-and-first-page.md) | — | **resolved** |
 | 03 | [값 파일 단일 출처 + 토큰 치환 (게이트 2·3)](03-values-and-tokens.md) | 01, 02 | ready-for-agent |
-| 04 | [문장별 출처 사이드카 + `[추론]` 인라인 배지](04-sidecar-and-badge.md) | 02 | ready-for-agent |
+| 04 | [문장별 출처 사이드카 + `[추론]` 인라인 배지](04-sidecar-and-badge.md) | 02 | **resolved** |
 | 05 | [검색: 색인 굽기 + `Ctrl+K` 모달 (게이트 1)](05-search.md) | 02 | ready-for-agent |
 | 06 | [버전 추적: History 파일 + 게이트 4·5·6](06-version-tracking.md) | 04 | ready-for-agent |
 | 07 | [본문: 도형 속성](07-content-shape-attributes.md) | 03, 04 | ready-for-agent |
@@ -64,6 +64,10 @@
 
 **문장마다 사이드카 태그를 판정한다.** `[원본 p.NN]` / `[추론]` / `[운영 지식 필요]` /
 `[운영]` / `[화면 YYYY.MM]`. 검수자는 원본에 안 묶인 것만 본다.
+
+**문법 — 문장 끝에 공백 없이 바로 붙인다:** `문장이다.[추론]`. `buildDocs()`(04)가 이 한 줄로
+사이드카를 걷고 본문에서 지운다 — 대괄호 뒤에 `(...)`가 없으면 마크다운이 링크로 안 읽으므로
+이스케이프가 따로 필요 없다.
 
 **우리 숫자는 본문에 직접 박지 않는다** — 토큰으로 두고 값 파일이 단일 출처다.
 
