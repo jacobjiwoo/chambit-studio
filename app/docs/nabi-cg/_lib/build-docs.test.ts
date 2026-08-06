@@ -13,7 +13,7 @@ import { readdirSync } from "node:fs";
 import { afterAll, describe, expect, it } from "vitest";
 
 import { LANDING, NAV, UNLISTED } from "../_meta/nav";
-import { BADGE_HREF, buildDocs, CONTENT_DIR } from "./build-docs";
+import { BADGE_HREF, buildDocs, CONTENT_DIR, type SidecarTag } from "./build-docs";
 import { cleanupSandboxes, sandbox } from "./test-sandbox";
 
 const docs = buildDocs(CONTENT_DIR);
@@ -27,6 +27,23 @@ const h2 = (body: string) =>
     .split("\n")
     .filter((line) => line.startsWith("## "))
     .map((line) => line.slice(3).trim());
+
+/** 한 페이지에 달린 태그 종류 — 매뉴얼 사실·메운 자리·우리 판단이 다 있는지 보는 눈이다. */
+const kindsOf = (slug: string) =>
+  new Set(docs.sidecar.filter((e) => e.slug === slug).map((e) => e.tag.kind));
+
+/**
+ * 그 페이지가 인용한 인쇄 번호들. **자는 인쇄 번호 하나**이고 PDF 쪽 번호는 여기에 +29한
+ * 값이다(07 §원본 페이지 번호). 태그가 가리키는 자리는 「그 절」이 아니라 **「그 문장이 실제로
+ * 있는 쪽」**이라, 07·08이 각자 자기 구간을 대고 잰다.
+ */
+const originPages = (slug: string) =>
+  docs.sidecar
+    .filter((e) => e.slug === slug && e.tag.kind === "원본")
+    .map((e) => (e.tag as Extract<SidecarTag, { kind: "원본" }>).page);
+
+/** `H2 관련` 아래 — 페이지끼리 거는 링크가 사는 자리다. */
+const related = (body: string) => body.slice(body.lastIndexOf("## 관련"));
 
 describe("사이드바 일곱 줄", () => {
   it("흐름 순으로 선다 — 매뉴얼 챕터 순서가 아니라 하루의 작업 순서다", () => {
@@ -143,16 +160,20 @@ describe("글자 속성 페이지", () => {
   });
 
   it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
-    const entries = docs.sidecar.filter((e) => e.slug === "text-attributes");
-    const kinds = new Set(entries.map((e) => e.tag.kind));
-
-    expect(kinds).toEqual(new Set(["원본", "추론", "운영"]));
-    expect(entries.length).toBeGreaterThan(10);
+    expect(kindsOf("text-attributes")).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(docs.sidecar.filter((e) => e.slug === "text-attributes").length).toBeGreaterThan(10);
   });
 
   it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
     expect(attrs?.body).toContain(`[확인 전](${BADGE_HREF})`);
     expect(attrs?.body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+
+  it("`Char Unit`에 한글 이름이 붙었다 — 08이 짓는다", () => {
+    // 07이 실측한 *"1차 핵심 용어 상당수에 한글 이름이 없다"*의 셋 중 하나이고, 이 페이지에
+    // 사는 항목이라 08이 이름을 지어 여기 꽂는다. 이름이 없으면 화면의 `Char Unit`을 못 읽는
+    // 사람에게 이 줄은 검색으로도 본문으로도 안 닿는다
+    expect(attrs?.body).toContain("Char Unit(색 적용 단위)");
   });
 });
 
@@ -219,29 +240,194 @@ describe("도형 속성 페이지", () => {
   // 「그림이 0장이다」는 이 페이지만의 조건이 아니라 본문 규칙 셋째라 §실물 소스에서 전 페이지에 건다
 
   it("`H2 관련`에서 글자 속성으로 **링크**가 나간다 — 크기 조절이 글자↔도형을 넘나든다", () => {
-    const related = body.slice(body.lastIndexOf("## 관련"));
-    expect(related).toContain(`[글자 속성](${page("text-attributes")!.href})`);
+    expect(related(body)).toContain(`[글자 속성](${page("text-attributes")!.href})`);
   });
 
   it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
-    const entries = docs.sidecar.filter((e) => e.slug === "shape-attributes");
-    const kinds = new Set(entries.map((e) => e.tag.kind));
-
-    expect(kinds).toEqual(new Set(["원본", "추론", "운영"]));
-    expect(entries.length).toBeGreaterThan(10);
+    expect(kindsOf("shape-attributes")).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(docs.sidecar.filter((e) => e.slug === "shape-attributes").length).toBeGreaterThan(10);
   });
 
   it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §4.3은 p.80–83이다", () => {
     // 프로토타입 43은 이 절을 `p.109–111`로 적었는데 그건 **PDF 쪽 번호**다(인쇄 번호 +29).
     // 나머지 태그와 섞이면 검수자가 매번 어느 자를 쓸지 되묻는다 — 자는 인쇄 번호 하나다
-    const pages = docs.sidecar
-      .filter((e) => e.slug === "shape-attributes" && e.tag.kind === "원본")
-      .map((e) => (e.tag as { kind: "원본"; page: number }).page);
+    const pages = originPages("shape-attributes");
 
     expect(pages.length).toBeGreaterThan(0);
     // §4.3 도형 객체 속성(80–83) · §4.5 Color(89–92) · §7.2 편집 단축키(108)
     const cited = [...new Set(pages)].sort((a, b) => a - b);
     expect(cited.every((p) => (p >= 80 && p <= 83) || (p >= 89 && p <= 92) || p === 108)).toBe(true);
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+});
+
+describe("텍스트 임포트 페이지", () => {
+  const doc = page("text-import");
+  const body = doc?.body ?? "";
+
+  it("마크다운 한 장에서 렌더돼 나온다", () => {
+    expect(doc).toBeDefined();
+    expect(doc?.title).toBe("텍스트 임포트");
+    expect(doc?.lede).toBe("원고 txt를 페이지로 한 번에 앉힌다");
+    expect(body.length).toBeGreaterThan(1000);
+  });
+
+  it("기본형 슬롯 다섯을 갖췄다", () => {
+    const sections = h2(body);
+
+    // ①② H1 기능 이름 + 해주는 일 한 줄 — 사이드바와 **같은 문자열**이라 nav에서 온다
+    expect(doc?.title).toBeTruthy();
+    expect(doc?.lede).toBeTruthy();
+
+    // ③ 어디서 여는가 — 본문 첫 줄이고 제목이 아니다. 이 기능은 패널이 아니라 메뉴에 있어
+    // 여는 자리가 곧 경로다
+    expect(body.split("\n")[0]).not.toMatch(/^#/);
+    expect(body.split("\n")[0]).toContain("Ctrl+T");
+
+    // ④ H2 작업들 — `페이지 적용 옵션`·`정렬 제어문자` 같은 기능 이름이 아니라 하려는 일이다
+    expect(sections[0]).toBe("원고 txt를 자막 페이지로 앉히기");
+
+    // ⑤ H2 나머지 속성(레퍼런스 표) / H2 관련 — 이 순서로 끝난다
+    expect(sections.slice(-2)).toEqual(["나머지 속성", "관련"]);
+  });
+
+  it("손대는 순서가 번호로 붙어 있다 — 서체가 먼저고 삽입이 나중이다", () => {
+    // 서체·자리를 나중에 정하면 페이지를 하나씩 다시 손대야 한다. 순서가 값을 가지는 자리다
+    for (const n of [1, 2, 3]) {
+      expect(body).toMatch(new RegExp(`^### ${n}\\. `, "m"));
+    }
+  });
+
+  it("자막 추출기를 가리키는 한 줄과 `/subtitle-extractor` 링크가 있다", () => {
+    // **이 절을 1차로 올린 유일한 근거**인데 지금까지 문서 어디에도 없었다. 물려받은 사람은
+    // 도구가 있는 줄도 모르고, 그게 09가 말한 *"발견"*의 정확한 사례다.
+    // 반대 방향(도구 → 문서)은 안 잇는다 — 이전 effort의 산출물을 이 맵이 고치게 된다
+    expect(body).toContain("(/subtitle-extractor)");
+    expect(body).toContain("설교 자막 추출기");
+  });
+
+  it("그 한 줄이 사이드카에 `[운영]`으로 등록돼 있다", () => {
+    // 매뉴얼에 없는 문장이므로 `[원본]`이 될 수 없고, 우리 운영이 바뀌면(도구를 안 쓰게 되면)
+    // 다시 볼 곳이라 `[운영]`이다. 사이드카가 그 인덱스를 든다
+    const linked = docs.sidecar.filter(
+      (e) => e.slug === "text-import" && e.sentence.includes("설교 자막 추출기"),
+    );
+
+    expect(linked.length).toBeGreaterThan(0);
+    expect(linked.every((e) => e.tag.kind === "운영")).toBe(true);
+  });
+
+  it("첫 등장 병기가 들어갔다 — 화면의 영문과 머릿속 한글이 둘 다 색인에 든다", () => {
+    expect(body).toContain("Windows Clip(클립보드 붙여넣기)");
+  });
+
+  it("아이콘을 생김새가 아니라 경로로 가리킨다", () => {
+    // `Ctrl+T`가 이 페이지의 경로다. 매뉴얼에 없는 생김새 문장은 쓰지 않는다
+    expect(body).toContain("`Ctrl+T`");
+    expect(body).not.toMatch(/빨간|녹색|파란/);
+  });
+
+  it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §3.6.5는 p.49–53이다", () => {
+    const pages = originPages("text-import");
+
+    expect(pages.length).toBeGreaterThan(0);
+    // §3.6.5 텍스트 파일(49–53) · §7.4 삽입 단축키(110)
+    expect(pages.every((p) => (p >= 49 && p <= 53) || p === 110)).toBe(true);
+  });
+
+  it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
+    expect(kindsOf("text-import")).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(docs.sidecar.filter((e) => e.slug === "text-import").length).toBeGreaterThan(10);
+  });
+
+  it("`H2 관련`에서 Style Catalog로 **링크**가 나간다", () => {
+    // 임포트 전에 정하는 서체 기본값이 곧 Style Catalog가 저장해 두는 것이다. 매주 다시
+    // 맞추는 사람에게 이 링크가 *"그럴 필요가 없다"*를 말한다
+    expect(related(body)).toContain(`](${page("style-catalog")!.href})`);
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+});
+
+describe("Style Catalog 페이지", () => {
+  const doc = page("style-catalog");
+  const body = doc?.body ?? "";
+
+  it("마크다운 한 장에서 렌더돼 나온다", () => {
+    expect(doc).toBeDefined();
+    expect(doc?.title).toBe("Style Catalog");
+    expect(doc?.lede).toBe("같은 서식을 저장해 두고 재사용");
+    expect(body.length).toBeGreaterThan(1000);
+  });
+
+  it("기본형 슬롯 다섯을 갖췄다", () => {
+    const sections = h2(body);
+
+    expect(doc?.title).toBeTruthy();
+    expect(doc?.lede).toBeTruthy();
+
+    // ③ 어디서 여는가 — 이 기능은 메뉴가 아니라 **상시 떠 있는 패널**이라 여는 동작 자체가
+    // 없다. 그래도 첫 줄은 *"화면 어디를 보면 되는가"*를 말해야 한다
+    expect(body.split("\n")[0]).not.toMatch(/^#/);
+    expect(body.split("\n")[0]).toContain("Style Catalog");
+
+    // ④ H2 작업들 — `Style 추가/적용하기`가 아니라 하려는 일이 제목이다
+    expect(sections[0]).toBe("매주 같은 서식을 다시 맞추지 않으려면");
+
+    // ⑤ H2 나머지 속성(레퍼런스 표) / H2 관련 — 이 순서로 끝난다
+    expect(sections.slice(-2)).toEqual(["나머지 속성", "관련"]);
+  });
+
+  it("`Style Catalog`의 한글 이름이 첫 등장 병기로 본문에 있다 — 우리가 짓는다", () => {
+    // 154p 전체에 영문–한글 병기가 28종뿐이고 이 이름은 거기 없다. **검색 시안에서 `스타일`
+    // 질의가 0건이었던 원인이 색인이 아니라 본문의 이 구멍이었다**(10 §9). 지은 이름은 우리
+    // 것이므로 04의 거리 벌리기와 같은 방향이다
+    expect(body).toContain("Style Catalog(스타일 모음)");
+    expect(body).toContain("스타일");
+  });
+
+  it("네 가지 Style에도 같은 방식으로 이름이 붙었다", () => {
+    for (const pair of ["Char(글자)", "Color(색)", "Shape(도형)", "Page(페이지)"]) {
+      expect(body, pair).toContain(pair);
+    }
+  });
+
+  it("손대는 순서가 번호로 붙어 있다 — 등록이 먼저고 적용이 나중이다", () => {
+    for (const n of [1, 2]) {
+      expect(body).toMatch(new RegExp(`^### ${n}\\. `, "m"));
+    }
+  });
+
+  it("아이콘을 생김새가 아니라 경로로 가리킨다", () => {
+    // 등록하는 길이 단축키다 — `Ctrl+Alt+A`(글자·도형) / `Ctrl+Alt+P`(페이지)
+    expect(body).toContain("`Ctrl+Alt+A`");
+    expect(body).toContain("`Ctrl+Alt+P`");
+    expect(body).not.toMatch(/빨간|녹색|파란/);
+  });
+
+  it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §3.4는 p.36–39다", () => {
+    const pages = originPages("style-catalog");
+
+    expect(pages.length).toBeGreaterThan(0);
+    // §1.1.8 UI구성(2) · §3.3.10.4 페이지 템플릿 일괄지정(35) · §3.4 Style Catalog(36–39) ·
+    // §7.2 편집 단축키(109)
+    expect(pages.every((p) => p === 2 || (p >= 35 && p <= 39) || p === 109)).toBe(true);
+  });
+
+  it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
+    expect(kindsOf("style-catalog")).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(docs.sidecar.filter((e) => e.slug === "style-catalog").length).toBeGreaterThan(10);
+  });
+
+  it("`H2 관련`에서 텍스트 임포트로 **링크**가 나간다", () => {
+    expect(related(body)).toContain(`](${page("text-import")!.href})`);
   });
 
   it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
