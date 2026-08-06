@@ -12,7 +12,7 @@
  */
 import MiniSearch, { type Options, type SearchResult } from "minisearch";
 
-import { indexTokens, queryTokens } from "./tokenize";
+import { highlightTokens, indexTokens, searchTokens } from "./tokenize";
 
 /**
  * **자리 하나** — 검색이 데려다주는 곳이자 결과 줄에 뜨는 이름이다. 색인 · 결과 · 화면이 이
@@ -53,8 +53,10 @@ const CONTEXT_LENGTH = 90;
 const CONTEXT_LEAD = 24;
 
 /**
- * 색인과 질의가 **같은 설정을 쓴다.** 토크나이저만 양쪽이 다르다 — 공백 제거 정규화는
- * 색인 쪽에만 있다(`tokenize.ts` 참조).
+ * 색인과 질의가 **같은 설정을 쓴다.** 토크나이저만 양쪽이 다르고, **비대칭이 이 사이트에서
+ * 가장 값나가는 설계 하나다** — 색인은 어절과 2-gram을 넣고(`indexTokens`), 질의는 한글
+ * 세 글자 이상에서 **2-gram만 요구한다**(`searchTokens`). 붙여 친 `줄간격`을 색인이 항으로
+ * 들고 있지 않아도 걸리는 이유이고, 그 덕에 색인이 292 → 205 KB가 됐다(`tokenize.ts` 참조).
  *
  * `combineWith: "AND"` — 질의의 모든 토큰(2-gram 포함)을 요구한다. 실측에서 이 조합이
  * 재현율 100%에 오탐 0이었다. `prefix`는 조사와 라틴 어미를 흡수한다(`윤곽선` → `윤곽선만`).
@@ -70,7 +72,13 @@ const OPTIONS: Options<IndexEntry> = {
     prefix: true,
     // 제목 줄에 걸린 질의가 본문 한 번 스친 것보다 위다
     boost: { heading: 3, section: 2 },
-    tokenize: queryTokens,
+    tokenize: searchTokens,
+    // **제목뿐인 칸은 본문 있는 칸 아래에 선다.** 2차 자리(`not-yet`)는 소제목 17개가 각각
+    // 본문 0줄인 칸이라, 소제목 부스트(×3)만 받고도 같은 낱말을 여러 번 쓴 본문을 이긴다 —
+    // `스타일`에서 실제로 그랬다. 그 페이지의 임무는 *"아직 안 썼다"*를 **만나게** 하는 것이지
+    // 답을 가진 페이지를 밀어내는 것이 아니다(12 §2차 자리)
+    boostDocument: (_id, _term, stored) =>
+      (stored as IndexEntry).text.trim() === (stored as IndexEntry).heading.trim() ? 0.4 : 1,
   },
 };
 
@@ -88,7 +96,7 @@ export function loadIndex(json: string): DocSearch {
     find(query: string): Hit[] {
       if (!query.trim()) return [];
 
-      const terms = queryTokens(query)
+      const terms = highlightTokens(query)
         .filter((term) => term.length >= 2)
         .sort((a, b) => b.length - a.length);
 
