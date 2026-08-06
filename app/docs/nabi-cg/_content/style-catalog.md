@@ -74,4 +74,4 @@
 - 원고를 앉히기 전에 서체 기본값 정하기 → [텍스트 임포트](/docs/nabi-cg/text-import)
 - 등록할 글자 서식을 맞추는 곳 → [글자 속성](/docs/nabi-cg/text-attributes)
 - 등록할 도형 서식을 맞추는 곳 → [도형 속성](/docs/nabi-cg/shape-attributes)
-- 여러 객체를 한꺼번에 바꾸기 → `객체 편집`의 속성 일괄 지정(`Ctrl+B`)
+- 여러 객체를 한꺼번에 바꾸기 → [객체 편집](/docs/nabi-cg/object-editing)의 속성 일괄 지정(`Ctrl+B`)

@@ -436,6 +436,116 @@ describe("Style Catalog 페이지", () => {
   });
 });
 
+describe("객체 편집 페이지", () => {
+  const doc = page("object-editing");
+  const body = doc?.body ?? "";
+
+  it("마크다운 한 장에서 렌더돼 나온다", () => {
+    expect(doc).toBeDefined();
+    expect(doc?.title).toBe("객체 편집");
+    expect(doc?.lede).toBe("여러 개를 한 번에 고르고 맞춘다");
+    expect(body.length).toBeGreaterThan(1000);
+  });
+
+  it("기본형 슬롯 다섯을 갖췄다", () => {
+    const sections = h2(body);
+
+    expect(doc?.title).toBeTruthy();
+    expect(doc?.lede).toBeTruthy();
+
+    // ③ 어디서 여는가 — 이 장의 기능은 `Attributes` 탭이 아니라 **`편집` 메뉴와 단축키**에
+    // 흩어져 있다. 앞 세 페이지와 여는 자리가 달라서 첫 줄이 그걸 먼저 말해야 한다
+    expect(body.split("\n")[0]).not.toMatch(/^#/);
+    expect(body.split("\n")[0]).toContain("`편집` 메뉴");
+
+    // ④ H2 작업들 — `객체 선택`·`객체 정렬` 같은 기능 이름이 아니라 하려는 일이 제목이다.
+    // 고르는 것이 나머지 전부의 전제라 맨 앞이다
+    expect(sections[0]).toBe("여러 개를 한 번에 고르기");
+
+    // ⑤ H2 나머지 속성(레퍼런스 표) / H2 관련 — 이 순서로 끝난다
+    expect(sections.slice(-2)).toEqual(["나머지 속성", "관련"]);
+  });
+
+  it("손대는 순서가 번호로 붙어 있다 — 바뀌는 범위가 좁은 것부터다", () => {
+    for (const n of [1, 2, 3]) {
+      expect(body).toMatch(new RegExp(`^### ${n}\\. `, "m"));
+    }
+  });
+
+  it("`Ctrl+B` 일괄 지정이 본문에 있고 세 형제가 다 서 있다", () => {
+    // **05에서 *"아마 쓸걸...? 확실하진 않아"*가 나온 자리다.** 검색으로는 영영 안 만나는
+    // 기능이라(모르는 단어는 못 친다) 트리와 본문이 대신 데려다줘야 한다
+    expect(body).toContain("객체 속성 일괄 지정");
+    for (const key of ["`Ctrl+B`", "`Ctrl+Shift+B`", "`Ctrl+Alt+B`"]) {
+      expect(body, key).toContain(key);
+    }
+  });
+
+  it("무엇을 줄여 주는지가 한 줄로 적혀 있고 `[운영]`으로 등록됐다", () => {
+    // 기능 설명만 있으면 *"있는 줄 모르고 지나가기 쉽다"*가 그대로 남는다. 이 한 줄이
+    // 매뉴얼에 없는 우리 문장이므로 `[원본]`이 될 수 없고, 우리 작업 방식이 바뀌면 다시 볼
+    // 곳이라 `[운영]`이다
+    const saved = docs.sidecar.filter(
+      (e) => e.slug === "object-editing" && e.sentence.includes("한 장씩"),
+    );
+
+    expect(saved.length).toBeGreaterThan(0);
+    expect(saved.every((e) => e.tag.kind === "운영")).toBe(true);
+  });
+
+  it("첫 등장 병기가 들어갔다 — 화면의 영문과 머릿속 한글이 둘 다 색인에 든다", () => {
+    for (const pair of ["Safe Area(안내선)", "Undo/Redo(작업취소·다시실행)"]) {
+      expect(body, pair).toContain(pair);
+    }
+  });
+
+  it("아이콘을 생김새가 아니라 경로로 가리킨다 — 이 페이지는 메뉴 경로가 경로다", () => {
+    // 원본이 *"메뉴를 체크하거나 icon을 선택한다"*로 적은 자리다. 글로만 읽는 사람에게
+    // 그 아이콘은 없는 것과 같으므로 **메뉴 경로 쪽만** 쓴다
+    expect(body).toContain("편집 > 객체속성 일괄지정");
+    expect(body).not.toMatch(/아이콘/);
+    // **색 낱말은 여기서 안 막는다.** 앞 페이지들이 `빨간|녹색|파란`을 금지한 근거는 *"그
+    // 문장이 PDF에 없다"*였는데, 이 페이지가 싣는 색은 전부 원본이 적은 **화면이 돌려주는
+    // 표시**다(기준 객체 노란색 · 고정 회색 선 · 그룹 빨간 점선). 가리키는 길은 위 두 줄이 잰다
+  });
+
+  it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §3.2는 p.25–31이다", () => {
+    // 목차는 §3.2를 6페이지(p.25–30)로 적지만 **`3.2.13`의 꼬리가 p.31로 넘어간다**
+    // (`Ctrl+U`·`Ctrl+Shift+U`). 태그는 「그 절」이 아니라 「그 문장이 실제로 있는 쪽」이다
+    const pages = originPages("object-editing");
+
+    expect(pages.length).toBeGreaterThan(0);
+    expect(pages.every((p) => p >= 25 && p <= 31)).toBe(true);
+    // 꼬리 한 쪽을 실제로 인용하고 있다 — 안 그러면 위 범위가 느슨하기만 하다
+    expect(pages).toContain(31);
+  });
+
+  it("사이드카 태그가 실제로 달려 있다 — 매뉴얼 사실·메운 자리·우리 판단 세 종류가 다 있다", () => {
+    expect(kindsOf("object-editing")).toEqual(new Set(["원본", "추론", "운영"]));
+    expect(docs.sidecar.filter((e) => e.slug === "object-editing").length).toBeGreaterThan(10);
+  });
+
+  it("`H2 관련`에서 글자 속성·도형 속성으로 **링크**가 나간다", () => {
+    // 크기를 줄이는 일이 글자↔도형↔여러 개를 넘나든다. 세 페이지가 서로를 부르지 않으면
+    // 매주 하는 그 작업이 페이지 하나에서 막힌다
+    expect(related(body)).toContain(`](${page("text-attributes")!.href})`);
+    expect(related(body)).toContain(`](${page("shape-attributes")!.href})`);
+  });
+
+  it("앞선 세 페이지가 걸어 둔 `객체 편집` 참조가 이제 실제 링크다", () => {
+    // 07·08은 이 페이지가 없어 본문에 이름만 적어 뒀다(죽은 링크 금지). 라우트가 생겼으므로
+    // 그 자리를 링크로 잇는다 — 안 이으면 *"어디 있는지 모르는 기능"*이 그대로 남는다
+    for (const from of ["text-attributes", "shape-attributes", "style-catalog"]) {
+      expect(page(from)?.body, from).toContain(`](${page("object-editing")!.href})`);
+    }
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+});
+
 describe("본문이 아직 없는 항목", () => {
   it("사이드바에는 서지만 페이지로는 안 나온다", () => {
     const dir = sandbox({

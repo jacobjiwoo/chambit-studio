@@ -80,5 +80,5 @@
 ## 관련
 
 - 글자 폭·크기를 줄이는 순서 → [글자 속성](/docs/nabi-cg/text-attributes)
-- 여러 도형을 한꺼번에 같은 속성으로 → `객체 편집`의 속성 일괄 지정(`Ctrl+B`)
-- 같은 서식을 저장해 두고 재사용 → `Style Catalog`
+- 여러 도형을 한꺼번에 같은 속성으로 → [객체 편집](/docs/nabi-cg/object-editing)의 속성 일괄 지정(`Ctrl+B`)
+- 같은 서식을 저장해 두고 재사용 → [Style Catalog](/docs/nabi-cg/style-catalog)

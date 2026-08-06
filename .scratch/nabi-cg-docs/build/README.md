@@ -30,7 +30,7 @@
 | 06 | [버전 추적: History 파일 + 게이트 4·5·6](06-version-tracking.md) | 04 | **resolved** |
 | 07 | [본문: 도형 속성](07-content-shape-attributes.md) | 04 | ready-for-human |
 | 08 | [본문: 텍스트 임포트 + Style Catalog](08-content-text-import-and-style-catalog.md) | 04 | ready-for-human |
-| 09 | [본문: 객체 편집](09-content-object-editing.md) | 04 | **frontier** |
+| 09 | [본문: 객체 편집](09-content-object-editing.md) | 04 | ready-for-human |
 | 10 | [본문: 단축키 (치트시트형)](10-content-shortcuts.md) | 01b, 04, 06 | ready-for-agent |
 | 11 | [본문: 송출 §6](11-content-playback.md) | 01b, 04, 06 | ready-for-agent |
 | 12 | [안내문 4개 + 2차 자리](12-notices-and-phase-two-slots.md) | 05 | **resolved** |
@@ -38,7 +38,11 @@
 **`ready-for-human`은 본문이 안 열렸다는 뜻이 아니다.** 07은 페이지가 떠 있고 열한 항목 중
 열이 닫혔다. 남은 하나가 **기준값 블록**이고 그 입력(값 4칸)이 `01a`에서 나온다 — 07이 아니라
 01a·03이 움직여야 닫힌다. **08도 같은 모양으로 끝났다**(본문 두 장은 열렸고 값 블록·이름
-대조가 열린 칸으로 남았다). 09도 같다.
+대조가 열린 칸으로 남았다). **09도 같고, 남은 칸은 `01a`의 이름 대조 하나뿐이다** — 이 페이지는
+03이 와도 값 블록이 안 생긴다(값이 아니라 값을 거는 장치다).
+
+**본문 티켓 다섯 중 셋이 끝났다** — 사이드바 일곱 줄 중 다섯이 본문을 갖췄고, 남은 10·11은
+`01b`(방송실 PC)를 기다린다.
 
 ## 사람이 해야 하는 것 — 이제 `01b` 하나다
 

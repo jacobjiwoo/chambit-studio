@@ -53,7 +53,7 @@ const QUERIES: { query: string; page: string }[] = [
   { query: "Text Link", page: "text-attributes" },
   { query: "Width", page: "text-attributes" },
   { query: "자막", page: "text-attributes" },
-  // ── 본문이 아직 없는 여섯 (지금은 유예, 07–11이 본문을 넣으면 자동으로 들어온다) ──
+  // ── 본문이 나중에 들어온 여섯 (07–09가 넷을 채웠고 `송출`·`단축키` 둘이 10·11을 기다린다) ──
   { query: "스타일", page: "style-catalog" },
   { query: "임포트", page: "text-import" },
   { query: "배경판", page: "shape-attributes" },
