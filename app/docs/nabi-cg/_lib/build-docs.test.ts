@@ -12,7 +12,7 @@ import { readdirSync } from "node:fs";
 
 import { afterAll, describe, expect, it } from "vitest";
 
-import { LANDING, NAV } from "../_meta/nav";
+import { LANDING, NAV, UNLISTED } from "../_meta/nav";
 import { BADGE_HREF, buildDocs, CONTENT_DIR } from "./build-docs";
 import { cleanupSandboxes, sandbox } from "./test-sandbox";
 
@@ -59,6 +59,23 @@ describe("사이드바 일곱 줄", () => {
   it("랜딩은 사이드바에 안 선다 — 개요 페이지를 만들지 않는다", () => {
     expect(docs.nav.map((n) => n.slug)).not.toContain(LANDING.slug);
     expect(page(LANDING.slug)?.href).toBe("/docs/nabi-cg");
+  });
+
+  it("안내문과 2차 자리도 안 선다 — 페이지로는 서고 트리에는 없다", () => {
+    // 잘라낸 34p와 2차 67p를 목차로 남기면 *"344항목 트리를 버리고 새로"* 불변식을 정면으로
+    // 어긴다. 자리는 만들되 트리에는 안 넣고, 만나는 길은 검색 하나다(05)
+    for (const entry of UNLISTED) {
+      expect(docs.nav.map((n) => n.slug), entry.title).not.toContain(entry.slug);
+      expect(page(entry.slug), entry.title).toBeDefined();
+    }
+  });
+
+  it("**뒤집힐 조건** — 1단이 15개를 넘으면 골격 B가 무너진다", () => {
+    // 넘어가는 순간 이 형태(항목마다 한 줄이 사이드바에 산다)를 버리고 제목만 사이드바 +
+    // 개요 페이지 카드(골격 A)로 간다. 12가 페이지 둘을 더하면서 이 선에 가장 가까이 갔고,
+    // 둘 다 트리 밖으로 보내 일곱을 지켰다
+    expect(docs.nav).toHaveLength(7);
+    expect(docs.nav.length).toBeLessThanOrEqual(15);
   });
 });
 
@@ -324,6 +341,95 @@ describe("사이드카 — 문장별 출처 태그", () => {
     expect(body).toContain(`[확인 전](${BADGE_HREF})`);
     // 문장 본문 자체는 살아남는다 — 지워지는 것은 태그뿐이다
     expect(body).toContain("추론 문장.");
+  });
+});
+
+describe("안내문 넷 — 잘라낸 34페이지를 덮는다", () => {
+  const notice = page("not-covered");
+  const body = notice?.body ?? "";
+  const sections = h2(body);
+
+  it("넷이 서고 각각 대상을 구체적으로 나열한다", () => {
+    expect(sections).toEqual(["성경·찬송 자막", "설치·장비", "오디오·영상", "잘 안 쓰는 도구"]);
+
+    // 대상 나열이 곧 **검색 키 확보**다. 화면에서 본 낱말을 치는 사람에게 이 글자들이 본문에
+    // 실제로 박혀 있지 않으면 안내문은 존재해도 영영 안 만난다 — 걸리는지는 05가 잰다
+    for (const key of ["교회DB", "성경", "찬송", "교독문", "장절", "설치", "오디오", "인쇄"]) {
+      expect(body, key).toContain(key);
+    }
+  });
+
+  it("이유절이 없다 — 사실만 적는다", () => {
+    // 이유를 쓰면 **운영이 바뀔 때 문장이 거짓말이 된다.** 「방송부가 교회DB를 안 쓰므로」는
+    // 안 쓰는 동안만 참이고, 쓰기 시작한 날 아무도 이 문장을 안 고친다
+    expect(body).not.toMatch(/때문|므로|이라서|여서|왜냐/);
+  });
+
+  it("「없습니다」와 「아직 없습니다」가 갈라 쓰였다 — 영영과 지금은", () => {
+    // 구별을 구조가 아니라 **문장이 흡수한다.** 기다리면 생기는 것과 안 생기는 것을 읽는
+    // 사람이 가를 수 있어야 한다
+    expect(body.match(/아직 없습니다/g) ?? []).not.toHaveLength(0);
+    expect(body.match(/(?<!아직 )없습니다/g) ?? []).not.toHaveLength(0);
+  });
+
+  it("원본을 챕터 이름까지만 가리킨다 — 절 번호까지 내려가면 트리 복제에 닿는다", () => {
+    const cited = [...body.matchAll(/원본 매뉴얼 `([^`]+)`/g)].map((m) => m[1]);
+
+    expect(cited).toEqual([
+      "Chapter 3. 교회 DB",
+      "Chapter 1. Setting & Control",
+      "Chapter 2. NABI-CG",
+      "Chapter 2. NABI-CG",
+    ]);
+    expect(body).not.toMatch(/§/);
+    expect(body).not.toMatch(/\d\.\d/);
+  });
+
+  it("`설치·장비` 안내문이 `CPX-DL Controller`를 담는다", () => {
+    // 2차의 이상증상 셋 중 둘이 이 이름을 가리킨다(SD로 실행됨 → Output Format을 HD로).
+    // 그 자리에 닿는 사람이 여기서 원본 챕터를 받아 간다
+    const install = body.slice(body.indexOf("## 설치·장비"), body.indexOf("## 오디오·영상"));
+    expect(install).toContain("CPX-DL Controller");
+  });
+
+  it("출처가 전부 `[운영]`이다 — 우리 운영이 바뀌면 다시 볼 곳", () => {
+    // 안내문 문장의 주장은 매뉴얼 사실이 아니라 **범위 판정**이고, 범위는 운영의 함수다.
+    // `[원본 p.NN]`을 안 다는 이유는 하나 더 있다 — 인쇄 번호가 챕터마다 리셋되므로 Ch1·Ch3를
+    // 가리키는 `p.1`은 어느 챕터인지 말하지 못한다. 챕터 이름이 여기서 가장 정밀한 자다
+    const kinds = new Set(docs.sidecar.filter((e) => e.slug === "not-covered").map((e) => e.tag.kind));
+    expect(kinds).toEqual(new Set(["운영"]));
+  });
+});
+
+describe("2차 자리 — 제목만 서고 본문은 비운다", () => {
+  const later = page("not-yet");
+  const body = later?.body ?? "";
+  const slots = h2(body);
+
+  it("67페이지가 자리와 제목으로만 선다", () => {
+    // 1차/2차 절단의 값이 여기서 한 번 더 나온다 — 본문을 안 쓰면 검수도 갱신도 0이지만
+    // *"찾았는데 없다"*는 막힌다
+    expect(slots).toContain("이상증상 대처법");
+    expect(slots).toContain("Global Animation");
+    expect(slots).toContain("Custom 도형");
+  });
+
+  it("제목 아래가 실제로 비어 있다", () => {
+    const under = body
+      .slice(body.indexOf("## "))
+      .split("\n")
+      .filter((line) => line.trim() !== "" && !line.startsWith("## "));
+
+    expect(under).toEqual([]);
+  });
+
+  it("`[화면]` 태그가 0개다 — 게이트 5의 물량이 안 는다", () => {
+    // 06은 `[화면]` 한 줄마다 사람이 나비CG를 열어 재확인하는 비용을 건다. 2차는 본문이
+    // 비어 그 비용에 1도 안 보태고, 안내문도 마찬가지다
+    for (const slug of UNLISTED.map((entry) => entry.slug)) {
+      const screen = docs.sidecar.filter((e) => e.slug === slug && e.tag.kind === "화면");
+      expect(screen, slug).toHaveLength(0);
+    }
   });
 });
 

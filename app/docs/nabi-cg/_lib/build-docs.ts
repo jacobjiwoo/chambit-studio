@@ -16,7 +16,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { basename, join } from "node:path";
 
-import { LANDING, NAV, type NavEntry } from "../_meta/nav";
+import { LANDING, NAV, UNLISTED, type NavEntry } from "../_meta/nav";
 import { anchorOf } from "./anchor";
 import { bake, type IndexEntry } from "./search";
 
@@ -247,7 +247,9 @@ export const CONTENT_DIR = join(process.cwd(), "app/docs/nabi-cg/_content");
 const hrefOf = (slug: string) => (slug ? `${BASE}/${slug}` : BASE);
 
 export function buildDocs(contentDir: string): Docs {
-  const entries = [LANDING, ...NAV];
+  // 페이지가 되는 자리 전부다. **셋째 묶음(`UNLISTED`)은 여기까지만 오고 아래 `nav`에는 안 간다** —
+  // 안내문과 2차 자리는 페이지·색인으로는 서고 1단 트리에는 없다
+  const entries = [LANDING, ...NAV, ...UNLISTED];
 
   for (const entry of entries) {
     if (entry.slug !== LANDING.slug && !SLUG.test(entry.slug)) {

@@ -29,7 +29,7 @@
 | 09 | [본문: 객체 편집](09-content-object-editing.md) | 01, 03, 04 | ready-for-agent |
 | 10 | [본문: 단축키 (치트시트형)](10-content-shortcuts.md) | 01, 04, 06 | ready-for-agent |
 | 11 | [본문: 송출 §6](11-content-playback.md) | 01, 04, 06 | ready-for-agent |
-| 12 | [안내문 4개 + 2차 자리](12-notices-and-phase-two-slots.md) | 05 | ready-for-agent |
+| 12 | [안내문 4개 + 2차 자리](12-notices-and-phase-two-slots.md) | 05 | **resolved** |
 
 **07이 `ready-for-human`인 것은 본문이 안 열려서가 아니다.** 페이지는 떠 있고 열한 항목 중 열이
 닫혔다. 남은 하나가 **기준값 블록**인데 그 입력(값 4칸)이 01에서만 나온다 — 07이 아니라 01·03이

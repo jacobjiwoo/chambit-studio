@@ -36,6 +36,13 @@
   line-height: 1.5;
 }
 
+/* 소제목이 연달아 서면 그 사이에 가를 것이 없다 — 2차 자리(제목만 서고 본문은 비운다)가
+   이 모양이고, 절 간격 그대로 두면 빈 제목 열여섯이 화면 세 개 높이로 늘어진다 */
+.doc-prose h2 + h2 {
+  margin-top: 0;
+  padding-top: 1rem;
+}
+
 .doc-prose h3 {
   margin: 1.9rem 0 0.6rem;
   color: #171717;

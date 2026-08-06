@@ -146,12 +146,49 @@ describe("화면에 보이는 단어를 그대로 친다", () => {
   });
 
   it("걸리는 게 없으면 빈 결과다 — 아무거나 채워 넣지 않는다", () => {
-    expect(find("교회DB 성경 장절")).toEqual([]);
+    // 한때 이 자리가 `교회DB 성경 장절`이었다. 12가 안내문을 세우면서 **그게 정확히 반대로
+    // 뒤집혔다** — 이제 그 질의는 걸려야 하고, 아래 §안내문이 그걸 잰다
+    expect(find("유튜브 송출")).toEqual([]);
   });
 
   it("초성 검색이 없다 — 1차에서 뺀 것이 실제로 빠져 있다", () => {
     expect(find("ㅈㄱ")).toEqual([]);
     expect(find("ㄷㅊㅋ")).toEqual([]);
+  });
+});
+
+describe("안내문 넷 — 검색이 유일한 길이다", () => {
+  // 안내문은 1단 트리에 없다. **여기서 안 걸리면 존재하지 않는 것과 같다** — 그래서 이 블록이
+  // 12의 진짜 게이트다. *"찾았는데 없다"*가 이 사이트 최악의 실패이고, 안내문이 그걸 덮는 대신
+  // 자기가 안 걸리면 실패가 그대로 남는다
+  it("잘라낸 34페이지를 겨냥한 낱말이 전부 안내문으로 떨어진다", () => {
+    for (const query of ["교회DB", "성경", "찬송", "설치", "오디오"]) {
+      expect(slugs(query), query).toContain("not-covered");
+    }
+  });
+
+  it("장비 이름으로도 걸린다 — 이름은 모르고 화면에 뜬 글자만 아는 경우", () => {
+    expect(slugs("CPX-DL Controller")).toContain("not-covered");
+    expect(slugs("교회DB 성경 장절")).toContain("not-covered");
+  });
+
+  it("결과 줄이 어느 안내문인지 말한다 — 열기 전에 답이 보인다", () => {
+    // 결과 줄은 `섹션 › 소제목`이다. 페이지 하나에 안내문 넷을 얹었으므로 소제목이 곧
+    // 안내문 이름이 되고, 여덟 줄 중에서 고르는 사람이 **누르기 전에** 무엇인지 안다
+    const hit = find("교회DB").find((h) => h.slug === "not-covered")!;
+    expect(hit.section).toBe("이 문서가 다루지 않는 것");
+    expect(hit.heading).toBe("성경·찬송 자막");
+    expect(hit.href).toMatch(/^\/docs\/nabi-cg\/not-covered#/);
+  });
+});
+
+describe("2차 자리 — 제목뿐이어도 걸린다", () => {
+  it("자리 이름으로 치면 *아직 안 쓴 것*이 뜬다", () => {
+    // 본문이 0줄이라 색인에 든 글자는 **제목뿐이다.** 그래도 *"찾았는데 아무것도 없다"*와
+    // *"아직 안 썼다"*는 읽는 사람에게 전혀 다른 답이다
+    for (const query of ["이상증상", "Global Animation", "Custom 도형", "옵션창"]) {
+      expect(slugs(query), query).toContain("not-yet");
+    }
   });
 });
 
