@@ -23,7 +23,7 @@
 | 03 | [값 파일 단일 출처 + 토큰 치환 (게이트 2·3)](03-values-and-tokens.md) | 01, 02 | ready-for-agent |
 | 04 | [문장별 출처 사이드카 + `[추론]` 인라인 배지](04-sidecar-and-badge.md) | 02 | **resolved** |
 | 05 | [검색: 색인 굽기 + `Ctrl+K` 모달 (게이트 1)](05-search.md) | 02 | **resolved** |
-| 06 | [버전 추적: History 파일 + 게이트 4·5·6](06-version-tracking.md) | 04 | ready-for-agent |
+| 06 | [버전 추적: History 파일 + 게이트 4·5·6](06-version-tracking.md) | 04 | **resolved** |
 | 07 | [본문: 도형 속성](07-content-shape-attributes.md) | 03, 04 | ready-for-human |
 | 08 | [본문: 텍스트 임포트 + Style Catalog](08-content-text-import-and-style-catalog.md) | 01, 03, 04 | ready-for-agent |
 | 09 | [본문: 객체 편집](09-content-object-editing.md) | 01, 03, 04 | ready-for-agent |
