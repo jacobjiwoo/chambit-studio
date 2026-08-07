@@ -57,6 +57,12 @@ next-env.d.ts
 # .scratch/nabi-cg-docs/issues/04-publication-scope.md
 *.pdf
 
+# 개역개정 원본 JSON(5.1 MB). 조사·검증용 로컬 사본이지 최종 산출물이 아니다.
+# 어떤 형태로 실을지는 아직 안 정해졌고, 그 결정이 나면 원본은 필요 없어질 공산이 크다.
+# 정해지기 전에 커밋하면 git 히스토리에 5.1 MB가 영구히 박힌다 — 205 KB를 깎는 저장소다.
+# .scratch/dawn-prayer-ppt/issues/05-where-bible-data-lives.md
+/.scratch/dawn-prayer-ppt/bible.json
+
 # 로컬 절대경로가 들어간다
 .claude/settings.local.json
 
