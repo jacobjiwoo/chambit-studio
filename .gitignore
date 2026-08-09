@@ -57,11 +57,14 @@ next-env.d.ts
 # .scratch/nabi-cg-docs/issues/04-publication-scope.md
 *.pdf
 
-# 개역개정 원본 JSON(5.1 MB). 조사·검증용 로컬 사본이지 최종 산출물이 아니다.
-# 어떤 형태로 실을지는 아직 안 정해졌고, 그 결정이 나면 원본은 필요 없어질 공산이 크다.
-# 정해지기 전에 커밋하면 git 히스토리에 5.1 MB가 영구히 박힌다 — 205 KB를 깎는 저장소다.
+# 개역개정 데이터. 티켓 05가 정했다 — 배포되는 건 `public/bible.<해시8자>.json`(책 중첩
+# 배열)이고 그건 커밋한다. 아래 둘은 그 **중간 재료**라 커밋하지 않는다:
+#   bible.json  parse-bskorea.py가 캐시에서 만드는 평면 구조 5.1 MB
+#   tools/cache fetch-bskorea.py가 공회에서 받는 HTML 1,189장 33 MB
+# 둘 다 tools/의 스크립트 122줄이 언제든 다시 만든다. 재료가 아니라 만드는 법을 커밋한다.
 # .scratch/dawn-prayer-ppt/issues/05-where-bible-data-lives.md
 /.scratch/dawn-prayer-ppt/bible.json
+/.scratch/dawn-prayer-ppt/tools/cache/
 
 # 로컬 절대경로가 들어간다
 .claude/settings.local.json
