@@ -57,6 +57,15 @@ next-env.d.ts
 # .scratch/nabi-cg-docs/issues/04-publication-scope.md
 *.pdf
 
+# 파워포인트 파일. 물려받은 새벽기도 PPT에는 **교회 자산인 배경 이미지**가 들어 있고
+# 이 저장소는 public이다. 파일을 들이기 전에 규칙을 먼저 세운다 — 티켓 01이 지정한 순서이며,
+# 자막 추출기 맵의 "git init 전에 app/prototype/을 먼저 지우는 순서 자체를 안전장치로 쓴다"와
+# 같은 수법이다. 커밋할지는 티켓 01이 실물을 보고 판단한다. 그때까지는 전부 막는다.
+# .scratch/dawn-prayer-ppt/issues/01-existing-deck-measurement.md
+*.pptx
+*.potx
+*.ppt
+
 # 개역개정 데이터. 티켓 05가 정했다 — 배포되는 건 `public/bible.<해시8자>.json`(책 중첩
 # 배열)이고 그건 커밋한다. 아래 둘은 그 **중간 재료**라 커밋하지 않는다:
 #   bible.json  parse-bskorea.py가 캐시에서 만드는 평면 구조 5.1 MB
