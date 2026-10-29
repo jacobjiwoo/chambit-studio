@@ -37,7 +37,7 @@ Status: resolved
 
 ### 산출물
 
-`.scratch/dawn-prayer-ppt/research/pptx-generation.md`. 조사는 `research/pptx-generation` 브랜치에서 진행 중이다(2026-08-07 착수). 가능하면 **실제로 열리는 최소 `.pptx`를 만들어 보고** 그 결과를 첨부할 것 — 이 저장소는 조사가 실물을 만들어 확인하는 관례가 있다. 갈래 중 무엇을 고를지는 결정하지 말고 `생성 방식 — 템플릿이냐 백지냐`에 넘긴다.
+`.scratch/dawn-prayer-ppt/research/pptx-generation.md`. 조사는 `docs/dawn-prayer-ppt-03-pptx-generation` 브랜치에서 진행 중이다(2026-08-07 착수). 가능하면 **실제로 열리는 최소 `.pptx`를 만들어 보고** 그 결과를 첨부할 것 — 이 저장소는 조사가 실물을 만들어 확인하는 관례가 있다. 갈래 중 무엇을 고를지는 결정하지 말고 `생성 방식 — 템플릿이냐 백지냐`에 넘긴다.
 
 ## Answer
 
@@ -70,4 +70,4 @@ Status: resolved
 
 테스트 파일이 `/Users/jiwoo/.claude/jobs/0bd0c26c/tmp/build/`에 남아 있다(`min.pptx`, `swapped.pptx`, `af-bare.pptx`, `w20/w21.pptx` …). **더블클릭 30초면 전부 답이 나온다** → `생성물이 파워포인트에서 실제로 열리는가`.
 
-전문: [`research/pptx-generation.md`](../research/pptx-generation.md) (782줄, 브랜치 `research/pptx-generation`, 커밋 `575e0bd`)
+전문: [`research/pptx-generation.md`](../research/pptx-generation.md) (782줄, 브랜치 `docs/dawn-prayer-ppt-03-pptx-generation`, 커밋 `575e0bd`)

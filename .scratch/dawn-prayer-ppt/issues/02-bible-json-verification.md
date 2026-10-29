@@ -41,11 +41,11 @@ Status: resolved
 
 ### 산출물
 
-`.scratch/dawn-prayer-ppt/research/bible-json.md`. 수치는 전부 실측으로, 추정은 추정이라고 표시할 것. 조사는 `research/bible-json` 브랜치에서 진행 중이다(2026-08-07 착수).
+`.scratch/dawn-prayer-ppt/research/bible-json.md`. 수치는 전부 실측으로, 추정은 추정이라고 표시할 것. 조사는 `docs/dawn-prayer-ppt-02-bible-json` 브랜치에서 진행 중이다(2026-08-07 착수).
 
 ## Answer
 
-전문: [`research/bible-json.md`](../research/bible-json.md) (브랜치 `research/bible-json`, 커밋 `ddb9c90`)
+전문: [`research/bible-json.md`](../research/bible-json.md) (브랜치 `docs/dawn-prayer-ppt-02-bible-json`, 커밋 `ddb9c90`)
 
 **표본을 설계하러 갔다가 전수를 댔다.** 대한성서공회 개역개정(GAE) 1,189장을 전부 내려받아 **31,088절을 1:1로 대조**했다. 티켓이 *"전수 대조는 비현실적"* 이라고 적은 전제가 깨졌다 — 6분이면 된다.
 
