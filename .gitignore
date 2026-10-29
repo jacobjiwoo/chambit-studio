@@ -51,10 +51,7 @@ next-env.d.ts
 # 대조 테스트(corpus.test.ts)가 읽는 로컬 원고. 없으면 테스트는 실패가 아니라 skip이다.
 /fixtures/
 
-# 나비CG 매뉴얼 원본(compix 저작물)과 그 밖의 PDF. 이 저장소는 public이다.
-# 문서 사이트는 원본에서 '거리를 벌려' 성립한다 — 원본 자체를 커밋하면 거리가 0이 되어
-# 그 논리가 통째로 무너진다. 원본은 로컬에만 두고 compix 공식 게시글로 링크한다.
-# .scratch/nabi-cg-docs/issues/04-publication-scope.md
+# PDF. 이 저장소는 public이고, 손에 있는 PDF는 대개 남의 저작물(나비CG 매뉴얼 등)이다.
 *.pdf
 
 # 파워포인트 파일. 물려받은 새벽기도 PPT에는 **교회 자산인 배경 이미지**가 들어 있고
