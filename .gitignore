@@ -51,11 +51,26 @@ next-env.d.ts
 # 대조 테스트(corpus.test.ts)가 읽는 로컬 원고. 없으면 테스트는 실패가 아니라 skip이다.
 /fixtures/
 
-# 나비CG 매뉴얼 원본(compix 저작물)과 그 밖의 PDF. 이 저장소는 public이다.
-# 문서 사이트는 원본에서 '거리를 벌려' 성립한다 — 원본 자체를 커밋하면 거리가 0이 되어
-# 그 논리가 통째로 무너진다. 원본은 로컬에만 두고 compix 공식 게시글로 링크한다.
-# .scratch/nabi-cg-docs/issues/04-publication-scope.md
+# PDF. 이 저장소는 public이고, 손에 있는 PDF는 대개 남의 저작물(나비CG 매뉴얼 등)이다.
 *.pdf
+
+# 파워포인트 파일. 물려받은 새벽기도 PPT에는 **교회 자산인 배경 이미지**가 들어 있고
+# 이 저장소는 public이다. 파일을 들이기 전에 규칙을 먼저 세운다 — 티켓 01이 지정한 순서이며,
+# 자막 추출기 맵의 "git init 전에 app/prototype/을 먼저 지우는 순서 자체를 안전장치로 쓴다"와
+# 같은 수법이다. 커밋할지는 티켓 01이 실물을 보고 판단한다. 그때까지는 전부 막는다.
+# .scratch/dawn-prayer-ppt/issues/01-existing-deck-measurement.md
+*.pptx
+*.potx
+*.ppt
+
+# 개역개정 데이터. 티켓 05가 정했다 — 배포되는 건 `public/bible.<해시8자>.json`(책 중첩
+# 배열)이고 그건 커밋한다. 아래 둘은 그 **중간 재료**라 커밋하지 않는다:
+#   bible.json  parse-bskorea.py가 캐시에서 만드는 평면 구조 5.1 MB
+#   tools/cache fetch-bskorea.py가 공회에서 받는 HTML 1,189장 33 MB
+# 둘 다 tools/의 스크립트 122줄이 언제든 다시 만든다. 재료가 아니라 만드는 법을 커밋한다.
+# .scratch/dawn-prayer-ppt/issues/05-where-bible-data-lives.md
+/.scratch/dawn-prayer-ppt/bible.json
+/.scratch/dawn-prayer-ppt/tools/cache/
 
 # 로컬 절대경로가 들어간다
 .claude/settings.local.json
