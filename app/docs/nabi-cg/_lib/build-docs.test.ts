@@ -546,6 +546,65 @@ describe("객체 편집 페이지", () => {
   });
 });
 
+describe("단축키 페이지", () => {
+  const doc = page("shortcuts");
+  const body = doc?.body ?? "";
+
+  it("마크다운 한 장에서 렌더돼 나온다", () => {
+    expect(doc).toBeDefined();
+    expect(doc?.title).toBe("단축키");
+    expect(body.length).toBeGreaterThan(1000);
+  });
+
+  it("치트시트형이다 — 원본 §7의 갈래가 그대로 서고 `관련`으로 끝난다", () => {
+    // 기본형 슬롯(작업들 / 나머지 속성)이 아니다. 훑어 내려가며 찾는 표라 갈래가 곧 소제목이고,
+    // 그 소제목이 검색 결과 줄의 `단축키 › 편집`이 된다
+    const sections = h2(body);
+    expect(sections.slice(0, 7)).toEqual(["파일 관리", "편집", "보기", "삽입", "송출", "타임라인", "기타"]);
+    expect(sections.at(-1)).toBe("관련");
+  });
+
+  it("`Icon` 열이 없다 — 30×30 아이콘은 원본과 거리를 못 벌리는 자산이다", () => {
+    expect(body).not.toMatch(/Icon|아이콘/);
+    for (const row of body.split("\n").filter((line) => line.startsWith("| 메뉴"))) {
+      expect(row).toBe("| 메뉴 | 단축키 |");
+    }
+  });
+
+  it("`[원본 p.NN]`이 실제 PDF 위치와 맞는다 — §7은 p.107–111이고, 표 밖에서 데려온 줄만 예외다", () => {
+    // 예외 둘: 자간 `Ctrl+H`/`Ctrl+L`(글자 속성 절 p.77)과 프롬프터 설정 본문 제목(p.62).
+    // §7 표가 빠뜨린 것을 다른 쪽에서 데려왔으므로 태그가 **그 쪽**을 가리켜야 한다
+    const pages = originPages("shortcuts");
+    expect(pages.every((p) => (p >= 107 && p <= 111) || p === 77 || p === 62)).toBe(true);
+    for (const p of [107, 108, 109, 110, 111]) expect(pages, `p.${p}`).toContain(p);
+  });
+
+  it("§7 표에 없는 자간 키가 들어 있다 — `Ctrl+H`로 치면 이 페이지도 나온다", () => {
+    const kerning = docs.sidecar.filter((e) => e.slug === "shortcuts" && e.sentence.includes("Ctrl+H"));
+    expect(kerning.map((e) => e.tag)).toContainEqual({ kind: "원본", page: 77 });
+  });
+
+  it("매뉴얼 뒤에 생긴 셋이 표에 있고, 화면 확인 전이라 `[추론]` 배지를 단다", () => {
+    // `01b`(방송실 PC)가 끝나면 이 셋이 `[화면 YYYY.MM]`으로 바뀌고 게이트 5가 지킨다.
+    // 그때까지 빼 두면 이 표가 *"이게 전부"*라고 말하게 된다 — 전체 목록으로 읽히는 자리다
+    for (const key of ["Ctrl+Shift+F5", "Ctrl+Shift+F9", "Ctrl+Shift+F8"]) {
+      const rows = docs.sidecar.filter((e) => e.slug === "shortcuts" && e.sentence.includes(key));
+      expect(rows.length, key).toBeGreaterThan(0);
+      expect(rows.every((e) => e.tag.kind === "추론" || e.tag.kind === "화면"), key).toBe(true);
+    }
+  });
+
+  it("`H2 관련`에서 글자 속성·객체 편집으로 **링크**가 나간다", () => {
+    expect(related(body)).toContain(`](${page("text-attributes")!.href})`);
+    expect(related(body)).toContain(`](${page("object-editing")!.href})`);
+  });
+
+  it("`[추론]` 문장이 화면 배지로 뜨고 나머지 태그는 본문에서 안 보인다", () => {
+    expect(body).toContain(`[확인 전](${BADGE_HREF})`);
+    expect(body).not.toMatch(/\[원본|\[운영|\[화면|\[추론\]/);
+  });
+});
+
 describe("본문이 아직 없는 항목", () => {
   it("사이드바에는 서지만 페이지로는 안 나온다", () => {
     const dir = sandbox({
