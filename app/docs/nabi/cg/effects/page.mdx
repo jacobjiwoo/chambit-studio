@@ -1,0 +1,230 @@
+---
+title: Effects
+description: Page·Object 단위 In/Out 효과를 설정하는 방법, Layer와 Timeline 편집, Fade·Wipe·Move·Curl·Tile·Mask 등 Effects 종류.
+slug: effects
+chapter: cg
+order: 5
+---
+
+# 5. Effects
+
+Effects는 Page(페이지), Object(객체)단위로 지정이 가능하다. Still, Roll, Crawl모드에서는 Page Effects지정만 가능하고, MultiLayer모드에서는 Page, Object에 모두 효과 지정이 가능하다. MultiLayer에서의 Page효과는 배경이미지가 있을 경우 객체를 제외한 배경이미지에 대해 In/Out효과를 설정하고 확인할 수 있다. 모든 효과는 최대 두 개 까지 함께 사용 가능하다.
+
+![Effects 창](/docs/nabi/images/cg-effects-01.png)
+
+Page/Object인지 In/Out 인지 여부를 선택하고 다양한 이펙트의 샘플 이미지 중에서 원하는 효과를 더블클릭하면 적용된다.
+
+## 5.1. Page Effects
+
+Still, Roll, Crawl모드에서만 Effects적용이 가능하다. Roll과 Crawl의 경우 페이지가 스크롤되기 때문에 Page Effects 지정은 무의미하며, Still모드일 경우에 주로 사용한다.\
+아래의 순서대로 효과를 설정할 수 있다.
+
+### 5.1.1. Effects 설정
+
+![번호를 붙인 Effects 창](/docs/nabi/images/cg-effects-02.png)
+
+①. 효과 표적 선택 : Page 선택(Still모드에서는 Object는 비활성화)\
+②. In, Out 선택\
+③. Effects 효과 선택\
+④. 샘플 예제 더블 클릭\
+⑤. 사용자 기호에 맞게 세부 옵션 조절 메뉴 사용가능
+
+### 5.1.2. Effects 추가, 삭제
+
+Effects는 최대 2개까지 동시에 설정이 가능하다. 위의 설정 과정에서 ③단계에서 추가로 다른 Effects를 선택하여 ④에서 원하는 샘플을 더블 클릭하여 추가 한다.\
+Effects의 삭제는 ③과정에서 Effects명 앞에 체크 표시를 제거하면 효과가 없어진다.
+
+### 5.1.3. Duration / Sustain
+
+- **Duration** : Effects의 지속 시간으로 프레임 값이다. 0-500프레임까지 지정 가능하다(1초=30프레임)
+- **Sustain** : 각 효과 실행 후 대기시간을 나타낸다. 단위는 Duration과 동일하다.\
+  In에서의 Sustain은 In효과가 실행되고 다음 Out효과가 진행되기 전 머무르는 시간이고, Out에서의 Sustain은 Out 효과가 실행되고 다음 페이지의 In효과가 실행되기 전까지 머무르는 시간이다.
+
+## 5.2. Object(객체) Effects
+
+MultiLayer모드에서만 활성화 된다. Effect설정, 추가, 삭제 방법은 Page Effect와 동일하다.
+
+### 5.2.1. Duration / Begin / End
+
+- **Duration** : Effects의 지속 시간으로 프레임 값이다.(1초=30프레임)
+- **Begin** : 선택한 레이어의 시작 키프레임 값
+- **End** : 선택한 레이어의 끝 프레임 값. Duration과 Begin입력하면 자동 계산
+
+### 5.2.2. In / Out
+
+각 객체 레이어에 In, Out효과를 지정하면 타임라인 상에 위와 같이 효과가 지정되고, 효과명이 각 프레임에 보인다. 레이어를 선택하면 In 효과의 경우 겨자색, Out효과는 살구색으로 보인다.
+
+![In Effects와 Out Effects가 지정된 Timeline](/docs/nabi/images/cg-effects-03.png)
+
+### 5.2.3. 키프레임 이동, 편집
+
+생성된 키프레임은 Duration, Begin등의 값을 직접 입력하여 지정할 수도 있고, 타임라인 상에 키프레임을 직접 늘이거나 배열 할 수 있다.\
+편집할 레이어를 선택하고 설정된 In, Out 키프레임 부분에 마우스 커서를 대면 이동하거나 사이즈를 조절할 수 있도록 커서가 바뀌어 바로 편집이 가능하다.
+
+## 5.3. Layer / Timeline
+
+페이지 내에 객체 레이어 관리와 각각의 효과를 편집한다.
+
+### 5.3.1. Layer
+
+한 페이지 내에 여러 개의 객체 레이어로 이루어지는데, 각각의 레이어의 정보를 확인하거나 간단한 편집이 가능하다. MultiLayer모드에서 가능한 Mask효과의 경우 Layer에서 Mask효과 객체를 지정할 수 있다.
+
+**5.3.1.1. Layer 편집**
+
+작업창을 통해 직접 편집하지만 레이어 창에서 편집할 레이어를 선택하고 마우스 오른쪽 버튼을 눌러 편집메뉴를 선택하거나, 드래그 하여 Layer순서 이동이 가능하다.
+
+![Layer 오른쪽 버튼 편집메뉴](/docs/nabi/images/cg-effects-04.png)
+
+**5.3.1.2. Layer 종류**
+
+각각의 레이어는 객체 종류별로 아래의 이미지와 같이 레이어 상에 표현된다.
+
+![객체 종류별 레이어](/docs/nabi/images/cg-effects-05.png)
+
+→ 글자객체\
+→ 도형객체\
+→ 이미지 객체\
+→ Clock / Timer\
+→ 애니메이션 객체\
+→ 오디오 파일
+
+글자 객체는 입력한 내용이 보이고, 도형이나 시계 객체의 경우에는 객체 종류가 보인다. 이미지 객체와 애니메이션 등 외부 객체는 파일명이 그대로 보인다. 이미지와는 다르게 ‘배경이미지’삽입으로 생성된 객체는 레이어에는 보이지 않는다. 배경이미지 편집은 Alt키를 누른 상태에서 작업창에서 배경이미지객체를 선택하여 이동, 크기조절 등이 가능하다.
+
+- ![View 아이콘](/docs/nabi/images/cg-effects-06.png) View On/Off
+- ![Disable 아이콘](/docs/nabi/images/cg-effects-07.png) Disable On/Off
+- ![Mask 아이콘](/docs/nabi/images/cg-effects-08.png) Mask On/Off
+- ![Mask 영향 아이콘](/docs/nabi/images/cg-effects-09.png) Mask 영향 받는 객체 지정
+- ![In Pause 아이콘](/docs/nabi/images/cg-effects-10.png) In Pause : 선택한 레이어의 In 효과 시작점에서 Pause
+- ![Out Pause 아이콘](/docs/nabi/images/cg-effects-11.png) Out Pause : 선택한 레이어의 Out 효과 시작점에서 Pause
+- ![Exclude 아이콘](/docs/nabi/images/cg-effects-12.png) Exclude : 페이지 템플릿 일괄지정 효과 제외 객체
+
+**5.3.1.2.1. 오디오 파일 삽입 / 삭제**
+
+![오디오 파일 삽입/변경·삭제 메뉴](/docs/nabi/images/cg-effects-13.png)
+
+페이지에 오디오 파일을 삽입할 수 있다. 이펙트 효과음을 지정하는데 활용할 수 있으며, 해당 페이지의 송출 시간보다 긴 오디오 파일을 삽입하면 오디오 파일 플레이가 끝날 때까지 다음 페이지 송출이 되지 않기 때문에 적당한 길이의 오디오 파일을 활용하도록 한다.
+
+타임라인 제일 하단 오디오 파일 타임라인의 사각 박스 더블 클릭하거나 마우스 오른쪽 버튼을 눌러 파일 지정 메뉴를 열어 지정할 수 있고 같은 방법으로 지정된 파일을 삭제 또는 변경 할 수 있다. 사용 가능한 파일은 mp3, wav형식 이다.
+
+### 5.3.2. Timeline
+
+MultiLayer모드에서는 페이지 내 레이어에 각각의 효과를 적용할 수 있는데, 적용된 효과의 순서를 편집할 수 있다.
+
+**5.3.2.1. Effect Reset**
+
+각 객체 레이어에 In, Out효과를 지정하면 타임라인 상에 효과가 지정되고, 효과명이 각 프레임에 보인다. 레이어를 선택하면 In 효과의 경우 겨자색, Out효과는 살구색으로 보인다.
+
+![In Effects와 Out Effects가 지정된 Timeline](/docs/nabi/images/cg-effects-14.png)
+
+지정된 효과를 삭제하는 것은 하단의 Effect 탭에서 가능하지만, 타임라인에서도 바로 효과를 삭제시킬 수 있다. 원하는 레이어를 선택한 후 마우스 오른쪽 버튼 바로가기 버튼을 이용한다.
+
+![Timeline의 Reset Effects 메뉴](/docs/nabi/images/cg-effects-15.png)
+
+- **Reset Effects** : In/Out Effect reset
+- **Reset In Effect** : In Effect reset
+- **Reset Out Effect** : Out Effect reset
+
+### 5.3.3. 키프레임 이동, 편집
+
+생성된 키프레임은 Duration, Begin등의 값을 직접 입력하여 지정할 수도 있고, 타임라인 상에 키프레임을 직접 늘이거나 배열 할 수 있다.\
+편집할 레이어를 선택하고 설정된 In, Out 키프레임 부분에 마우스 커서를 대면 이동하거나 사이즈를 조절할 수 있도록 커서가 바뀌어 바로 편집이 가능하다.
+
+### 5.3.4. Timeline Zoom In/Out
+
+타임라인을 확대, 축소 할 수 있다.
+
+![Timeline 오른쪽 아래 Zoom 버튼](/docs/nabi/images/cg-effects-16.png)
+
+| 구분 | 기능 | 단축키 |
+| - | - | - |
+| ![타임라인 확대 버튼](/docs/nabi/images/cg-effects-17.png) | 타임라인 확대 | 상단 숫자 키 + |
+| ![타임라인 축소 버튼](/docs/nabi/images/cg-effects-18.png) | 타임라인 축소 | 상단 숫자 키 - |
+| ![타임라인 기본 길이 버튼](/docs/nabi/images/cg-effects-19.png) | 타임라인 길이가 기본인 상태로 보여줌(1초) | 상단 숫자 키 0 |
+| ![타임라인 전체길이 버튼](/docs/nabi/images/cg-effects-20.png) | 타임라인 전체길이를 보여줌 | 상단 숫자 키 \\ |
+
+{/* 확인 필요: 마지막 행 단축키가 PDF 98 그림에서는 '₩'로 보인다. 한국어 글꼴이 백슬래시를 '₩'로 그리는 것이라 텍스트 추출본대로 '\'로 옮겼다 */}
+
+**5.3.4.1. Timeline View 「F9」**
+
+F9키를 누르면 편집화면상에서 Timeline을 숨긴다. 다시 누르면 화면상에 타임라인이 다시 보인다.
+
+## 5.4. Effects 종류
+
+### 5.4.1. Fade
+
+서서히 나타나거나 서서히 없어지는 효과를 표현하는데, In에 지정하면 Fade In, Out에 지정하면 Fade Out효과를 나타낸다.
+
+### 5.4.2. Wipe / Organic
+
+샘플이미지 형태로 화면이 닦이는 효과를 표현하는데, 검정색에서 흰색 부분 방향으로 진행된다.
+
+- **Type** : Wipe경계선 효과 설정
+  - Soft : 효과 경계선을 부드럽게 처리
+  - Hard : 효과 경계선을 선명하게 처리
+  - Border : 효과 경계선을 라인으로 표시하며, 색상과 두께를 지정할 수 있다.
+
+![Wipe 효과 샘플](/docs/nabi/images/cg-effects-21.png)
+
+![Organic 효과 샘플](/docs/nabi/images/cg-effects-22.png)
+
+### 5.4.3. Move
+
+![Move 효과 샘플](/docs/nabi/images/cg-effects-23.png)
+
+### 5.4.4. Scale
+
+![Scale 효과 샘플](/docs/nabi/images/cg-effects-24.png)
+
+### 5.4.5. Curl
+
+테두리 부분이 구부러지는 효과로 페이지 넘기는 것과 같은 효과 나타낸다.
+
+![Curl 효과 샘플과 Radius·Angle·Roll 옵션](/docs/nabi/images/cg-effects-25.png)
+
+①. **Radius** : 말리는 부분의 반지름\
+②. **Angle** : 객체 들어오는 방향\
+③. **Roll** : 객체가 말린 상태로 효과가 적용
+
+### 5.4.6. Tile
+
+![Tile 효과 샘플과 Shape·Motion·Pivot·Divide·Direction 옵션](/docs/nabi/images/cg-effects-26.png)
+
+![Tile, Random, Radial 효과 예](/docs/nabi/images/cg-effects-27.png)
+
+Tile Random Radial
+
+①. **Shape** : 타일 입자 모양 설정\
+②. **Motion** : 타일 입자가 나타나는 형태\
+③. **R·S Pivot** : 타일 입자가 나타나는 회전 중심축\
+④. **Divide X·Y** : 타일 입자의 크기 지정\
+⑤. **Direction** : 타일입자가 나타나는 방향
+
+### 5.4.7. Banner
+
+![Banner 효과 샘플](/docs/nabi/images/cg-effects-28.png)
+
+Warping효과를 표현한다.
+
+### 5.4.8. Text
+
+![Text 효과 Typing 샘플](/docs/nabi/images/cg-effects-29.png)
+
+- **Typing** : 글자 타이핑 효과를 지정한다. Duration값을 조정하여 속도를 조절한다.
+
+### 5.4.9. Blink
+
+![Blink 효과와 Count 옵션](/docs/nabi/images/cg-effects-30.png)
+
+- **Count** : 깜빡임의 회수를 지정한다.
+
+{/* 확인 필요: '회수'는 표준어로 '횟수'다. 사전에 있는 낱말이라 오탈자로 단정하지 않고 원문대로 둔다 */}
+
+### 5.4.10. Mask Effect
+
+일반적으로 한 개의 레이어 위에 또 다른 레이어가 위치하면, 레이어에 불투명 영역이 있을 경우 아래의 레이어는 가려져서 보이지 않게 된다. Mask효과는 Mask로 지정한 객체 이미지만큼 다른 레이어의 이미지를 보여주는 것을 말한다.\
+특정 영역을 마스크로 지정하여, 그 영역 안에만 글자가 보이게 하는 효과로 활용할 수 있다.
+
+![Mask 효과 예](/docs/nabi/images/cg-effects-31.png)
+
+- ![Mask 아이콘](/docs/nabi/images/cg-effects-32.png) Mask로 지정한 영역
+- ![Mask 영향 아이콘](/docs/nabi/images/cg-effects-33.png) Mask 영역에 영향을 받는 레이어
