@@ -51,6 +51,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [문서 기반 세우기](issues/05-docs-foundation.md): `app/docs/nabi/<chapter>/<slug>/page.mdx`만 쓰면 사이드바·`<title>`·앵커가 따라온다. frontmatter·폴더가 어긋나거나 `order`가 겹치면 빌드가 멈춘다. MDX는 `<!-- -->`를 못 쓰므로 확인 필요 표시는 `{/* 확인 필요: … */}`다. 샘플 `setup/sample`은 첫 절 변환이 지운다
 - [Callout 컴포넌트](issues/06-callout-component.md): `app/_components/callout.tsx`를 `mdx-components.tsx`에 등록했다. 루트 파일이 라우트 private folder를 import할 수 없어 `app/_components`에 둔다. 절 페이지는 import 없이 `<Callout type="warning">`·`"danger"`로 쓴다
 - [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
+- [cg/getting-started 변환](issues/09-cg-getting-started-conversion.md): Chapter 2 `2. 시작하기`를 한 페이지로 옮겼다. 07 방식에 새로 정한 것은 없다. 굵은 `[…]` 뒤에 한글이 붙어 `**`가 닫히지 않는 곳은 `<strong>`으로 쓴다. 확인 필요 0, 이미지 32(아이콘 5), 오탈자 4
 
 ## Not yet specified
 
