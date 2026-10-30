@@ -53,6 +53,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
 - [cg/editing 변환 1](issues/10-cg-editing-1-conversion.md): `cg/editing` 페이지와 H1을 만들고 3.1–3.3(PDF 49–64)을 옮겼다. 이미지가 100개를 넘어 번호는 세 자리(`cg-editing-001.png`)다. 병합 머리글은 칸을 풀고, 대각선 머리글과 칸 안 줄바꿈은 `<br />`, 표 칸의 `{` `}` `<`는 `\`로 가린다
 - [cg/editing 변환 2](issues/11-cg-editing-2-conversion.md): 3.4–3.5(PDF 65–77)를 이어 썼다. 행 병합 표는 열을 늘려 풀고, 확장자 패턴 `*.nba`는 기울임꼴이 되지 않게 `\*`로 가린다
+- [cg/editing 변환 3](issues/12-cg-editing-3-conversion.md): 3.6(PDF 78–89)을 이어 썼다. 3.6.13 그림과 3.6.14가 PDF 89에 있어 3.6을 끝까지 옮겼고 13은 3.7부터다. 줄 첫머리 `* ` 보충은 `\*`, 이미지 alt 안의 `<`도 `\<`로 가린다
 
 ## Not yet specified
 
