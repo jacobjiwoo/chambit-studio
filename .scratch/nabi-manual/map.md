@@ -38,6 +38,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 
 - [Next.js 16에서 MDX 문서 기반을 세우는 방법](issues/01-mdx-foundation-research.md): `@next/mdx` + 루트 `mdx-components.tsx`, 플러그인은 문자열로(Turbopack). frontmatter는 `remark-mdx-frontmatter`로 `metadata`에, 표는 `remark-gfm`, 앵커는 `rehype-slug`(번호의 `.`는 빠진다). 사이드바는 레이아웃이 빌드 때 frontmatter를 읽는다. 이미지에 `next/image`를 쓰지 않는다(정적 export)
 - [PDF 원문 실측](issues/02-pdf-survey.md): `pdftotext -layout` 추출로 변환할 수 있다(깨진 글자 없음). 표·인라인 아이콘·낱말 중간 줄바꿈만 페이지 이미지를 본다. Ch2 `3. 편집` 52쪽이 가장 크다. 주의 표현은 `※` + 굵은 글씨 10곳이고, 코드 블록 대상은 없다
+- [Callout 종류와 원문 표현](issues/04-callout-types.md): `type`은 `warning`(주의·경고 `※` 문단 9곳)과 `danger`(PDF 19 빨간 밑줄 한 곳) 둘이다. `※`와 문단 전체 굵게는 Callout이 대신하므로 지우고 낱말(`주의 :`)은 남긴다. 컴포넌트는 글자 라벨을 넣지 않는다. 용어 설명·문의 안내 `※`(PDF 26, 27), `관련 옵션`, `* ` 보충은 Callout이 아니다
 
 ## Not yet specified
 
