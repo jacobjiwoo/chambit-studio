@@ -26,7 +26,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - 페이지 하나 = 1단계 절이다. 그 절이 H1, 2단계가 H2, 3단계가 H3이다. 4단계부터는 굵은 글씨 소제목으로 내린다.
 - H2·H3에는 제목에서 자동으로 만든 앵커(`rehype-slug`)를 단다. 한국어 앵커를 허용한다.
 - frontmatter는 `title`, `description`(150자 이내), `slug`, `chapter`, `order`다.
-- 이미지 자리표시자는 `public/docs/nabi/images/<chapter>-<절>-NN.png`를 가리킨다. 실제 파일이 들어오기 전까지는 깨진 이미지로 둔다. `public/`은 [project-structure.md](../../.claude/rules/project-structure.md) 표에 없으므로 Next.js 문서를 확인하고 표를 고친 뒤 만든다.
+- 이미지는 `public/docs/nabi/images/<chapter>-<절>-NN.webp`다. 처음에는 `.png` 자리표시자였고, 실제 파일을 넣으며 WebP로 바꿨다.
 - 주의·경고 문구는 `<Callout type="warning">`·`<Callout type="danger">`로 바꾼다(티켓 04).
 - 탐색은 왼쪽 사이드바(Chapter → 절)만 둔다.
 
@@ -39,6 +39,8 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - 한 번 나온 철자 실수만 고친다. 두 번 똑같이 나오거나 이름일 수 있는 것은 확인 필요로 둔다. 띄어쓰기는 고치지 않는다.
 - 변환 티켓마다 `## Answer`에 `### 확인 필요`, `### 이미지`(파일·PDF 쪽·`pdfimages` 번호·무엇), `### 고친 오탈자` 표 셋을 둔다.
 - Chapter 첫 페이지 셋(`setup`, `cg`, `db`)은 07이 모두 만들었다. 절 티켓은 `<chapter>/<slug>/page.mdx`만 쓴다.
+
+**이미지 채우기(2026-10-30)** — 처음에는 범위 밖이었지만 사용자가 맡겼다. 브랜치 `feat/nabi-manual-images`에서 413개를 PDF에서 뽑아 WebP로 넣었다. 방식은 [review-lists.md](review-lists.md) `## 이미지` 머리말에 있다.
 
 **참고할 skill** — 결정 티켓은 `grilling`과 `domain-modeling`을 쓴다.
 
@@ -69,6 +71,5 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 
 ## Out of scope
 
-- 실제 이미지 추출·준비 — 사용자가 목록을 받아 따로 준비한다.
 - 페이지 안 H2·H3 목차 — 써 보고 필요하면 새로 시작한다.
 - `/docs/` 아래 다른 문서 — 이 지도는 NABI 매뉴얼만 다룬다.
