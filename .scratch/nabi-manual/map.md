@@ -32,6 +32,14 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 
 **변환 규칙(사용자 지시)** — 원문을 추가·삭제·요약·의역하지 않는다. 명백한 오탈자만 고치고 고친 곳을 기록한다. 읽기 어려운 곳은 추측하지 않고 `{/* 확인 필요: ... */}`를 남긴다(MDX는 `<!-- -->`를 못 쓴다. 사용자 지시의 `<!-- -->`를 이것으로 바꾼다). PDF 머리글·바닥글·쪽 번호는 지우고, 줄바꿈으로 끊긴 문장은 잇는다. 표는 마크다운 표로, 코드·명령어는 언어를 지정한 코드 블록으로 바꾼다(실측 결과 코드 블록 대상은 없고, 경로·파일명은 인라인 코드다).
 
+**시범 변환이 정한 방식(티켓 07)** — 자세한 것과 실제 예는 [07 Answer](issues/07-setup-conversion.md)와 `app/docs/nabi/setup/*/page.mdx`다.
+
+- 원문의 `.`·`·`·`-` 글머리표는 마크다운 목록 `- `로, 끝까지 차지 않고 끊긴 줄은 줄 끝 `\`(hard break)로 옮긴다. 목차에 없는 번호 소제목(`1. 송출 자막이 떨리는 경우`)과 원문이 굵게 쓴 `①.` 말머리는 굵은 글씨다.
+- 이미지는 PDF 이미지 객체 하나에 자리표시자 하나다. 인라인 아이콘은 제목 안이어도 원문 자리에 둔다. URL은 명시 링크로 쓴다.
+- 한 번 나온 철자 실수만 고친다. 두 번 똑같이 나오거나 이름일 수 있는 것은 확인 필요로 둔다. 띄어쓰기는 고치지 않는다.
+- 변환 티켓마다 `## Answer`에 `### 확인 필요`, `### 이미지`(파일·PDF 쪽·`pdfimages` 번호·무엇), `### 고친 오탈자` 표 셋을 둔다.
+- Chapter 첫 페이지 셋(`setup`, `cg`, `db`)은 07이 모두 만들었다. 절 티켓은 `<chapter>/<slug>/page.mdx`만 쓴다.
+
 **참고할 skill** — 결정 티켓은 `grilling`과 `domain-modeling`을 쓴다.
 
 ## Decisions so far
@@ -41,11 +49,12 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [페이지 목록과 slug](issues/03-page-list-and-slugs.md): 1단계 절 15개가 페이지 15개다(`setup/hd200-install`, `cg/editing`, `db/search` 등). `3. 편집`도 한 페이지이고 변환 티켓만 넷으로 나눈다. `title`은 번호를 빼고 H1은 번호까지 원문 그대로다. `slug`는 경로의 마지막 조각, `order`는 원문 번호다. 변환은 티켓 07–18이고 07(setup)이 시범이다
 - [Callout 종류와 원문 표현](issues/04-callout-types.md): `type`은 `warning`(주의·경고 `※` 문단 9곳)과 `danger`(PDF 19 빨간 밑줄 한 곳) 둘이다. `※`와 문단 전체 굵게는 Callout이 대신하므로 지우고 낱말(`주의 :`)은 남긴다. 컴포넌트는 글자 라벨을 넣지 않는다. 용어 설명·문의 안내 `※`(PDF 26, 27), `관련 옵션`, `* ` 보충은 Callout이 아니다
 - [문서 기반 세우기](issues/05-docs-foundation.md): `app/docs/nabi/<chapter>/<slug>/page.mdx`만 쓰면 사이드바·`<title>`·앵커가 따라온다. frontmatter·폴더가 어긋나거나 `order`가 겹치면 빌드가 멈춘다. MDX는 `<!-- -->`를 못 쓰므로 확인 필요 표시는 `{/* 확인 필요: … */}`다. 샘플 `setup/sample`은 첫 절 변환이 지운다
+- [Callout 컴포넌트](issues/06-callout-component.md): `app/_components/callout.tsx`를 `mdx-components.tsx`에 등록했다. 루트 파일이 라우트 private folder를 import할 수 없어 `app/_components`에 둔다. 절 페이지는 import 없이 `<Callout type="warning">`·`"danger"`로 쓴다
+- [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
 
 ## Not yet specified
 
-- **확인 필요·이미지 목록을 모으는 방식** — 절 티켓마다 `## Answer`에 남길지, 한 파일로 모을지. 시범 변환 티켓 07을 해 보고 정한다.
-- **오탈자 수정 기록을 어디에 둘지** — 위와 같다.
+없다.
 
 ## Out of scope
 

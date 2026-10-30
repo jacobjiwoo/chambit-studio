@@ -1,0 +1,36 @@
+---
+title: 이상증상 대처법
+description: 송출 자막이 떨릴 때, 작업창에 빨간 십자선이 보일 때, NABI-CG가 SD(4:3)로 실행될 때의 대처법과 기술문의 안내.
+slug: troubleshooting
+chapter: setup
+order: 4
+---
+
+# 4. 이상증상 대처법
+
+문자발생기 하드웨어가 설치되어 있음에도 불구하고 아래와 같은 이상증상이 발생할 경우 내용을 확인하여 조치하도록 한다.
+
+**1. 송출 자막이 떨리는 경우**
+
+PCI Express 슬롯의 Bandwidth가 4.0 이하로 동작하게 되면 송출 자막이 떨리는 증상이 발생하는데, 이런 경우에는 CMOS에서 PCI Express Bandwidth 설정 값을 4.0이상으로 변경해야한다. 메인보드의 CMOS 메뉴 창은 제품마다 다르다.\
+Ex) Asus P8H67
+
+![CMOS의 PCI Express X16_2 slot bandwidth 설정 줄](/docs/nabi/images/setup-troubleshooting-01.png)
+
+![ASUS UEFI BIOS Utility의 Onboard Devices Configuration 화면](/docs/nabi/images/setup-troubleshooting-02.png)
+
+**2. NABI-CG실행 시 빨간 색 십자가가 작업창 화면에 나타날 경우**
+
+![작업창 중앙의 빨간색 십자선](/docs/nabi/images/setup-troubleshooting-03.png)
+
+작업창 중앙에 위와 같이 빨간색 십자선이 보이는 경우는 USB Dongle Lock인식이 제대로 되지 않아 생기는 현상으로 Dongle Lock 프로그램을 다시 설치하고 인식이 되었는지 장치관리자에서 다시 확인하도록 한다.
+
+**3. NABI-CG가 SD(4:3)로 실행될 경우**
+
+NABI-CG실행 시 이상 메시지는 없으나 SD사이즈로 프로그램이 실행되는 경우, HD Format으로 설정이 되지 않아 생기는 현상이므로 CPX-DL Controller를 실행하여 Output Display의 Format을 HD로 변경하도록 한다.
+
+※ **Output Display** : 출력 포맷 선택(일반적인 HD설정 값은 HD 1080i 59.94)
+
+![Output Display Format 목록](/docs/nabi/images/setup-troubleshooting-04.png)
+
+**※ 기타 자세한 기술문의는 당사 홈페이지 ([www.compix.co.kr](http://www.compix.co.kr))나 고객센터로 문의할 수 있다. ※**
