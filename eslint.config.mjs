@@ -46,6 +46,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Claude 앱 세션의 worktree. 다른 체크아웃이라 각자 자기 폴더에서 lint한다.
+    ".claude/worktrees/**",
   ]),
 ]);
 
