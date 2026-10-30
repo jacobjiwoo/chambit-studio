@@ -58,6 +58,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [cg/editing 변환 3](issues/12-cg-editing-3-conversion.md): 3.6(PDF 78–89)을 이어 썼다. 3.6.13 그림과 3.6.14가 PDF 89에 있어 3.6을 끝까지 옮겼고 13은 3.7부터다. 줄 첫머리 `* ` 보충은 `\*`, 이미지 alt 안의 `<`도 `\<`로 가린다
 - [cg/editing 변환 4](issues/13-cg-editing-4-conversion.md): 3.7–3.8(PDF 89–100)을 이어 써서 `cg/editing`을 끝냈다(이미지 157개). `•` 글머리표도 목록으로, 밑줄 강조는 굵은 글씨로만 옮긴다. 옵션 이름 오타는 스크린샷 글자가 근거일 때만 고친다
 - [cg/attributes 변환](issues/14-cg-attributes-conversion.md): `4. 속성편집(Attribute)`(PDF 101–121)를 한 페이지·한 티켓으로 옮겼다(이미지 88개). 5단계 소제목도 굵은 글씨 문단이고, Callout 아닌 원문 밑줄은 `<u>`로 남긴다. 그림 옆 설명 글은 그림 바로 뒤 보통 문단이다
+- [cg/effects 변환](issues/15-cg-effects-conversion.md): `5. Effects`(PDF 122–131)를 옮겼다. 매 쪽 머리글 로고 이미지는 자리표시자를 두지 않는다. `•` 글머리표도 `- `다. 이미지 33개, 확인 필요 둘, 고친 오탈자 하나
 
 ## Not yet specified
 
