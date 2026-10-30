@@ -24,6 +24,17 @@ export default function Home() {
               </p>
             </Link>
           </li>
+          <li>
+            <Link
+              href="/docs/nabi"
+              className="block rounded-2xl border border-neutral-200 bg-white p-6 transition hover:border-neutral-400"
+            >
+              <span className="font-semibold">NABI 매뉴얼</span>
+              <p className="mt-1 text-sm text-neutral-500">
+                Compix NABI User Manual을 웹 문서로 옮겼습니다.
+              </p>
+            </Link>
+          </li>
         </ul>
       </main>
     </div>

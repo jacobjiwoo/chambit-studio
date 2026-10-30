@@ -38,6 +38,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 
 - [Next.js 16에서 MDX 문서 기반을 세우는 방법](issues/01-mdx-foundation-research.md): `@next/mdx` + 루트 `mdx-components.tsx`, 플러그인은 문자열로(Turbopack). frontmatter는 `remark-mdx-frontmatter`로 `metadata`에, 표는 `remark-gfm`, 앵커는 `rehype-slug`(번호의 `.`는 빠진다). 사이드바는 레이아웃이 빌드 때 frontmatter를 읽는다. 이미지에 `next/image`를 쓰지 않는다(정적 export)
 - [PDF 원문 실측](issues/02-pdf-survey.md): `pdftotext -layout` 추출로 변환할 수 있다(깨진 글자 없음). 표·인라인 아이콘·낱말 중간 줄바꿈만 페이지 이미지를 본다. Ch2 `3. 편집` 52쪽이 가장 크다. 주의 표현은 `※` + 굵은 글씨 10곳이고, 코드 블록 대상은 없다
+- [문서 기반 세우기](issues/05-docs-foundation.md): `app/docs/nabi/<chapter>/<slug>/page.mdx`만 쓰면 사이드바·`<title>`·앵커가 따라온다. frontmatter·폴더가 어긋나거나 `order`가 겹치면 빌드가 멈춘다. MDX는 `<!-- -->`를 못 쓰므로 확인 필요 표시는 `{/* 확인 필요: … */}`다. 샘플 `setup/sample`은 첫 절 변환이 지운다
 
 ## Not yet specified
 

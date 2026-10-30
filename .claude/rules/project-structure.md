@@ -9,6 +9,8 @@
 | 경로 | 무엇 | 커밋 |
 | - | - | - |
 | `app/` | App Router. 코드는 전부 여기 있다 | ✓ |
+| `mdx-components.tsx` | MDX 전역 컴포넌트. `@next/mdx`가 루트에서만 찾는다([mdx-components.js](https://nextjs.org/docs/app/api-reference/file-conventions/mdx-components)) | ✓ |
+| `public/` | 정적 파일. `public/a/b.png`가 `/a/b.png`로 열린다([public Folder](https://nextjs.org/docs/app/api-reference/file-conventions/public-folder)) | ✓ |
 | `docs/` | 문서, ADR | ✓ |
 | `.scratch/` | 조사·스펙·티켓 | ✓ |
 | `.claude/` | [claude-directory.md](claude-directory.md)를 따른다 | ✓ |
@@ -26,7 +28,7 @@
 
 | 무엇 | 예 |
 | - | - |
-| 라우팅 파일 | `layout.tsx` `page.tsx` `loading.tsx` `not-found.tsx` `error.tsx` `global-error.tsx` `route.ts` `template.tsx` `default.tsx` |
+| 라우팅 파일 | `layout.tsx` `page.tsx` `page.mdx` `loading.tsx` `not-found.tsx` `error.tsx` `global-error.tsx` `route.ts` `template.tsx` `default.tsx` |
 | metadata 파일 | `favicon.ico` `icon` `apple-icon` `opengraph-image` `twitter-image` `sitemap` `robots` |
 | 라우트 폴더 | `subtitle-extractor/` `[slug]/` `(group)/` `@slot/` `(.)folder/` |
 | private folder | `_components/` `_lib/` |
@@ -61,4 +63,4 @@
 
 ## 표에 없는 것을 만들려면 문서부터 본다
 
-위 문서를 열어 확인한다. Next.js 규약이면 표를 고치고 진행한다. `public/`이나 E2E 테스트 디렉토리처럼 처음 생기는 것도 이 순서를 밟는다. 표와 문서가 어긋나면 문서가 맞다.
+위 문서를 열어 확인한다. Next.js 규약이면 표를 고치고 진행한다. E2E 테스트 디렉토리처럼 처음 생기는 것도 이 순서를 밟는다. 표와 문서가 어긋나면 문서가 맞다.
