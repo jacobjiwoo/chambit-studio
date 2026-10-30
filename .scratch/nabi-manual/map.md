@@ -52,6 +52,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [Callout 컴포넌트](issues/06-callout-component.md): `app/_components/callout.tsx`를 `mdx-components.tsx`에 등록했다. 루트 파일이 라우트 private folder를 import할 수 없어 `app/_components`에 둔다. 절 페이지는 import 없이 `<Callout type="warning">`·`"danger"`로 쓴다
 - [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
 - [cg/overview 변환](issues/08-cg-overview-conversion.md): `cg/overview`(PDF 30–35)를 옮겼다. Ch2는 쪽마다 머리글 로고가 이미지 객체(object ID 160)라 `pdfimages` 목록에서 빼고 센다. 줄바꿈으로 갈린 곳의 띄어쓰기를 알 수 없으면 확인 필요로 남긴다
+- [cg/getting-started 변환](issues/09-cg-getting-started-conversion.md): Chapter 2 `2. 시작하기`를 한 페이지로 옮겼다. 07 방식에 새로 정한 것은 없다. 굵은 `[…]` 뒤에 한글이 붙어 `**`가 닫히지 않는 곳은 `<strong>`으로 쓴다. 확인 필요 0, 이미지 32(아이콘 5), 오탈자 4
 
 ## Not yet specified
 
