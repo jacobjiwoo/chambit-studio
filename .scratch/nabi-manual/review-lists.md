@@ -165,6 +165,7 @@
 - `pdfimages -png`로 뽑은 객체를 q90 손실 WebP와 무손실 WebP 중 작은 쪽으로 저장한다. 작은 아이콘 42개가 무손실이다. 합계 약 7.4MB다.
 - PDF가 clip으로 일부만 보이는 23개는 보이는 영역대로 자른다. clip 영역은 `pdftocairo -svg`의 clipPath와 이미지 행렬로 셈한다. `setup-troubleshooting-01`(26쪽 BIOS 화면 객체의 한 줄), `cg-shortcuts-22`(Take In·Take Out 아이콘 중 왼쪽)가 여기 든다.
 - `cg-editing-139`는 따로 나오는 마스크(`pdfimages` 181, `mask` 행)를 alpha로 합쳐 투명 배경을 살린다. 마스크 행은 번호를 차지하지만 목록 번호는 이미 이를 셈해 두었다. `smask`는 없다.
+- PDF가 이미지 위나 옆에 벡터로 덧그린 빨간 표시 두 곳은 `pdftocairo -svg`의 좌표를 이미지 픽셀로 옮겨 그려 넣는다. `setup-troubleshooting-02`의 강조 상자 둘, `cg-editing-033` 오른쪽의 빨간 화살표다. 색 있는 벡터는 이 둘뿐이다(27쪽 파란색은 링크 밑줄).
 
 ### [setup 변환](issues/07-setup-conversion.md)
 
@@ -189,7 +190,7 @@
 | `setup-software-install-25.webp` | 24 | 27 | Download VLC Player 창 |
 | `setup-software-install-26.webp` | 25 | 28 | Edit Resolution 창 |
 | `setup-troubleshooting-01.webp` | 25 | 29 | CMOS의 PCI Express bandwidth 설정 줄. 26쪽 BIOS 화면과 같은 객체를 잘라 보인 것이라 직접 잘라야 한다 |
-| `setup-troubleshooting-02.webp` | 26 | 30 | ASUS UEFI BIOS Utility 화면 |
+| `setup-troubleshooting-02.webp` | 26 | 30 | ASUS UEFI BIOS Utility 화면(벡터 빨간 상자 둘을 그려 넣었다) |
 | `setup-troubleshooting-03.webp` | 26 | 31 | 작업창 중앙의 빨간색 십자선 |
 | `setup-troubleshooting-04.webp` | 27 | 32 | Output Display Format 목록 |
 
@@ -272,7 +273,7 @@
 | `cg-editing-028.webp` | 55 | 34 | 크기 조절 상자 8개 |
 | `cg-editing-029.webp` | 55 | 35 | 크기 조절 방향 화살표 |
 | `cg-editing-030.webp`–`032.webp` | 56 | 37–39 | 안내선, 정렬선, 선택 객체 기준 정렬 아이콘(목록 안) |
-| `cg-editing-033.webp` | 56 | 40 | 정렬 위치 선택 메뉴(표 왼쪽 그림. 사이의 빨간 화살표는 벡터라 빠진다) |
+| `cg-editing-033.webp` | 56 | 40 | 정렬 위치 선택 메뉴(표 왼쪽 그림. 사이의 빨간 벡터 화살표를 오른쪽에 그려 넣었다) |
 | `cg-editing-034.webp` | 56 | 41 | 가로, 세로, 가로+세로 크기 맞추기 아이콘 |
 | `cg-editing-035.webp` | 57 | 43 | 기준객체와 선택된 객체들 |
 | `cg-editing-036.webp` | 57 | 44 | 크기 맞추기 결과 셋(위에 아이콘 줄 포함) |
