@@ -1,0 +1,59 @@
+---
+title: 문자발생기 보드 장착
+description: 천하통일 HD200과 HD200K 문자발생기 보드를 슬롯에 장착하고 HD-SDI, Overlay, Analog 입출력을 연결하는 방법.
+slug: cg-board
+chapter: setup
+order: 2
+---
+
+# 2. 문자발생기 보드 장착
+
+## 2.1. 문자발생기 보드 장착 및 입출력 연결
+
+‘천하통일 HD200/200K’는 PCI Express 4X타입으로 Bandwidth가 4.0이상을 지원하는 슬롯이 2개 이상 있는 메인보드에서만 설치가 가능하다.
+
+### 2.1.1. 천하통일HD200
+
+![천하통일HD200 보드와 Bypass B/D 연결도](/docs/nabi/images/setup-cg-board-01.png)
+
+전원이 꺼진 상태에서 문자발생기 보드를 슬롯에 장착한다. 슬롯 중에서 가운데 위치한 슬롯에 장착을 권장한다. 가운데 슬롯은 다른 장치와 충돌이 가장 적은 위치이다.
+
+**①. HD-SDI 연결**
+
+- **PGM In :** 카메라, Mix, VTR 의 출력을 연결
+- **CG In :** 천하통일 HD200보드의 HD-SDI-In 단자와 연결
+- **CG Out :** 천하통일 HD200보드의 HD-SDI-Out 단자와 연결
+- **PGM Out :** 녹화기, 출력모니터, 프로젝터의 입력과 연결
+
+**②. Analog 연결** : 함께 제공되는 Breakout Cable이용하여 연결
+
+- Composite연결 : 20.Composite In / 21.Composite Out
+- S-Video연결 : 22.S-Video In / 23.S-Video Out
+- Component연결\
+  7.R-Y In / 3.R-Y Out\
+  8.Y In / 4.Y Out\
+  9.B-Y In / 5.B-Y Out
+
+<Callout type="warning">
+천하통일 HD200은 Overlay로 연결되기 때문에 HD/SDI 신호의 경우 Bypass B/D연결로 전원이 Off시에는 PGM-IN이 PGM-Out으로 출력되도록 되어 있지만, PC부팅하면 문자발생기 보드가 초기화되기 전까지는 출력화면이 검게 나온다. 그러므로 문자발생기 PC를 부팅하고 반드시 CG를 실행하여 보드를 초기화 시켜주어야 영상이 보이기 때문에 부팅하면 NABI-CG를 실행 하도록 한다.
+</Callout>
+
+### 2.1.2. 천하통일HD200K
+
+**①. 스위처 연결 시**(스위처와 연결 시 Bypass보드 사용하지 않는다)
+
+![천하통일HD200K 스위처 연결도](/docs/nabi/images/setup-cg-board-02.png)
+
+**②. Overlay연결**(Bypass사용)
+
+![천하통일HD200K와 Bypass B/D Overlay 연결도](/docs/nabi/images/setup-cg-board-03.png)
+
+**③. Analog연결** : 함께 제공되는 Breakout Cable이용하여 연결
+
+- Composite연결\
+  : 20.Composite In / 21.Composite Out
+- S-Video연결 : 22.S-Video In / 23.S-Video Out
+- Component연결\
+  7.R-Y In / 3.R-Y Out\
+  8.Y In / 4.Y Out\
+  9.B-Y In / 5.B-Y Out
