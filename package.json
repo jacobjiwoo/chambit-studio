@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "vitest run && next build",
+    "build": "pnpm test && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --exclude '.claude/worktrees/**'"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
