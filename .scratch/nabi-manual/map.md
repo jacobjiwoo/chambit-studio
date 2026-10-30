@@ -52,6 +52,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [Callout 컴포넌트](issues/06-callout-component.md): `app/_components/callout.tsx`를 `mdx-components.tsx`에 등록했다. 루트 파일이 라우트 private folder를 import할 수 없어 `app/_components`에 둔다. 절 페이지는 import 없이 `<Callout type="warning">`·`"danger"`로 쓴다
 - [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
 - [cg/editing 변환 1](issues/10-cg-editing-1-conversion.md): `cg/editing` 페이지와 H1을 만들고 3.1–3.3(PDF 49–64)을 옮겼다. 이미지가 100개를 넘어 번호는 세 자리(`cg-editing-001.png`)다. 병합 머리글은 칸을 풀고, 대각선 머리글과 칸 안 줄바꿈은 `<br />`, 표 칸의 `{` `}` `<`는 `\`로 가린다
+- [cg/editing 변환 2](issues/11-cg-editing-2-conversion.md): 3.4–3.5(PDF 65–77)를 이어 썼다. 행 병합 표는 열을 늘려 풀고, 확장자 패턴 `*.nba`는 기울임꼴이 되지 않게 `\*`로 가린다
 
 ## Not yet specified
 

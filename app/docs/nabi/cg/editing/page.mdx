@@ -410,3 +410,215 @@ Page Up/Down키로 현재 작업 페이지에서 한 페이지씩 위/아래로 
 ![페이지 템플릿 일괄지정 전후의 Page List](/docs/nabi/images/cg-editing-061.png)
 
 ![페이지 템플릿 일괄지정 전후의 페이지](/docs/nabi/images/cg-editing-062.png)
+
+## 3.4. Style Catalog
+
+자주 사용하는 색상이나 객체속성, 이미지 폴더 등의 정보들을 모아두었다 쉽게 재사용 할 수 있다.
+
+![Style Catalog 창](/docs/nabi/images/cg-editing-063.png)
+
+### 3.4.1. Style 편집
+
+**3.4.1.1. Style 추가/적용하기**
+
+Char, Color, Shape Style는 드래그나 단축키를 눌러 추가/적용이 가능하며, Image, Back, Animation, Video, Back Video는 PC내의 특정 폴더를 등록해 두는 것으로, 폴더 내에 들어있는 파일을 일일이 열어보지 않고도 해당 폴더의 내용을 쉽게 확인할 수 있다. 단, 지정한 폴더의 이미지 용량에 따라 로딩시간이 걸릴 수 있다. (관련 옵션 : 도구>옵션>General>Style Catalog with folder list)\
+위와 같이 Style로 지정했다면 지정된 Style은 작업창에 원하는 객체에 드래그 하여 적용할 수 있다.
+
+| 종 류 | 기 능 | Style 추가 | Style 적용 |
+| - | - | - | - |
+| Char | 텍스트 객체의 서체, 크기, 색상정보 저장 | 텍스트객체 선택 후 Ctrl+Alt+A | 변경할 텍스트 객체로 Drag & Drop |
+| Color | 색상 정보 저장 | Attributes탭에서 색상을 Catalog로 드래그 | 변경할 객체로 후 Drag & Drop(Face만적용)<br />Attribute탭의 F/E/S로 Drag & Drop |
+| Shape | 도형 객체의 모양, 크기, 색상 정보 저장 | 도형객체 선택 후 Ctrl+Alt+A | 작업창으로 Drag하면 도형 객체 추가 |
+| Page | 현재 작업 중인 페이지 저장 | 저장할 Page에서 Ctrl+Alt+P | 작업창으로 Drag하면 선택한 Page로 변경 |
+| Image | 이미지 속성으로 적용<br />: tga, bmp, jpg, gif, png, tif | 폴더 지정 | 작업창으로 Drag하면 이미지 객체 추가 |
+| Back | 배경이미지 속성으로 적용<br />: tga, bmp, jpg, gif, png, tif | 폴더 지정 | 작업창으로 Drag하면 배경이미지로 적용 |
+| Animation | 애니메이션 속성으로 적용<br />: tad, gpf<br />(Compix CG에서 생성된 애니메이션파일) | 폴더 지정 | 작업창으로 Drag하면 애니메이션 객체 추가 |
+| Video | 동영상 속성으로 적용<br />: avi, wmv, mov, mp4, mxf, mpg | 폴더 지정 | 작업창으로 Drag하면 동영상 객체 추가 |
+| Back Video | 배경동영상 속성으로 적용<br />: avi, wmv, mov, mp4, mxf, mpg | 폴더 지정 | 작업창으로 Drag하면 배경동영상으로 적용 |
+
+**3.4.1.2. Style 파일 만들기**
+
+Image, Back, Animation처럼 폴더를 링크 하는 경우를 제외하고는 적용한 Style을 용도에 맞게 저장하여 사용할 수도 있다.\
+그림과 같이 Style 이름이나 Style 위에서 마우스 오른쪽 버튼을 누르면, 새로 생성할 수 있도록 New메뉴가 생긴다. New메뉴로 생성된 빈 Style위에 새로운 Style을 추가하게 되면 저장하도록 창이 뜬다. Style의 확장자는 \*.nbs이다.
+
+![Style Catalog의 New 메뉴와 새로 생긴 New Style Catalog](/docs/nabi/images/cg-editing-064.png)
+
+![STYLES 폴더의 다른 이름으로 저장 창](/docs/nabi/images/cg-editing-065.png)
+
+**3.4.1.3. Style 보기/편집하기**
+
+![Style 위의 마우스 오른쪽 버튼 메뉴](/docs/nabi/images/cg-editing-066.png)
+
+편집할 Style을 선택하고 마우스 오른쪽 버튼을 누르면, 등록된 Style을 복사, 붙이기, 삭제 할 수 있다.\
+View나 Icon메뉴를 이용하여 다양한 방식으로 Style 썸네일을 볼 수 있다.
+
+**3.4.1.4. Add Folder**
+
+폴더 개념의 Style(Image, Back, Animation, Video, Back Video)에서만 활성화 되며, PC내에 일정 폴더를 지정하여 폴더 내에 들어있는 파일을 보여준다. 단. 폴더의 이미지 용량에 따라 로딩시간이 걸릴 수 있다.
+
+**3.4.1.5. Refresh**
+
+폴더의 내용을 보여주는 Style(Image, Back, Animation)에서만 활성화 되며, 폴더 내용이 변경되었을 경우 Refresh를 해주면 변경된 내용이 적용 될 것이다.\
+관련 옵션] 도구>옵션>General>Refresh thumbnail in style catalog when NABI starts
+
+## 3.5. 보기
+
+![보기 메뉴](/docs/nabi/images/cg-editing-067.png)
+
+### 3.5.1. 안내선 / 격자점 / 정렬선
+
+작업창에 다양한 안내선을 지정하여 사용이 가능하다. 설정한 각종 안내선을 On/Off 한다.
+
+**① 안내선(Safe Area)** : 작업한 CG내용이 잘리지 않고 안전하게 송출될 수 있는 평균값의 영역을 말한다.\
+Video Safe Area, Vertical/Horizontal Center, SD Area\
+가이드라인 설정은 도구>옵션>Editor에서 지정한다.
+
+![Safe Area, Horizontal Center, Vertical Center, SD Area 안내선](/docs/nabi/images/cg-editing-068.png)
+
+**② 격자점**\
+격자무늬의 점선을 보여준다. 간격은 도구>옵션>Editor에서 가능하다
+
+![격자점](/docs/nabi/images/cg-editing-069.png)
+
+**③ 정렬선**
+
+![눈금자의 정렬선 포인트와 녹색 정렬 영역](/docs/nabi/images/cg-editing-070.png)
+
+사용자가 기준 영역을 설정할 수 있는데, 객체의 정렬이나 외부 텍스트를 불러들일 때 기준 영역으로 사용된다.\
+설정 방법은 작업창 상단과 좌측 눈금자부분에 ▶◀/▲▼모양의 포인트를 마우스로 움직이면 아래 그림과 같이 영역이 녹색 라인으로 영역이 보인다.
+
+### 3.5.2. Snap / Snap to 「Alt+;」
+
+지정한 정렬선 근처로 객체를 이동, 복사했을 때 가까운 정렬 선에 자석처럼 붙는 기능이다. Snap 기능을 On/Off하는 단축키는 Alt+; 이다.\
+해당 정렬선이 켜진 상태에서 Snap기능을 적용할 기준을 지정할 수 있다.
+
+![Snap, Snap To 메뉴](/docs/nabi/images/cg-editing-071.png)
+
+### 3.5.3. 안내선 사이즈 조정
+
+안내선은 비디오에서 CG작업한 내용이 잘리지 않고 안전하게 나갈 수 있는 평균값 이다. 영상에 따라서 차이가 있을 수 있으므로 사용자 임의로 조정 할 수 있는데, 이 메뉴를 실행하면 안내선에 8개의 포인터가 나타나고 포인터를 조정하여 안내선의 크기를 조정할 수 있다.\
+반드시 설정이 끝나면 ‘안내선 사이즈 조정’을 다시 선택하여 체크를 해제해야 한다.
+
+![포인터 8개가 나타난 안내선](/docs/nabi/images/cg-editing-072.png)
+
+### 3.5.4. 안내선 사이즈 초기화
+
+‘안내선 사이즈 조정’ 메뉴로 변경된 안내선을 초기화 시킨다.
+
+### 3.5.5. Alias 표기
+
+APC연동이나 SDK를 이용한 기타 옵션 프로그램, 교회DB 이용 시 활용되는 기능으로 각 객체를 구분할 수 있는 이름을 지정하는 기능이다.
+
+### 3.5.6. 송출 미리보기 ![송출 미리보기 아이콘](/docs/nabi/images/cg-editing-073.png)「F5」
+
+현재 선택한 페이지만 송출된다. 단축키는 F5이다.
+
+### 3.5.7. 프리뷰 윈도우 「F12」
+
+송출 시 송출 대기 중인 페이지를 PC에서 미리 볼 수 있다. 송출효과는 보이지 않고 송출 대기 중인 페이지의 페이지 번호, 페이지 모드를 볼 수 있으며, 단축키는 F12이다
+
+![Preview Window](/docs/nabi/images/cg-editing-074.png)
+
+![NABI 화면 위의 Preview Window](/docs/nabi/images/cg-editing-075.png)
+
+### 3.5.8. 16:9 ↔ 4:3
+
+기본 사이즈가 720×486(4:3) 인 것을 16:9비율로 늘려서 보이게 해준다.
+
+### 3.5.9. 페이지 리스트 윈도우 ![페이지 리스트 윈도우 아이콘](/docs/nabi/images/cg-editing-076.png)「F11」
+
+많은 양의 페이지 리스트 이미지를 한꺼번에 보여주는 윈도우로 많은 양의 페이지를 한꺼번에 보면서 방영 할 수 있다.\
+페이지리스트 윈도우 하단에는 Playback/Stamp Playback/Global Animation Playback 컨트롤 메뉴가 있어서, 바로 송출 컨트롤이 가능하고, 송출 중에 리스트에서 원하는 페이지를 더블 클릭 (도구>옵션>Playback>Play Direct by Double-click in the PageListWindow)면 넥스트로 지정 된다
+
+![Page List Window](/docs/nabi/images/cg-editing-077.png)
+
+### 3.5.10. 오디오 타임라인 윈도우 ![오디오 타임라인 윈도우 아이콘](/docs/nabi/images/cg-editing-078.png) 「F10」
+
+페이지 별로 가사 작업을 한 후, ‘오디오 타임라인 윈도우’를 실행하여 오디오 파일에 각 페이지의 송출 지점을 지정하면 오디오 파일과 함께 가사 페이지가 자동 송출된다. 사용 가능한 오디오 파일은 mp3, wav파일이며, 파일 확장자는 \*.nba로 저장되어, 별도로 관리하거나, 기존 파일(\*.nbi)에 삽입하여 사용할 수 있다.
+
+**3.5.10.1. 오디오 타임라인 윈도우 메뉴**
+
+![Audio Timeline Window(A–G 표시)](/docs/nabi/images/cg-editing-079.png)
+
+**ⓐ. 자막 페이지 리스트** : 자막 작업된 페이지 리스트가 순차적으로 보인다. 현재 송출 중(PGM)인 페이지는 분홍색 테두리로, 송출 대기 중(Next)인 페이지는 하늘색 테두리로 진행되는 상황이 보인다.
+
+![분홍색 테두리의 PGM 페이지와 하늘색 테두리의 NEXT 페이지](/docs/nabi/images/cg-editing-080.png)
+
+**ⓑ. 오디오 타임라인 :** 오디오 파일의 Duration으로 타임라인의 길이가 결정되고, 키패드의 Enter를 눌러 자막 페이지 클립을 순차적으로 오디오 타임 라인위에 올릴 수 있다.\
+**ⓒ. Play Head** : 타임라인에 보이는 빨간 선으로 오디오 파일의 현재 재생 위치를 나타낸다. 마우스로 클릭하여 Play Head위치를 이동시킬 수 있다.\
+**ⓓ. Playback** : 오디오 타임라인위에 페이지 클립을 올려 송출을 확인할 수 있는 창으로 왼쪽은 송출 준비 중인 페이지(NEXT), 오른쪽은 송출중인 페이지(PGM)를 나타낸다.
+
+![Playback의 NEXT, PGM 페이지](/docs/nabi/images/cg-editing-081.png)
+
+**ⓔ. 오디오파일 설정 및 플레이 :** 오디오 파일을 등록한다. mp3, wav파일 사용이 가능하고, 송출 중에는 오디오 파일을 변경할 수 없다. 오디오 파일 Play / Stop은 Space bar로 컨트롤 할 수 있다.
+
+![오디오파일 설정 및 플레이 영역](/docs/nabi/images/cg-editing-082.png)
+
+![Play 버튼](/docs/nabi/images/cg-editing-083.png)![Stop 버튼](/docs/nabi/images/cg-editing-084.png) : 오디오파일 Play/일시정지/정지(Space Bar)\
+![PlayHead 맨 앞으로 이동 버튼](/docs/nabi/images/cg-editing-085.png) : PlayHead 맨 앞으로 이동\
+![CG 버튼](/docs/nabi/images/cg-editing-086.png) : CG In(키패드 Enter)\
+![재생 시간 표시](/docs/nabi/images/cg-editing-087.png) : 현재 재생 시점 / 전체 재생 시간\
+![File 버튼](/docs/nabi/images/cg-editing-088.png) : 오디오 파일을 설정\
+![볼륨 조절 막대](/docs/nabi/images/cg-editing-089.png) : 볼륨 조절\
+**ⓕ. Delete All Clips** : 타임라인 위에 지정된 페이지 클립을 모두 삭제한다.\
+**ⓖ. Reset Windows Size** : 오디오 타임라인 윈도우 크기는 확대 축소가 가능하며, Reset Windows Size버튼을 누르면 기본 창 사이즈로 조절된다.
+
+**3.5.10.2. 오디오 타임라인 설정 및 편집**
+
+오디오 타임 라인에 자막 페이지 클립을 설정하는 과정은 아래와 같이 간단히 정리할 수 있다.\
+ⓐ. 가사 자막 작업\
+ⓑ. 오디오 타임라인 편집창 실행(F10)\
+ⓒ. 오디오 파일지정 / 플레이(오디오파일 Play & Stop : Space bar)\
+ⓓ. 오디오 타임라인위에 페이지 클립 적용(키패드 Enter)
+
+**3.5.10.2.1. 페이지 클립 삽입**
+
+오디오파일이 플레이되는 상태에서 키패드의 Enter키를 눌러 순차적으로 페이지를 오디오 타임라인 위에 올린다. 순차적인 페이지 송출 중 특정 페이지를 송출하려면 키패드에서 해당페이지 번호를 입력하고 Enter버튼을 누르면 NEXT에 로드된다.
+
+<Callout type="warning">
+오디오 타임라인에서 송출 시 Run Setting 모드는 무조건 Manual In으로 적용된다.
+</Callout>
+
+**3.5.10.2.2. 페이지 클립 편집**
+
+- **페이지 클립 이동** : 페이지 클립을 선택하고 마우스로 드래그 하거나, 키보드의 화살표 방향 좌, 우 버튼으로 미세 이동 가능
+- **페이지 클립 삭제** : 삭제할 페이지클립 선택 후 Del키를 누른다. Shift키를 눌러 범위 선택할 수도 있으며, Ctrl키를 누른 상태에서 원하는 페이지를 선택하여 삭제할 수 있다.
+
+**3.5.10.3. nba파일 관리**
+
+**3.5.10.3.1. nba파일로 저장**
+
+오디오 타임라인에 페이지 클립을 올리는 작업이 끝나고 파일>저장하기 메뉴에서 저장할 수 있다. 오디오 타임라인 윈도우에서 클립을 올렸을 경우 기본 확장자는 \*.nba로 지정되어 파일을 저장할 수 있는 창이 뜬다.
+
+![Nabi Audio Files(\*.nba) 형식의 Save 창](/docs/nabi/images/cg-editing-090.png)
+
+**3.5.10.3.2. nba파일 열기**
+
+파일>열기 메뉴에서 확장자를 nba로 선택하면, nba파일을 바로 열 수 있다. 오디오 파일과 함께 송출하기 위해서는 오디오 타임라인 윈도우(F10)를 띄우고 송출해야하며, 일반 Playback메뉴로 송출할 경우 오디오가 적용되지 않고 일반 송출로 진행된다.\
+nba파일도 함께 사용된 외부 파일(이미지, 오디오파일)의 경로만 기억하기 때문에, 기존 경로에 파일이 없을 경우 아래와 같이 경고 메시지가 뜨고 경로를 다시 지정해야한다.
+
+![오디오 파일이 존재하지 않는다는 경고 메시지](/docs/nabi/images/cg-editing-091.png)
+
+**3.5.10.3.3. nba 프로젝트 파일 삽입 「Alt+A」**
+
+\*.nbi파일에 \*.nba로 저장된 파일을 삽입하여 사용할 수 있다. 페이지 리스트에서 마우스 오른쪽 버튼을 눌러 ‘.nba파일 삽입’메뉴에서 원하는 파일을 선택하면, nba이 프로젝트 파일 형식으로 삽입된다.
+
+![.nba 파일 삽입 메뉴와 삽입 결과](/docs/nabi/images/cg-editing-092.png)
+
+nbi파일에 삽입된 nba 프로젝트 파일의 경우 오디오 파일이나 nba파일의 기존 저장 경로에 없다면 아래와 같이 페이지 리스트에 X표시가 된다.
+
+![X표시된 nba 프로젝트 파일 페이지](/docs/nabi/images/cg-editing-093.png)
+
+경로를 찾지 못하는 nba 프로젝트 파일을 페이지 리스트에서 선택하면, nba파일이 없을 경우 NoNBAFile, 오디오 파일이 없을 경우 NoAudioFile이라고 편집 창에 표시된다.
+
+![편집 창의 NoNBAFile, NoAudioFile 표시](/docs/nabi/images/cg-editing-094.png)
+
+**3.5.10.3.4. nba프로젝트 파일 열기 「Alt+더블클릭」**
+
+삽입된 nba프로젝트 파일은 페이지리스트에서 nba프로젝트 파일을 선택하고 Alt+더블 클릭을 누르면 별도의 탭으로 파일이 열리고 수정 및 편집이 가능하다.
+
+### 3.5.11. 작업용 프리뷰 모니터
+
+송출보드가 없는 작업용 프로그램일 경우 사용할 수 있는 기능으로, 작업용에서의 듀얼 모니터를 사용하는 PC의 경우 송출 미리 보기창을 주모니터 또는 보조모니터에서 할지를 지정할 수 있다.
+
+![작업용 프리뷰 모니터 메뉴](/docs/nabi/images/cg-editing-095.png)
