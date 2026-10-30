@@ -10,7 +10,8 @@ import { Callout } from "@/app/_components/callout";
  * `rehype-slug`가 단 `id`는 `props`로 넘어오니 그대로 펼친다.
  *
  * `img`는 `next/image`로 바꾸지 않는다. 정적 export가 기본 loader를 지원하지 않고,
- * 마크다운 이미지에는 width·height가 없다.
+ * 마크다운 이미지에는 width·height가 없다. 문장·표 칸·제목 안 아이콘이 글줄에 남도록
+ * 블록이 아닌 `inline-block`으로 둔다. 혼자 있는 그림은 감싼 `p`가 간격을 준다.
  *
  * `Callout`은 요소가 아니라 컴포넌트라 절 페이지가 `<Callout type="warning">`처럼 쓴다.
  */
@@ -64,7 +65,11 @@ const components: MDXComponents = {
   ),
   img: ({ alt = "", ...props }) => (
     // eslint-disable-next-line @next/next/no-img-element -- 위 주석대로 next/image를 쓰지 않는다
-    <img className="mt-4 max-w-full" alt={alt} {...props} />
+    <img
+      className="inline-block max-w-full align-middle"
+      alt={alt}
+      {...props}
+    />
   ),
   Callout,
 };
