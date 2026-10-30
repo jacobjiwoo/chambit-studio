@@ -53,6 +53,10 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [setup 변환](issues/07-setup-conversion.md): Chapter 1 네 페이지와 첫 페이지(`/docs/nabi`, Chapter 첫 페이지 셋)를 옮겼다. 사이드바 Chapter 이름·순서는 Chapter 첫 페이지 frontmatter가 정하고, 절만 있고 Chapter 첫 페이지가 없으면 빌드가 멈춘다. 확인 필요·이미지·오탈자 목록은 티켓마다 Answer 표 셋에 모은다
 - [cg/overview 변환](issues/08-cg-overview-conversion.md): `cg/overview`(PDF 30–35)를 옮겼다. Ch2는 쪽마다 머리글 로고가 이미지 객체(object ID 160)라 `pdfimages` 목록에서 빼고 센다. 줄바꿈으로 갈린 곳의 띄어쓰기를 알 수 없으면 확인 필요로 남긴다
 - [cg/getting-started 변환](issues/09-cg-getting-started-conversion.md): Chapter 2 `2. 시작하기`를 한 페이지로 옮겼다. 07 방식에 새로 정한 것은 없다. 굵은 `[…]` 뒤에 한글이 붙어 `**`가 닫히지 않는 곳은 `<strong>`으로 쓴다. 확인 필요 0, 이미지 32(아이콘 5), 오탈자 4
+- [cg/editing 변환 1](issues/10-cg-editing-1-conversion.md): `cg/editing` 페이지와 H1을 만들고 3.1–3.3(PDF 49–64)을 옮겼다. 이미지가 100개를 넘어 번호는 세 자리(`cg-editing-001.png`)다. 병합 머리글은 칸을 풀고, 대각선 머리글과 칸 안 줄바꿈은 `<br />`, 표 칸의 `{` `}` `<`는 `\`로 가린다
+- [cg/editing 변환 2](issues/11-cg-editing-2-conversion.md): 3.4–3.5(PDF 65–77)를 이어 썼다. 행 병합 표는 열을 늘려 풀고, 확장자 패턴 `*.nba`는 기울임꼴이 되지 않게 `\*`로 가린다
+- [cg/editing 변환 3](issues/12-cg-editing-3-conversion.md): 3.6(PDF 78–89)을 이어 썼다. 3.6.13 그림과 3.6.14가 PDF 89에 있어 3.6을 끝까지 옮겼고 13은 3.7부터다. 줄 첫머리 `* ` 보충은 `\*`, 이미지 alt 안의 `<`도 `\<`로 가린다
+- [cg/editing 변환 4](issues/13-cg-editing-4-conversion.md): 3.7–3.8(PDF 89–100)을 이어 써서 `cg/editing`을 끝냈다(이미지 157개). `•` 글머리표도 목록으로, 밑줄 강조는 굵은 글씨로만 옮긴다. 옵션 이름 오타는 스크린샷 글자가 근거일 때만 고친다
 
 ## Not yet specified
 
