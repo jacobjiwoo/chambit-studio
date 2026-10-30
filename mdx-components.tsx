@@ -1,5 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 
+import { Callout } from "@/app/_components/callout";
+
 /**
  * 모든 MDX 페이지에 적용되는 요소 매핑. `@next/mdx`가 App Router에서 이 파일을 루트에서만
  * 찾는다.
@@ -9,6 +11,8 @@ import type { MDXComponents } from "mdx/types";
  *
  * `img`는 `next/image`로 바꾸지 않는다. 정적 export가 기본 loader를 지원하지 않고,
  * 마크다운 이미지에는 width·height가 없다.
+ *
+ * `Callout`은 요소가 아니라 컴포넌트라 절 페이지가 `<Callout type="warning">`처럼 쓴다.
  */
 const components: MDXComponents = {
   h1: (props) => <h1 className="text-3xl font-bold" {...props} />,
@@ -62,6 +66,7 @@ const components: MDXComponents = {
     // eslint-disable-next-line @next/next/no-img-element -- 위 주석대로 next/image를 쓰지 않는다
     <img className="mt-4 max-w-full" alt={alt} {...props} />
   ),
+  Callout,
 };
 
 export function useMDXComponents(): MDXComponents {

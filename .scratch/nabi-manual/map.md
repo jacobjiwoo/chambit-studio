@@ -41,6 +41,7 @@ Compix **NABI User Manual**(PDF 153쪽, `/Users/jiwoo/Downloads/NABI_2.5_docs.pd
 - [페이지 목록과 slug](issues/03-page-list-and-slugs.md): 1단계 절 15개가 페이지 15개다(`setup/hd200-install`, `cg/editing`, `db/search` 등). `3. 편집`도 한 페이지이고 변환 티켓만 넷으로 나눈다. `title`은 번호를 빼고 H1은 번호까지 원문 그대로다. `slug`는 경로의 마지막 조각, `order`는 원문 번호다. 변환은 티켓 07–18이고 07(setup)이 시범이다
 - [Callout 종류와 원문 표현](issues/04-callout-types.md): `type`은 `warning`(주의·경고 `※` 문단 9곳)과 `danger`(PDF 19 빨간 밑줄 한 곳) 둘이다. `※`와 문단 전체 굵게는 Callout이 대신하므로 지우고 낱말(`주의 :`)은 남긴다. 컴포넌트는 글자 라벨을 넣지 않는다. 용어 설명·문의 안내 `※`(PDF 26, 27), `관련 옵션`, `* ` 보충은 Callout이 아니다
 - [문서 기반 세우기](issues/05-docs-foundation.md): `app/docs/nabi/<chapter>/<slug>/page.mdx`만 쓰면 사이드바·`<title>`·앵커가 따라온다. frontmatter·폴더가 어긋나거나 `order`가 겹치면 빌드가 멈춘다. MDX는 `<!-- -->`를 못 쓰므로 확인 필요 표시는 `{/* 확인 필요: … */}`다. 샘플 `setup/sample`은 첫 절 변환이 지운다
+- [Callout 컴포넌트](issues/06-callout-component.md): `app/_components/callout.tsx`를 `mdx-components.tsx`에 등록했다. 루트 파일이 라우트 private folder를 import할 수 없어 `app/_components`에 둔다. 절 페이지는 import 없이 `<Callout type="warning">`·`"danger"`로 쓴다
 
 ## Not yet specified
 
