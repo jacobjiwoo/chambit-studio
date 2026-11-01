@@ -1,6 +1,6 @@
 # 07: 셋리스트 순서 목록과 드래그 정렬
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 03
 
 ## 무엇을 만드나
