@@ -1,6 +1,6 @@
 # 08: 셋리스트 상세와 슬라이드 편집 서랍
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 03
 
 ## 무엇을 만드나

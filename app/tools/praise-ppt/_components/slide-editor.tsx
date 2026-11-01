@@ -1,6 +1,10 @@
+import { useEffect, useRef } from "react";
+
 import type { Background } from "../_lib/background";
-import type { SetlistEntry } from "../_lib/setlist";
+import { countUsedSlides } from "../_lib/plan";
+import { appliedBackground, type SetlistEntry } from "../_lib/setlist";
 import type { Song } from "../_lib/song";
+import { SlideThumb } from "./slide-thumb";
 
 /**
  * 슬라이드 편집 서랍(08). 루트는 서랍이 열려 있고 곡을 찾았을 때만 그린다. 콜백은 이 곡에
@@ -17,11 +21,79 @@ export type SlideEditorProps = {
   onClose: () => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- 빈 자리. 채우는 티켓이 지운다
-export function SlideEditor(_: SlideEditorProps) {
+export function SlideEditor({
+  song,
+  entry,
+  commonBackground,
+  onToggleSlide,
+  onIncludeAll,
+  onExcludeAll,
+  onClose,
+}: SlideEditorProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  // 그려질 때가 곧 열릴 때다. 모달로 열어야 Esc와 backdrop이 생긴다
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    return () => dialog?.close();
+  }, []);
+
+  const total = song.slides.length;
+  const used = countUsedSlides(song, entry);
+  const background = appliedBackground(entry, commonBackground);
+
   return (
-    <section>
-      <h2>슬라이드 편집</h2>
-    </section>
+    // 바깥 클릭: dialog에 padding이 없으니 dialog 자신이 눌렸다면 backdrop이다.
+    // 키보드로는 Esc가 같은 일을 한다
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="slide-editor-title"
+      style={{ padding: 0 }}
+      onCancel={(event) => {
+        // 닫기는 루트 상태가 정한다. 브라우저가 먼저 닫지 않게 막는다
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div style={{ padding: 16 }}>
+        <header>
+          <h2 id="slide-editor-title">{song.title}</h2>
+          <p>사용할 슬라이드를 골라주세요 · 전체 {total}장</p>
+          <button type="button" onClick={onIncludeAll}>
+            전체 포함
+          </button>
+          <button type="button" onClick={onExcludeAll}>
+            전체 제외
+          </button>
+        </header>
+
+        <ul style={{ display: "flex", flexWrap: "wrap", listStyle: "none", padding: 0 }}>
+          {song.slides.map((slide) => {
+            const excluded = entry.excluded.has(slide.index);
+            return (
+              <li key={slide.index}>
+                <button type="button" aria-pressed={!excluded} onClick={() => onToggleSlide(slide.index)}>
+                  <SlideThumb slide={slide} background={background} excluded={excluded} />
+                  {excluded ? "제외" : "포함"}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <footer>
+          <span>
+            {used} / {total}장 사용
+          </span>
+          <button type="button" onClick={onClose}>
+            완료
+          </button>
+        </footer>
+      </div>
+    </dialog>
   );
 }
