@@ -44,11 +44,17 @@ export function SetlistOrder({ setlist, findSong, onRemove, onMove }: SetlistOrd
     onMove(from, to);
   };
 
+  // 곡 목록에서 못 찾은 곡은 정리되기 전까지 순번·곡 수·드래그 대상에서 모두 뺀다
+  const rows = setlist.flatMap((entry) => {
+    const song = findSong(entry.songId);
+    return song ? [{ entry, song }] : [];
+  });
+
   return (
     <section>
       <h2>셋리스트 순서</h2>
-      <p>{setlist.length}곡</p>
-      {setlist.length === 0 ? (
+      <p>{rows.length}곡</p>
+      {rows.length === 0 ? (
         <p>아직 담긴 곡이 없어요. 곡을 검색해 담아 보세요.</p>
       ) : (
         <DndContext
@@ -58,23 +64,19 @@ export function SetlistOrder({ setlist, findSong, onRemove, onMove }: SetlistOrd
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={setlist.map((entry) => entry.songId)}
+            items={rows.map(({ entry }) => entry.songId)}
             strategy={verticalListSortingStrategy}
           >
             <ol>
-              {setlist.map((entry, index) => {
-                const song = findSong(entry.songId);
-                if (!song) return null;
-                return (
-                  <SetlistOrderItem
-                    key={entry.songId}
-                    order={index + 1}
-                    song={song}
-                    entry={entry}
-                    onRemove={() => onRemove(entry.songId)}
-                  />
-                );
-              })}
+              {rows.map(({ entry, song }, index) => (
+                <SetlistOrderItem
+                  key={entry.songId}
+                  order={index + 1}
+                  song={song}
+                  entry={entry}
+                  onRemove={() => onRemove(entry.songId)}
+                />
+              ))}
             </ol>
           </SortableContext>
         </DndContext>
