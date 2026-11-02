@@ -6,8 +6,7 @@ import type { FindSong } from "../_lib/song";
 import { SongCard } from "./song-card";
 
 /**
- * 셋리스트 상세(08). 곡 카드는 08이 이 컴포넌트 아래에 만든다. 썸네일 배경은
- * `_lib/setlist`의 `appliedBackground`이고 스타일은 `background-style.ts`다.
+ * 셋리스트 상세(08). 곡마다 곡 카드(`song-card.tsx`)를 그리고, 비었으면 3단계 시작 안내를 보인다.
  */
 export type SetlistDetailProps = {
   setlist: Setlist;
@@ -33,28 +32,28 @@ export function SetlistDetail({
   onOpenSlideEditor,
   onOpenSongBackground,
 }: SetlistDetailProps) {
-  const count = setlist.length;
+  const songCount = setlist.length;
 
   return (
     <section>
       {commonBackgroundBar}
       <header>
         <h2>
-          이번 예배 찬양{count > 0 && ` · ${count}곡`}
+          이번 예배 찬양{songCount > 0 && ` · ${songCount}곡`}
         </h2>
         <p>
-          {count > 0
+          {songCount > 0
             ? `총 ${slideTotal}장의 슬라이드가 PPT로 만들어집니다`
             : "찬양을 검색해 셋리스트에 추가하세요"}
         </p>
-        {count > 0 && (
+        {songCount > 0 && (
           <button type="button" onClick={onClearAll}>
             전체 비우기
           </button>
         )}
       </header>
 
-      {count === 0 ? (
+      {songCount === 0 ? (
         <SetlistEmpty />
       ) : (
         setlist.map((entry, order) => {

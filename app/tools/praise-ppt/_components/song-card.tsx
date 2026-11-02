@@ -51,10 +51,12 @@ export function SongCard({
           onClick={onOpenSongBackground}
           title={hasSongBackground ? `곡별 배경: ${backgroundName(background)}` : "곡별 배경 지정"}
         >
-          <span
-            aria-hidden
-            style={{ ...backgroundStyle(background), display: "inline-block", width: 16, height: 16 }}
-          />
+          {hasSongBackground && (
+            <span
+              aria-hidden
+              style={{ ...backgroundStyle(background), display: "inline-block", width: 16, height: 16 }}
+            />
+          )}
           {hasSongBackground ? `곡별 배경: ${backgroundName(background)}` : "곡별 배경"}
         </button>
         <button type="button" onClick={onOpenSlideEditor}>

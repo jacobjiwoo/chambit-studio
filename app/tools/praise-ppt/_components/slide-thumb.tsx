@@ -17,10 +17,11 @@ export function SlideThumb({
 }) {
   const number = slide.index + 1;
   return (
-    <figure
+    // 서랍에서는 button 안에 들어가니 phrasing content(span)로 짓는다
+    <span
       style={{
         ...backgroundStyle(background),
-        margin: 0,
+        display: "inline-block",
         width: 160,
         aspectRatio: "16 / 9",
         opacity: excluded ? 0.3 : 1,
@@ -34,7 +35,7 @@ export function SlideThumb({
         loading="lazy"
         style={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
-      <figcaption>{number}</figcaption>
-    </figure>
+      <span>{number}</span>
+    </span>
   );
 }

@@ -32,11 +32,10 @@ export function SlideEditor({
 }: SlideEditorProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // 그려질 때가 곧 열릴 때다. 모달로 열어야 Esc와 backdrop이 생긴다
+  // 그려질 때가 곧 열릴 때다. 모달로 열어야 Esc와 backdrop이 생긴다. 닫기는 루트가 이 컴포넌트를
+  // 빼는 것이라 cleanup에서 close()하지 않는다 — close 이벤트가 다시 onClose를 부르기 때문이다
   useEffect(() => {
-    const dialog = dialogRef.current;
-    dialog?.showModal();
-    return () => dialog?.close();
+    dialogRef.current?.showModal();
   }, []);
 
   const total = song.slides.length;
@@ -55,6 +54,8 @@ export function SlideEditor({
         event.preventDefault();
         onClose();
       }}
+      // cancel을 막지 못하고 브라우저가 닫아 버린 경우에도 루트 상태를 맞춘다
+      onClose={onClose}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
