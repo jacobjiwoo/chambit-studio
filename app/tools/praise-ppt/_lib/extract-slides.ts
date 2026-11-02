@@ -24,6 +24,9 @@ export class ExtractError extends Error {
 
 type ImageMime = "image/png" | "image/jpeg";
 
+/** 디코딩하지 않은 PNG·JPEG 바이트와 그 종류 */
+type RasterImage = { bytes: Uint8Array; mime: ImageMime };
+
 /** 이름이 `.ppt`나 `.pptx`로 끝나는가. 대소문자는 가리지 않는다. */
 export function isPptName(name: string): boolean {
   return /\.pptx?$/i.test(name);
@@ -42,7 +45,7 @@ export async function extractSlides(file: File): Promise<Slide[]> {
   throw new ExtractError("지원하지 않는 파일 형식입니다 (.ppt 또는 .pptx 만 가능)");
 }
 
-function toSlides(images: { bytes: Uint8Array; mime: ImageMime }[]): Slide[] {
+function toSlides(images: RasterImage[]): Slide[] {
   return images.map(({ bytes, mime }, index) => ({
     index,
     image: `data:${mime};base64,${bytesToBase64(bytes)}`,
@@ -99,7 +102,7 @@ function fromPpt(bytes: Uint8Array): Slide[] {
 
   const data = Uint8Array.from(pictures.content);
   const view = new DataView(data.buffer);
-  const candidates: { bytes: Uint8Array; mime: ImageMime; rgba: boolean }[] = [];
+  const candidates: (RasterImage & { rgba: boolean })[] = [];
 
   // 레코드 헤더 8바이트: 타입은 offset 2의 u16, 본문 길이는 offset 4의 u32
   let offset = 0;
@@ -209,10 +212,7 @@ function mimeOf(path: string): ImageMime | null {
 }
 
 /** 슬라이드에서 처음 나오는 그림을 꺼낸다. 못 찾으면 `null`이고 그 슬라이드는 건너뛴다 */
-function firstImage(
-  files: Unzipped,
-  slidePath: string,
-): { bytes: Uint8Array; mime: ImageMime } | null {
+function firstImage(files: Unzipped, slidePath: string): RasterImage | null {
   const slide = files[slidePath];
   if (!slide) return null;
   const embedId = /<a:blip\b[^>]*r:embed="([^"]+)"/.exec(strFromU8(slide))?.[1];
@@ -234,7 +234,10 @@ function firstImage(
 function fromPptx(bytes: Uint8Array): Slide[] {
   let files: Unzipped;
   try {
-    files = unzipSync(bytes);
+    // 읽는 것은 XML·관계·래스터 그림뿐이다. 동영상·폰트까지 풀면 메모리를 쓰고 화면이 멈춘다
+    files = unzipSync(bytes, {
+      filter: ({ name }) => /\.(xml|rels)$/.test(name) || mimeOf(name) !== null,
+    });
   } catch (error) {
     throw new ExtractError(`PPTX (ZIP) 파싱 실패: ${errorText(error)}`);
   }
