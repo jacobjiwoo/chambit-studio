@@ -1,6 +1,6 @@
 # 05: 검색
 
-Status: ready-for-agent
+Status: resolved
 Blocked by: 03
 
 ## 무엇을 만드나
