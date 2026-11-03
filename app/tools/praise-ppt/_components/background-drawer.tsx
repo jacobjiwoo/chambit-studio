@@ -1,6 +1,6 @@
 import { useEffect, type ChangeEvent } from "react";
 
-import { backgroundName, COLOR_PRESETS, type Background } from "../_lib/background";
+import { backgroundName, COLOR_PRESETS, isColor, type Background } from "../_lib/background";
 import { backgroundStyle } from "./background-style";
 
 /**
@@ -78,10 +78,7 @@ export function BackgroundDrawer({ target, background, onChange, onClose }: Back
           <h3>색상</h3>
           <div className="grid grid-cols-4 gap-2">
             {COLOR_PRESETS.map((preset) => {
-              const selected =
-                showSelection &&
-                background.type === "color" &&
-                background.value.toLowerCase() === preset.value.toLowerCase();
+              const selected = showSelection && isColor(background, preset.value);
               return (
                 <button
                   key={preset.value}
