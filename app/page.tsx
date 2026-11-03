@@ -46,6 +46,17 @@ export default function Home() {
               </p>
             </Link>
           </li>
+          <li>
+            <Link
+              href="/docs/broadcast-system"
+              className="block rounded-2xl border border-neutral-200 bg-white p-6 transition hover:border-neutral-400"
+            >
+              <span className="font-semibold">방송 시스템</span>
+              <p className="mt-1 text-sm text-neutral-500">
+                방송실 장비와 연결, 방송부 공식 용어를 정리했습니다.
+              </p>
+            </Link>
+          </li>
         </ul>
       </main>
     </div>
