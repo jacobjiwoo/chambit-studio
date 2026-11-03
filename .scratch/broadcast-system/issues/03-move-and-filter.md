@@ -6,13 +6,17 @@ Blocked by: 02
 
 ## 무엇을 하나
 
-Claude 프로젝트의 원래 파일을 걸러 내 저장소로 옮긴다. 결정과 이유는 [map](../map.md) Decisions에 있다. 작업 전에 `app/docs/broadcast-system/CLAUDE.md`를 읽는다.
+Claude 프로젝트의 원래 파일을 걸러 내 저장소로 옮긴다. 04(레이아웃·첫 페이지)와 동시에 돈다. 결정과 이유는 [map](../map.md) Decisions에 있다. 작업 전에 `app/docs/broadcast-system/CLAUDE.md`를 읽는다.
 
 | 원래 파일 | 옮길 곳 |
 | - | - |
 | `핸드북/00_용어집.md` | `app/docs/broadcast-system/glossary/page.mdx` |
 | `핸드북/01_장비목록표.md` | `app/docs/broadcast-system/equipment/page.mdx` |
 | `핸드북/90_업그레이드_제안.md` | `.scratch/broadcast-system/upgrade-proposals.md` |
+
+## 건드리지 않는 것
+
+04가 `app/docs/broadcast-system/`의 `layout.tsx`·`page.mdx`·`_lib`를 만든다. 이 티켓은 `glossary/`·`equipment/` 폴더와 `.scratch/broadcast-system/upgrade-proposals.md`만 만든다. 04가 아직 머지되지 않았으면 페이지는 사이드바 없이 루트 레이아웃으로 보이는 것이 맞다.
 
 ## 원래 파일 받기
 
@@ -39,7 +43,7 @@ Claude 프로젝트의 원래 파일을 걸러 내 저장소로 옮긴다. 결�
 
 ## 끝난 조건
 
-- 두 페이지가 사이드바에 순서대로 나오고, 표와 배지가 깨지지 않는다(빌드한 HTML에서 확인).
+- 두 페이지의 표와 배지가 깨지지 않는다(빌드한 HTML에서 확인). 사이드바 순서는 05에서 본다.
 - Answer에 `### 걸러 낸 것`(원래 문장 요지 → 바꾼 것), `### Unconfirmed로 못 감싼 곳`, `### 사람에게 물을 것` 표를 둔다. 원래 문장을 그대로 옮겨 적지 않는다 — 걸러 낸 내용이 Answer로 커밋되면 걸러 낸 의미가 없다.
 - 사람이 걸러 낸 결과를 확인한다.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`가 통과한다.

@@ -15,6 +15,10 @@ Blocked by: 없음 — 바로 시작할 수 있다
 - 그래서 통째로 옮기지 않는다. 실제로 둘이 같은 것(사이드바 표시, 레이아웃 껍데기, frontmatter 읽기·`order` 정렬·`description` 길이 검사 등)만 올리고, Chapter 처리처럼 NABI에만 있는 것은 `app/docs/nabi/` 안에 남긴다. 무엇을 올렸는지와 이유를 Answer에 적는다.
 - 미리 올리지 않는다. 방송 시스템이 쓰지 않을 것을 "나중을 위해" 올리지 않는다.
 
+## 건드리지 않는 것
+
+02와 동시에 돈다. `app/_components/`, `mdx-components.tsx`, `.claude/rules/`, `CONTEXT.md`, `app/docs/broadcast-system/`은 고치지 않는다.
+
 ## 끝난 조건
 
 - `/docs/nabi`의 사이드바, 첫 페이지 링크, 지금 보는 절 강조가 전과 같다. 빌드한 `out/docs/nabi/**` HTML을 전후로 비교해 확인한다.

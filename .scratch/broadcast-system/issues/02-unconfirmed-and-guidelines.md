@@ -1,24 +1,26 @@
-# 02: 방송 시스템 문서 뼈대
+# 02: `Unconfirmed` 배지와 작업 지침
 
 Type: task
 Status: ready-for-agent
-Blocked by: 01
+Blocked by: 없음 — 바로 시작할 수 있다
 
 ## 무엇을 하나
 
-03이 MDX 파일만 쓰면 되도록 `/docs/broadcast-system` 기반을 세운다. 결정과 이유는 [map](../map.md) Decisions에 있다.
+03(문서 옮기기)이 쓸 배지와 작업 지침을 세운다. 사이드바·레이아웃은 04가 하므로 01을 기다리지 않는다. 결정과 이유는 [map](../map.md) Decisions에 있다.
 
-1. **라우트와 레이아웃** — `app/docs/broadcast-system/layout.tsx`가 01에서 올린 사이드바를 쓴다. 사이드바는 한 단계(페이지 목록, `order` 순)이고 frontmatter에서 만든다. metadata title 템플릿은 `%s — 방송 시스템`.
-2. **첫 페이지** — `app/docs/broadcast-system/page.mdx`. 이 문서가 무엇인지(방송실 장비·연결·운영, 계속 고치는 문서, 배지의 뜻) 짧게 쓰고 페이지 링크 목록을 둔다. 목록은 손으로 쓰지 않고 frontmatter에서 만든다.
-3. **`Unconfirmed` 배지** — `app/_components/unconfirmed.tsx`, `mdx-components.tsx`에 등록해 import 없이 쓴다. `<Unconfirmed>출발 장비</Unconfirmed>`처럼 미확인인 것을 감싸고, 표 칸 안에서도 글줄에 붙어 보이는 인라인 배지다(회색 계열, 글자 "확인 필요"). 감싼 내용은 그대로 보이고 배지가 미확인임을 표시한다. `<Unconfirmed />`처럼 내용 없이 쓰면 배지만 보인다. `Callout` 주석처럼 왜 `app/_components`인지 적는다.
-4. **`app/docs/broadcast-system/CLAUDE.md`** — 아래 "원래 지침"을 저장소에 맞게 옮긴다. 이 폴더 파일을 다룰 때만 읽히는 중첩 `CLAUDE.md`다. [instruction-writing.md](../../../.claude/rules/instruction-writing.md)를 따른다 — lint로 강제할 수 있거나 Claude가 기본으로 하는 것은 쓰지 않는다. 바꿀 것:
+1. **`Unconfirmed` 배지** — `app/_components/unconfirmed.tsx`, `mdx-components.tsx`에 등록해 import 없이 쓴다. `<Unconfirmed>출발 장비</Unconfirmed>`처럼 미확인인 것을 감싸고, 표 칸 안에서도 글줄에 붙어 보이는 인라인 배지다(회색 계열, 글자 "확인 필요"). 감싼 내용은 그대로 보이고 배지가 미확인임을 표시한다. `<Unconfirmed />`처럼 내용 없이 쓰면 배지만 보인다. `Callout` 주석처럼 왜 `app/_components`인지 적는다.
+2. **`app/docs/broadcast-system/CLAUDE.md`** — 아래 "원래 지침"을 저장소에 맞게 옮긴다. 이 폴더 파일을 다룰 때만 읽히는 중첩 `CLAUDE.md`다. [instruction-writing.md](../../../.claude/rules/instruction-writing.md)를 따른다 — lint로 강제할 수 있거나 Claude가 기본으로 하는 것은 쓰지 않는다. 바꿀 것:
    - "확인 필요"는 `<Unconfirmed>`로 쓴다. "추정"·"선임 설명"·"사용자 확인"은 글자로 둔다.
    - 결과물은 이 폴더의 페이지다. 용어집 페이지가 장비 이름의 기준이다.
    - 업그레이드 제안은 `.scratch/broadcast-system/upgrade-proposals.md`에 쓴다(사이트에 올리지 않는다).
    - 공개 사이트다: 내부 네트워크 주소를 쓰지 않고, 사람(선임 등)의 설명은 평가하지 않고 사실과 미확인을 적는다. 사진 원본은 커밋하지 않고, 쓰는 사진만 `public/docs/broadcast-system/images/`에 WebP로 둔다.
    - 문체·언어는 저장소 [language.md](../../../.claude/rules/language.md)를 따른다. 원래 지침과 겹치는 것은 쓰지 않는다.
-5. **규칙 수정** — [project-structure.md](../../../.claude/rules/project-structure.md)의 `app/` 표에 "에이전트 지침: `CLAUDE.md`"를 더한다. 근거는 Claude Code 공식 문서의 중첩 `CLAUDE.md`(하위 폴더 파일을 읽을 때 읽힘)이고, 링크를 단다. 표 아래 "표에 없는 것을 만들려면" 절차를 밟는다 — 문서를 먼저 열어 확인한다.
-6. **`CONTEXT.md`** — "방송 시스템" 항목을 더한다. 방송실 장비·연결·운영 문서이고, 방송 장비 용어는 그 문서의 용어집 페이지가 정한다는 것까지.
+3. **규칙 수정** — [project-structure.md](../../../.claude/rules/project-structure.md)의 `app/` 표에 "에이전트 지침: `CLAUDE.md`"를 더한다. 근거는 Claude Code 공식 문서의 중첩 `CLAUDE.md`(하위 폴더 파일을 읽을 때 읽힘)이고, 링크를 단다. 표 아래 "표에 없는 것을 만들려면" 절차를 밟는다 — 문서를 먼저 열어 확인한다.
+4. **`CONTEXT.md`** — "방송 시스템" 항목을 더한다. 방송실 장비·연결·운영 문서이고, 방송 장비 용어는 그 문서의 용어집 페이지가 정한다는 것까지.
+
+## 건드리지 않는 것
+
+01·04와 동시에 돈다. `app/docs/_*`, `app/docs/nabi/`, `app/docs/broadcast-system/`의 `layout.tsx`·`page.mdx`·`_lib`·`_components`는 만들거나 고치지 않는다.
 
 ## 원래 지침 (Claude 프로젝트, 2026-11-03 기준)
 
@@ -71,6 +73,6 @@ Blocked by: 01
 
 ## 끝난 조건
 
-- 샘플 페이지 하나(03이 바꿔 쓸 자리)로 사이드바, 첫 페이지 링크 목록, 표 칸 안의 `Unconfirmed` 배지가 렌더되는 것을 빌드한 HTML에서 확인한다.
+- 배지를 확인할 샘플 MDX를 임시로 만들어 빌드한 HTML에서 표 칸 안의 `<Unconfirmed>내용</Unconfirmed>`과 `<Unconfirmed />`가 깨지지 않는 것을 본 뒤 지운다. 샘플은 커밋하지 않는다.
 - `/docs/nabi`가 그대로다.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`가 통과한다.

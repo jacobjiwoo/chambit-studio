@@ -2,7 +2,7 @@
 
 Label: `wayfinder:map`
 
-> 이 문서를 다루는 에이전트는 먼저 [`app/docs/broadcast-system/CLAUDE.md`](../../app/docs/broadcast-system/CLAUDE.md)를 읽는다(티켓 [02](issues/02-docs-skeleton.md)가 만든다). `.scratch/`는 그 폴더 밖이라 자동으로 읽히지 않는다.
+> 이 문서를 다루는 에이전트는 먼저 [`app/docs/broadcast-system/CLAUDE.md`](../../app/docs/broadcast-system/CLAUDE.md)를 읽는다(티켓 [02](issues/02-unconfirmed-and-guidelines.md)가 만든다). `.scratch/`는 그 폴더 밖이라 자동으로 읽히지 않는다.
 
 ## Destination
 
@@ -36,16 +36,28 @@ Label: `wayfinder:map`
 - **문서 하나 = 페이지 하나다.** 장비 목록표 안의 파트(전원, 영상·온라인 송출 등)는 H2 앵커로 나눈다. 방송실에서는 한 페이지 안 검색이 빠르다. 아직 없는 문서는 메뉴에 두지 않는다.
 - **작업 지침은 `app/docs/broadcast-system/CLAUDE.md`에 둔다.** 전역 `.claude/rules/`가 아니라 이 문서 폴더의 중첩 `CLAUDE.md`라, 이 폴더 파일을 다룰 때만 읽힌다. `project-structure.md` 표에는 없던 파일이라 표에 근거(Claude Code 공식 문서)와 함께 더한다.
 - **사진 원본은 커밋하지 않는다.** 페이지에 쓰는 것만 `public/docs/broadcast-system/images/`에 WebP로 넣는다. public 저장소라 방송실 내부 사진이 통째로 공개되고 용량도 크다.
-- **티켓은 넷이다.** 사이드바 공용화를 따로 떼는 것은 NABI 매뉴얼 코드를 건드리는 리팩터라 회귀 확인을 분리하기 위해서다.
+- **티켓은 다섯이고 두 줄로 나란히 돈다.** 사이드바 공용화(01)를 따로 떼는 것은 NABI 매뉴얼 코드를 건드리는 리팩터라 회귀 확인을 분리하기 위해서다. 처음에는 넷을 한 줄로 두었으나, 뼈대 티켓에서 사이드바가 필요 없는 일(배지, 작업 지침)을 02로 떼어 레이아웃(04)과 나눴다. 문서 옮기기(03)는 배지와 지침만 있으면 되므로 01을 기다리지 않는다. 03은 사람 확인이 있어 가장 오래 걸리고, 그동안 01→04가 함께 진행된다. 동시에 도는 티켓끼리 같은 파일을 만지지 않도록 티켓마다 "건드리지 않는 것"을 적었다.
 
 ## Tickets
 
-| # | 무엇 | Blocked by |
-| - | - | - |
-| [01](issues/01-shared-docs-sidebar.md) | 문서 사이드바를 `app/docs/`로 올리기 | — |
-| [02](issues/02-docs-skeleton.md) | 방송 시스템 문서 뼈대, `Unconfirmed`, `CLAUDE.md`, 규칙 | 01 |
-| [03](issues/03-move-and-filter.md) | 문서 옮기기와 걸러 내기 | 02 |
-| [04](issues/04-home-card.md) | 메인 화면 카드 | 03 |
+구현 스펙(user story, 테스트 seam)은 [spec.md](spec.md)에 있다.
+
+| # | 무엇 | Blocked by | 권장 모델 |
+| - | - | - | - |
+| [01](issues/01-shared-docs-sidebar.md) | 문서 사이드바를 `app/docs/`로 올리기 | — | Sonnet |
+| [02](issues/02-unconfirmed-and-guidelines.md) | `Unconfirmed` 배지, `CLAUDE.md`, 규칙, `CONTEXT.md` | — | Opus |
+| [03](issues/03-move-and-filter.md) | 문서 옮기기와 걸러 내기 | 02 | Opus |
+| [04](issues/04-docs-layout.md) | 레이아웃, 첫 페이지, 페이지 목록 함수 | 01, 02 | Sonnet |
+| [05](issues/05-home-card.md) | 메인 화면 카드, 합친 모습 확인 | 03, 04 | Sonnet |
+
+```
+01 ─────────┐
+            ├─ 04 ─┐
+02 ─────────┤      ├─ 05
+            └─ 03 ─┘
+```
+
+01과 02, 그다음 03과 04를 동시에 돌린다. 권장 모델은 판단이 결과를 좌우하는 티켓(지침 거르기, 공개 걸러 내기)만 Opus다.
 
 ## Fog
 
