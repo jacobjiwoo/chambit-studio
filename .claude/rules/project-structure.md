@@ -18,6 +18,7 @@
 | `fixtures/` | 테스트가 읽는 실제 원고 | gitignore |
 | `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` | 의존성, 스크립트 | ✓ |
 | `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `postcss.config.mjs` | 설정 | ✓ |
+| `GLOSSARY.md` | 도메인 용어집. mattpocock-skills가 루트에서 이 이름으로 찾는다 | ✓ |
 | `CLAUDE.md`, `README.md`, `.gitignore` | | ✓ |
 | `next-env.d.ts`, `.env*` | | gitignore |
 
