@@ -33,7 +33,7 @@
 | 라우트 폴더 | `subtitle-extractor/` `[slug]/` `(group)/` `@slot/` `(.)folder/` |
 | private folder | `_components/` `_lib/` |
 | 전역 스타일 | `app/globals.css`. 루트 `layout.tsx`가 import한다 |
-| 에이전트 지침 | `CLAUDE.md`. 그 폴더 파일을 읽거나 고칠 때만 로드된다([중첩 `CLAUDE.md`](https://code.claude.com/docs/ko/memory#how-claude-md-files-load)). `page`·`route`가 아니라 라우트가 되지 않는다([Colocation](https://nextjs.org/docs/app/getting-started/project-structure#colocation)) |
+| 에이전트 지침 | `CLAUDE.md`. 그 폴더 파일을 읽거나 고칠 때만 로드된다([중첩 `CLAUDE.md`](https://code.claude.com/docs/ko/memory#how-claude-md-files-load)). `page`·`route` 파일이 아니라서 라우트가 되지 않는다([Colocation](https://nextjs.org/docs/app/getting-started/project-structure#colocation)) |
 
 ## private folder는 `_components`와 `_lib` 둘뿐이다
 
