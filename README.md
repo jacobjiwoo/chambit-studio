@@ -42,8 +42,3 @@ pnpm lint && pnpm typecheck && pnpm test
 - `main`에 직접 커밋하지 않는다. 브랜치 이름과 머지 방식은 [branching.md](.claude/rules/branching.md)를 따른다.
 - 파일을 어디에 둘지는 [project-structure.md](.claude/rules/project-structure.md)를 따른다.
 - 문서, 커밋, PR, 주석은 한국어로 쓴다. 자세한 내용은 [language.md](.claude/rules/language.md)에 있다.
-
-## 제3자 콘텐츠
-
-- NABI 문서는 Compix의 서면 허락을 받아 매뉴얼을 웹 문서로 옮긴 것이다. 권리는 Compix에 있다.
-- 찬양 슬라이드 이미지는 원 블로그([cwy0675.tistory.com](https://cwy0675.tistory.com)) 운영자의 허락을 받아 제공한다. 권리는 원저작자에게 있다. 저장소에는 곡 제목과 장수만 담는다.
