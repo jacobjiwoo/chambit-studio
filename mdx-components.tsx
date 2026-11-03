@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 
 import { Callout } from "@/app/_components/callout";
+import { Unconfirmed } from "@/app/_components/unconfirmed";
 
 /**
  * 모든 MDX 페이지에 적용되는 요소 매핑. `@next/mdx`가 App Router에서 이 파일을 루트에서만
@@ -13,7 +14,8 @@ import { Callout } from "@/app/_components/callout";
  * 마크다운 이미지에는 width·height가 없다. 문장·표 칸·제목 안 아이콘이 글줄에 남도록
  * 블록이 아닌 `inline-block`으로 둔다. 혼자 있는 그림은 감싼 `p`가 간격을 준다.
  *
- * `Callout`은 요소가 아니라 컴포넌트라 절 페이지가 `<Callout type="warning">`처럼 쓴다.
+ * `Callout`과 `Unconfirmed`는 요소가 아니라 컴포넌트라 페이지가 `<Callout type="warning">`,
+ * `<Unconfirmed>…</Unconfirmed>`처럼 쓴다.
  */
 const components: MDXComponents = {
   h1: (props) => <h1 className="text-3xl font-bold" {...props} />,
@@ -72,6 +74,7 @@ const components: MDXComponents = {
     />
   ),
   Callout,
+  Unconfirmed,
 };
 
 export function useMDXComponents(): MDXComponents {

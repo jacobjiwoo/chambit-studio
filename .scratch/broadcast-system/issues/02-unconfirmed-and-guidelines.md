@@ -1,7 +1,7 @@
 # 02: `Unconfirmed` 배지와 작업 지침
 
 Type: task
-Status: ready-for-agent
+Status: resolved
 Blocked by: 없음 — 바로 시작할 수 있다
 
 ## 무엇을 하나
@@ -76,3 +76,38 @@ Blocked by: 없음 — 바로 시작할 수 있다
 - 배지를 확인할 샘플 MDX를 임시로 만들어 빌드한 HTML에서 표 칸 안의 `<Unconfirmed>내용</Unconfirmed>`과 `<Unconfirmed />`가 깨지지 않는 것을 본 뒤 지운다. 샘플은 커밋하지 않는다.
 - `/docs/nabi`가 그대로다.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`가 통과한다.
+
+## Answer
+
+배지, 중첩 `CLAUDE.md`, 규칙 표, `CONTEXT.md`를 더했다. 원래 지침은 [instruction-writing.md](../../../.claude/rules/instruction-writing.md)의 질문 순서(강제 가능한가 → Claude가 기본으로 하는가 → 예시가 필요한 경계인가)로 걸렀다.
+
+### 원래 지침에서 남기고 뺀 것
+
+| 원래 항목 | 처리 | 이유 |
+| - | - | - |
+| 역할 3가지 | 남김 | 이 폴더에서 무엇을 하는지 Claude가 알 수 없다 |
+| 사용자에 대해 | 줄여 남김. "혼자 보는 자료"는 "독자는 방송부원과 사역자"로 바꿈 | 설명의 깊이와 공개 규칙이 독자에 달려 있다. 공개 사이트가 되어 "혼자 본다"는 더 이상 맞지 않는다 |
+| 범위 | 남김. "OBS 등"은 "송출 소프트웨어"로 | 무엇이 이 문서에 들어오는지 정한다 |
+| 작업 순서 | 남김 | 큰 그림 먼저는 기본 동작이 아니다 |
+| 결과물 4종 | 페이지 표로 바꿈. 용어집을 더하고 장비 이름의 기준으로 둠. 장비 목록표 파트는 H2 | 결과물이 이 폴더의 페이지가 되었다(map Decisions) |
+| 기록 규칙 | 남김. "확인 필요"는 `<Unconfirmed>`, "추정"·"선임 설명"·"사용자 확인"은 글자 | map Decisions |
+| 기록 규칙의 질문 예시("믹서 뒷면 … 찍어줄 수 있어?") | 뺌. 규칙 문장에 "어느 장비의 어느 면 사진 등"으로 녹임 | 판단이 갈리는 경계가 아니다 |
+| 용어: 원어 + 첫 풀이 | 남김. Aux 예시는 규칙 아래로 | 풀이 형식(괄호)은 문장만으로 갈린다 |
+| 용어: 같은 대화에서 다시 풀지 않는다 | 뺌 | 대화 단위 규칙이다. 문서에서는 용어집 페이지가 풀이를 맡는다 |
+| 답변 스타일 전부 | 뺌 | 짧게 답하기, 바뀐 부분만 알리기는 Claude가 기본으로 한다. Edit 도구라 전체를 다시 출력할 일도 없다 |
+| 업그레이드 형식 | 남김. 위치를 `.scratch/broadcast-system/upgrade-proposals.md`로 | map Decisions |
+| 안전 | 남김 | 스펙 user story 47. 봉사자 안전이 걸려 기본 동작에 맡기지 않는다 |
+| 문체·언어 | 쓰지 않음 | 매 세션 읽히는 [language.md](../../../.claude/rules/language.md)와 겹친다 |
+
+새로 더한 것: 공개 규칙(내부 주소, 사람 설명 평가 금지, 사진 원본·WebP), 그리고 "그 밖에 공개가 걸리는 내용은 혼자 바꾸지 않고 묻는다"(스펙 user story 33). 공개 규칙은 hook으로 강제하지 않았다 — IP나 평가 문장은 패턴으로 가려지지 않는 판단이다.
+
+### 그 밖의 판단
+
+- 배지는 감싼 내용 뒤에 붙는 회색 인라인 `span`이다. 내용이 없으면 앞 여백 없이 배지만 나온다. 배지 글자만 `whitespace-nowrap`이고, 좁은 칸에서 감싼 내용과 배지 사이는 줄이 바뀔 수 있다. 긴 내용을 한 줄로 묶으면 표가 넓어지기 때문이다.
+- [project-structure.md](../../../.claude/rules/project-structure.md)는 표에 행을 더하면서, 표 위 문장("Next.js 특수 파일만 둔다")과 "표에 없는 것을 만들려면" 절도 어긋나지 않게 고쳤다. 근거는 Claude Code 문서의 [CLAUDE.md 파일이 로드되는 방식](https://code.claude.com/docs/ko/memory#how-claude-md-files-load)(하위 디렉터리 파일은 그 폴더 파일을 읽거나 쓸 때 로드)과 Next.js [Colocation](https://nextjs.org/docs/app/getting-started/project-structure#colocation)(라우트 폴더 안 파일은 `page`·`route`가 아니면 라우트가 되지 않음)이다. 두 문서를 열어 확인했다.
+
+### 확인
+
+- 표 칸 안 `<Unconfirmed>내용</Unconfirmed>`, `<Unconfirmed />`, 문장 안 배지를 임시 샘플(`app/docs/zz-unconfirmed-sample/`)로 빌드해 `out/` HTML과 화면에서 확인하고 지웠다. 커밋하지 않았다.
+- `/docs/nabi`: 변경 전후로 빌드한 HTML 19개가 빌드 해시를 빼면 같다.
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`(테스트 156개 통과, 4개 skip) 통과.
