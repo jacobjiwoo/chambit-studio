@@ -12,22 +12,20 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { parse } from "yaml";
+import {
+  readBaseFrontmatter,
+  readFrontmatterData,
+  sortByOrder,
+  type BaseFrontmatter,
+} from "../../_lib/frontmatter";
+import { toLink, type PageLink } from "../../_lib/page-link";
 
 /** 폴더 이름 오타를 막는다. 순서와 이름은 Chapter 첫 페이지의 frontmatter가 정한다. */
 export const CHAPTER_KEYS = ["setup", "cg", "db"] as const;
 
 export type ChapterKey = (typeof CHAPTER_KEYS)[number];
 
-export type Frontmatter = {
-  title: string;
-  description: string;
-  slug: string;
-  chapter: ChapterKey;
-  order: number;
-};
-
-export type PageLink = { title: string; href: string; order: number };
+export type Frontmatter = BaseFrontmatter & { chapter: ChapterKey };
 
 export type ChapterNav = PageLink & { key: ChapterKey; pages: PageLink[] };
 
@@ -37,35 +35,16 @@ export type ChapterNav = PageLink & { key: ChapterKey; pages: PageLink[] };
  */
 export type PageSource = { chapterDir: string; sectionDir?: string; source: string };
 
-const DESCRIPTION_MAX = 150;
-
-/** `page.mdx` 맨 앞의 YAML 블록을 읽고 다섯 키를 확인한다. */
+/** `page.mdx` 맨 앞의 YAML 블록을 읽고 다섯 키를 확인한다. 네 키는 문서 공용 규칙이다. */
 export function readFrontmatter(source: string, file: string): Frontmatter {
-  const block = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(source);
-  if (!block) throw new Error(`${file}: 맨 앞에 frontmatter(---)가 없다`);
+  const base = readBaseFrontmatter(source, file);
+  const { chapter } = readFrontmatterData(source, file);
 
-  const data: unknown = parse(block[1]);
-  if (typeof data !== "object" || data === null) {
-    throw new Error(`${file}: frontmatter가 키-값 묶음이 아니다`);
-  }
-  const { title, description, slug, chapter, order } = data as Record<string, unknown>;
-
-  for (const [key, value] of Object.entries({ title, description, slug })) {
-    if (typeof value !== "string" || value === "") {
-      throw new Error(`${file}: frontmatter \`${key}\`가 비어 있거나 문자열이 아니다`);
-    }
-  }
   if (!CHAPTER_KEYS.includes(chapter as ChapterKey)) {
     throw new Error(`${file}: frontmatter \`chapter\`는 setup·cg·db 중 하나다`);
   }
-  if (typeof order !== "number" || !Number.isInteger(order)) {
-    throw new Error(`${file}: frontmatter \`order\`는 정수다`);
-  }
-  if ((description as string).length > DESCRIPTION_MAX) {
-    throw new Error(`${file}: frontmatter \`description\`이 ${DESCRIPTION_MAX}자를 넘는다`);
-  }
 
-  return { title, description, slug, chapter, order } as Frontmatter;
+  return { ...base, chapter } as Frontmatter;
 }
 
 /**
@@ -87,7 +66,7 @@ export function toNav(sources: PageSource[]): ChapterNav[] {
     return { ...fm, file, href: `/docs/nabi/${dir}`, isChapter: sectionDir === undefined };
   });
 
-  const chapters = sortUnique(pages.filter((p) => p.isChapter));
+  const chapters = sortByOrder(pages.filter((p) => p.isChapter));
   for (const p of pages) {
     if (!p.isChapter && !chapters.some((c) => c.chapter === p.chapter)) {
       throw new Error(`${p.file}: Chapter 첫 페이지 \`app/docs/nabi/${p.chapter}/page.mdx\`가 없다`);
@@ -99,23 +78,8 @@ export function toNav(sources: PageSource[]): ChapterNav[] {
     title: c.title,
     href: c.href,
     order: c.order,
-    pages: sortUnique(pages.filter((p) => !p.isChapter && p.chapter === c.chapter)).map(toLink),
+    pages: sortByOrder(pages.filter((p) => !p.isChapter && p.chapter === c.chapter)).map(toLink),
   }));
-}
-
-/** `order` 순으로 늘어놓는다. 같은 값이 둘이면 순서를 정할 수 없으니 멈춘다. */
-function sortUnique<T extends { order: number; file: string }>(pages: T[]): T[] {
-  const sorted = [...pages].sort((a, b) => a.order - b.order);
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i].order === sorted[i - 1].order) {
-      throw new Error(`${sorted[i - 1].file}, ${sorted[i].file}: \`order: ${sorted[i].order}\`가 겹친다`);
-    }
-  }
-  return sorted;
-}
-
-function toLink({ title, href, order }: PageLink): PageLink {
-  return { title, href, order };
 }
 
 /**

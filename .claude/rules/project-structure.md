@@ -24,7 +24,7 @@
 
 ## `app/` 안에는 라우팅에 쓰이는 것과 private folder만 둔다
 
-라우트 폴더 바로 아래에는 Next.js 특수 파일만 둔다. 그 밖의 코드는 private folder에 넣는다.
+라우트 폴더 바로 아래에는 Next.js 특수 파일과 에이전트 지침만 둔다. 그 밖의 코드는 private folder에 넣는다.
 
 | 무엇 | 예 |
 | - | - |
@@ -33,6 +33,7 @@
 | 라우트 폴더 | `subtitle-extractor/` `[slug]/` `(group)/` `@slot/` `(.)folder/` |
 | private folder | `_components/` `_lib/` |
 | 전역 스타일 | `app/globals.css`. 루트 `layout.tsx`가 import한다 |
+| 에이전트 지침 | `CLAUDE.md`. 그 폴더 파일을 읽거나 고칠 때만 로드된다([중첩 `CLAUDE.md`](https://code.claude.com/docs/ko/memory#how-claude-md-files-load)). `page`·`route` 파일이 아니라서 라우트가 되지 않는다([Colocation](https://nextjs.org/docs/app/getting-started/project-structure#colocation)) |
 
 ## private folder는 `_components`와 `_lib` 둘뿐이다
 
@@ -63,4 +64,4 @@
 
 ## 표에 없는 것을 만들려면 문서부터 본다
 
-위 문서를 열어 확인한다. Next.js 규약이면 표를 고치고 진행한다. E2E 테스트 디렉토리처럼 처음 생기는 것도 이 순서를 밟는다. 표와 문서가 어긋나면 문서가 맞다.
+위 문서를 열어 확인한다. Next.js 규약이면 표를 고치고 진행한다. Claude Code 규약(`CLAUDE.md`)도 그 문서를 열어 확인하고 같은 순서를 밟는다. E2E 테스트 디렉토리처럼 처음 생기는 것도 이 순서를 밟는다. 표와 문서가 어긋나면 문서가 맞다.

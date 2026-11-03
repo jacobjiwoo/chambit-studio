@@ -33,15 +33,6 @@ describe("frontmatter", () => {
     });
   });
 
-  it("frontmatter가 없으면 멈춘다", () => {
-    expect(() => readFrontmatter("# 본문\n", "f")).toThrow("frontmatter(---)가 없다");
-  });
-
-  it("description이 150자를 넘으면 멈춘다", () => {
-    const long = `---\ntitle: t\ndescription: ${"가".repeat(151)}\nslug: s\nchapter: db\norder: 1\n---\n`;
-    expect(() => readFrontmatter(long, "f")).toThrow("150자");
-  });
-
   it("모르는 chapter면 멈춘다", () => {
     expect(() => readFrontmatter(page("etc", "s", 1).source, "f")).toThrow("setup·cg·db");
   });
