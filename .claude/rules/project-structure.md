@@ -20,6 +20,8 @@
 | `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `postcss.config.mjs` | 설정 | ✓ |
 | `GLOSSARY.md` | 도메인 용어집. mattpocock-skills가 루트에서 이 이름으로 찾는다 | ✓ |
 | `CLAUDE.md`, `README.md`, `.gitignore` | | ✓ |
+| `.mcp.json`, `.worktreeinclude` | Claude Code 설정. [claude-directory.md](claude-directory.md)를 따른다 | ✓ |
+| `CLAUDE.local.md` | | gitignore |
 | `next-env.d.ts`, `.env*` | | gitignore |
 
 - `.next/`, `out/`, `node_modules/`처럼 도구가 만들고 gitignore한 것은 이 표 밖이다.
@@ -60,9 +62,9 @@
 - 훅이라고 파일을 따로 나누지 않는다. 함께 쓰는 훅과 타입은 개념 이름의 파일 하나에 둔다.
 - 라우트 폴더는 kebab-case에 App Router 문법(`[ ]`, `( )`, `_`, `@`)만 더한다.
 
-## lint가 검사한다
+## lint와 CI가 검사한다
 
-`pnpm lint`가 import 방향과 `app/` 안의 이름을 검사한다(`eslint.config.mjs`). 루트 표와 라우트 폴더 바로 아래 파일은 검사하지 않으니 이 문서를 보고 지킨다.
+`pnpm lint`가 import 방향과 `app/` 안의 이름을 검사한다(`eslint.config.mjs`). CI의 `Repository structure` step이 커밋된 루트 경로를 위 루트 표 첫 칸과 대조한다(`.github/workflows/ci.yml`). 그래서 루트에 새 경로를 들이려면 표에 행을 더해야 CI가 통과한다. 라우트 폴더 바로 아래 파일은 검사하지 않으니 이 문서를 보고 지킨다.
 
 ## 표에 없는 것을 만들려면 문서부터 본다
 

@@ -8,6 +8,8 @@
 
 ## 이름: `<종류>/<slug>`
 
+CI의 `Branch name` step이 push와 PR마다 이 패턴을 검사한다.
+
 | 종류 | 무엇 |
 | - | - |
 | `feat` | 기능 |
@@ -16,7 +18,7 @@
 | `docs` | 문서. `.scratch/` 아래 조사·스펙·티켓도 여기다 |
 | `chore` | 설정, 의존성, 도구 |
 
-- slug는 영문 소문자와 `-`.
+- slug는 영문 소문자, 숫자, `-`.
 - 티켓에서 시작한 작업이면 slug를 `<feature>-<NN>-<slug>`로 짓는다. 예: `docs/dawn-prayer-ppt-03-pptx-generation`.
 - 다섯 종류 밖의 접두어는 쓰지 않는다. `research/`도 마찬가지 — 조사는 `docs/`다.
 
