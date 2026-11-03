@@ -1,7 +1,7 @@
 # 01: 문서 사이드바를 `app/docs/`로 올리기
 
 Type: task
-Status: ready-for-agent
+Status: resolved
 Blocked by: 없음 — 바로 시작할 수 있다
 
 ## 무엇을 하나
@@ -24,3 +24,22 @@ Blocked by: 없음 — 바로 시작할 수 있다
 - `/docs/nabi`의 사이드바, 첫 페이지 링크, 지금 보는 절 강조가 전과 같다. 빌드한 `out/docs/nabi/**` HTML을 전후로 비교해 확인한다.
 - 기존 `pages.test.ts`가 통과하고, 옮긴 함수의 테스트는 대상 파일 옆으로 따라간다.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`가 통과한다.
+
+## Answer
+
+### `app/docs/`로 올린 것
+
+- `_lib/frontmatter.ts` — `readBaseFrontmatter`(`title`·`description`·`slug`·`order` 확인, `description` 150자 검사), `readFrontmatterData`(YAML 블록 읽기), `sortByOrder`(`order` 정렬·중복 검사). 방송 시스템 frontmatter가 바로 이 네 키라 같은 규칙을 쓴다. 테스트는 `frontmatter.test.ts`로 따라갔다.
+- `_lib/page-link.ts` — `PageLink` 타입과 `toLink`. 사이드바와 첫 페이지 링크 목록의 공통 단위다.
+- `_components/docs-shell.tsx` — 사이드바(`aside`) + 본문(`article`) 껍데기. 사이드바 내용은 `sidebar` prop으로 받는다.
+- `_components/sidebar-page-link.tsx` — 사이드바의 페이지 링크 하나와 지금 보는 페이지 강조(`aria-current`).
+- `_components/page-link-list.tsx` — 첫 페이지의 링크 목록.
+
+### NABI에 남긴 것
+
+- `CHAPTER_KEYS`, `chapter` 키 검사, 폴더와 `chapter`·`slug` 대조, `toNav`, `loadNav`, Chapter 첫 페이지 필수 검사 — Chapter → 절 두 단계라서 NABI에만 있다.
+- `Sidebar`(Chapter 제목 링크와 목록 구성), `ChapterLinks`·`SectionLinks` — 방송 시스템은 한 단계라 모양이 다르다. 공용 조각만 위로 올렸다.
+
+### 확인
+
+`out/docs/nabi/**`의 HTML을 전후로 비교했다. `<script>`와 해시가 든 `/_next/` 경로·폰트 클래스를 지우면 DOM이 바이트 단위로 같다. (script 안 RSC payload의 module id는 파일이 바뀌어 달라지나 화면과 무관하다.) `pnpm lint`, `pnpm typecheck`, `pnpm build`(vitest 포함)가 통과했다.

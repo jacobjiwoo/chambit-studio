@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { SidebarPageLink } from "../../_components/sidebar-page-link";
 import type { ChapterNav } from "../_lib/pages";
 
 /**
@@ -36,24 +37,11 @@ export function Sidebar({ nav }: { nav: ChapterNav[] }) {
             </Link>
           </h2>
           <ul className="mt-2 space-y-1">
-            {chapter.pages.map((page) => {
-              const current = pathname === page.href;
-              return (
-                <li key={page.href}>
-                  <Link
-                    href={page.href}
-                    aria-current={current ? "page" : undefined}
-                    className={
-                      current
-                        ? "block rounded px-2 py-1 font-semibold text-neutral-900 bg-neutral-200"
-                        : "block rounded px-2 py-1 text-neutral-600 hover:bg-neutral-100"
-                    }
-                  >
-                    {page.title}
-                  </Link>
-                </li>
-              );
-            })}
+            {chapter.pages.map((page) => (
+              <li key={page.href}>
+                <SidebarPageLink page={page} />
+              </li>
+            ))}
           </ul>
         </section>
       ))}
