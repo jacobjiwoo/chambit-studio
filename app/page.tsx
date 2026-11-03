@@ -26,6 +26,17 @@ export default function Home() {
           </li>
           <li>
             <Link
+              href="/tools/praise-ppt"
+              className="block rounded-2xl border border-neutral-200 bg-white p-6 transition hover:border-neutral-400"
+            >
+              <span className="font-semibold">찬양 PPT</span>
+              <p className="mt-1 text-sm text-neutral-500">
+                찬양을 골라 셋리스트를 짜고 예배용 PPT 한 벌로 내려받습니다.
+              </p>
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/docs/nabi"
               className="block rounded-2xl border border-neutral-200 bg-white p-6 transition hover:border-neutral-400"
             >
