@@ -75,38 +75,46 @@ export function PraisePpt() {
 
   const closeDrawer = () => setDrawer(null);
 
+  // 디자인 시스템이 생기기 전까지 쓰는 임시 레이아웃. 왼쪽에서 곡을 찾고 오른쪽에서 셋리스트를
+  // 다듬는다. preflight가 지운 버튼·입력란 테두리만 이 안에서 되살린다
   return (
-    <main>
-      <header>
-        <h1>찬양 PPT</h1>
+    <main className="flex flex-1 flex-col [&_button:disabled]:opacity-40 [&_button]:rounded [&_button]:border [&_button]:border-neutral-300 [&_button]:px-2 [&_button]:py-0.5 [&_h2]:font-semibold [&_input[type=search]]:w-full [&_input[type=search]]:rounded [&_input[type=search]]:border [&_input[type=search]]:border-neutral-300 [&_input[type=search]]:px-3 [&_input[type=search]]:py-2">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-neutral-200 bg-white px-6 py-3">
+        <h1 className="text-lg font-bold">찬양 PPT</h1>
         <Build songCount={setlist.length} plan={plan} />
       </header>
 
-      <Search catalog={catalog} isInSetlist={isInSetlist} onToggleSong={setlistActions.toggle} />
-      <PptUpload onAddSong={addUploadedSong} />
+      <div className="grid flex-1 gap-8 px-6 py-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
+        <aside className="space-y-8 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto">
+          <Search catalog={catalog} isInSetlist={isInSetlist} onToggleSong={setlistActions.toggle} />
+          <PptUpload onAddSong={addUploadedSong} />
+        </aside>
 
-      <SetlistOrder
-        setlist={setlist}
-        findSong={findSong}
-        onRemove={setlistActions.remove}
-        onMove={setlistActions.move}
-      />
-
-      <SetlistDetail
-        setlist={setlist}
-        findSong={findSong}
-        commonBackground={commonBackground}
-        slideTotal={slideTotal}
-        commonBackgroundBar={
-          <CommonBackgroundBar
-            background={commonBackground}
-            onOpen={() => setDrawer({ kind: "common-background" })}
+        <div className="min-w-0 space-y-8">
+          <SetlistOrder
+            setlist={setlist}
+            findSong={findSong}
+            onRemove={setlistActions.remove}
+            onMove={setlistActions.move}
           />
-        }
-        onClearAll={setlistActions.clear}
-        onOpenSlideEditor={(songId) => setDrawer({ kind: "slides", songId })}
-        onOpenSongBackground={(songId) => setDrawer({ kind: "song-background", songId })}
-      />
+
+          <SetlistDetail
+            setlist={setlist}
+            findSong={findSong}
+            commonBackground={commonBackground}
+            slideTotal={slideTotal}
+            commonBackgroundBar={
+              <CommonBackgroundBar
+                background={commonBackground}
+                onOpen={() => setDrawer({ kind: "common-background" })}
+              />
+            }
+            onClearAll={setlistActions.clear}
+            onOpenSlideEditor={(songId) => setDrawer({ kind: "slides", songId })}
+            onOpenSongBackground={(songId) => setDrawer({ kind: "song-background", songId })}
+          />
+        </div>
+      </div>
 
       {renderDrawer()}
     </main>
