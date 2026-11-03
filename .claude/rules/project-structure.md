@@ -14,6 +14,7 @@
 | `docs/` | 문서, ADR | ✓ |
 | `.scratch/` | 조사·스펙·티켓 | ✓ |
 | `.claude/` | [claude-directory.md](claude-directory.md)를 따른다 | ✓ |
+| `.github/workflows/` | CI. GitHub Actions가 이 경로에서만 찾는다([Workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)) | ✓ |
 | `fixtures/` | 테스트가 읽는 실제 원고 | gitignore |
 | `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` | 의존성, 스크립트 | ✓ |
 | `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `postcss.config.mjs` | 설정 | ✓ |
