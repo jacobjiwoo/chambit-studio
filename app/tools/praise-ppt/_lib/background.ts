@@ -20,12 +20,15 @@ export const COLOR_PRESETS: readonly { name: string; value: string }[] = [
 /** 공통 배경의 기본값. 저장하지 않으니 새로고침하면 이것으로 돌아간다. */
 export const DEFAULT_BACKGROUND: Background = { type: "color", value: "FFFFFF" };
 
+/** 배경이 그 색(`#` 없는 hex)인지 본다. hex는 대소문자를 가리지 않는다. */
+export function isColor(background: Background, hex: string): boolean {
+  return background.type === "color" && background.value.toLowerCase() === hex.toLowerCase();
+}
+
 /** 화면에 보일 배경 이름 — 프리셋 이름, 아니면 `#RRGGBB`, 이미지면 "업로드 이미지". */
 export function backgroundName(background: Background): string {
   if (background.type === "image") return "업로드 이미지";
-  const preset = COLOR_PRESETS.find(
-    (p) => p.value.toLowerCase() === background.value.toLowerCase(),
-  );
+  const preset = COLOR_PRESETS.find((p) => isColor(background, p.value));
   return preset ? preset.name : `#${background.value}`;
 }
 
