@@ -1,3 +1,12 @@
+---
+paths:
+  - "**/CLAUDE.md"
+  - ".claude/rules/**"
+  - ".claude/skills/**"
+  - ".claude/agents/**"
+  - "docs/agents/**"
+---
+
 # 지침 파일 작성 규칙
 
 `CLAUDE.md`, `.claude/rules/`, `skills/`, `agents/`처럼 에이전트가 읽는 파일을 쓸 때 따른다. 근거는 [조사 노트](../../.scratch/language-rule/research/examples-in-agent-instructions.md)다.

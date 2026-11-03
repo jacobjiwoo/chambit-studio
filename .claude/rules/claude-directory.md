@@ -1,6 +1,15 @@
+---
+paths:
+  - ".claude/**"
+  - "CLAUDE.md"
+  - "CLAUDE.local.md"
+  - ".mcp.json"
+  - ".worktreeinclude"
+---
+
 # `.claude/` 디렉토리 규칙
 
-사람이든 에이전트든 따른다. 근거는 공식 문서 [`.claude` 디렉토리 탐색](https://code.claude.com/docs/ko/claude-directory)이다.
+사람이든 에이전트든 따른다. 근거는 공식 문서 [`.claude` 디렉토리 탐색](https://code.claude.com/docs/ko/claude-directory)이다. CI의 `Repository structure` step이 커밋된 `.claude/` 최상위 경로를 아래 표 첫 칸과 대조하고, `rules/`·`agents/`·`output-styles/`에 `.md`만 있는지 본다.
 
 ## `.claude/` 최상위에는 아래만 둔다
 

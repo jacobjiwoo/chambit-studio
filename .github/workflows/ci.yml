@@ -1,15 +1,39 @@
 # main을 바라보는 PR마다 돈다. `check` job은 main ruleset의 required status check다.
+# 티켓 브랜치는 PR 없이 integration branch에 들어가니 main이 아닌 브랜치의 push에도 돈다.
 name: CI
 
 on:
   pull_request:
     branches: [main]
+  push:
+    branches-ignore: [main]
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # 브랜치 이름 규칙. 근거는 .claude/rules/branching.md
+      - name: Branch name
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if ! [[ "$BRANCH" =~ ^(feat|fix|refactor|docs|chore)/[a-z0-9-]+$ ]]; then
+            echo "::error::브랜치 이름 '$BRANCH'이 <종류>/<slug> 규칙에 맞지 않는다. .claude/rules/branching.md를 본다."
+            exit 1
+          fi
+      # 루트와 .claude/ 최상위 허용 목록. 목록은 각 rule 문서의 표에서 읽는다.
+      - name: Repository structure
+        run: |
+          table() { awk -v h="$2" 'index($0, h) == 1 { f = 1; next } /^## / { f = 0 } f && /^\| `/' "$1" | cut -d'|' -f2 | grep -o '`[^`]*`' | tr -d '`' | sed 's#/.*##' | sort -u; }
+          fail=0
+          extra=$(comm -23 <(git ls-files | cut -d/ -f1 | sort -u) <(table .claude/rules/project-structure.md "## 루트에는"))
+          if [ -n "$extra" ]; then echo "::error::루트 표에 없는 경로: $extra (.claude/rules/project-structure.md)"; fail=1; fi
+          extra=$(comm -23 <(git ls-files .claude | cut -d/ -f2 | sort -u) <(table .claude/rules/claude-directory.md "## \`.claude/\` 최상위"))
+          if [ -n "$extra" ]; then echo "::error::.claude/ 표에 없는 경로: $extra (.claude/rules/claude-directory.md)"; fail=1; fi
+          extra=$(git ls-files .claude/rules .claude/agents .claude/output-styles | grep -v '\.md$' || true)
+          if [ -n "$extra" ]; then echo "::error::.md가 아닌 파일: $extra (.claude/rules/claude-directory.md)"; fail=1; fi
+          exit $fail
       - uses: pnpm/action-setup@v4
         with:
           version: 11
