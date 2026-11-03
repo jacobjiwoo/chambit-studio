@@ -29,6 +29,8 @@ pnpm lint && pnpm typecheck && pnpm test
 
 ## Agent skills
 
+`docs/agents/`는 mattpocock-skills 1.3.1의 `/setup-matt-pocock-skills`가 만들었다. skill의 base directory에 다른 버전이 보이면 그 skill을 다시 돌려 템플릿과 맞춘다.
+
 ### Issue tracker
 
 Issues and specs live as markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
