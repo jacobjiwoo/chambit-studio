@@ -1,9 +1,11 @@
 import {
+  type Announcements,
   closestCenter,
   DndContext,
   type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -18,6 +20,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { countUsedSlides } from "../_lib/plan";
 import type { Setlist, SetlistEntry } from "../_lib/setlist";
 import type { FindSong, Song } from "../_lib/song";
+
+/** dnd-kit 기본 안내는 영어라 한국어로 준다. 끌기 손잡이의 `aria-describedby`가 읽는다 */
+const SCREEN_READER_INSTRUCTIONS = {
+  draggable:
+    "스페이스 바를 누르면 곡을 들어요. 위아래 화살표로 옮기고, 스페이스 바를 다시 누르면 놓아요. " +
+    "Esc를 누르면 취소해요.",
+};
 
 /** 셋리스트 순서 목록(07). "N장 사용"은 `_lib/plan`의 `countUsedSlides`로 센다. */
 export type SetlistOrderProps = {
@@ -50,6 +59,23 @@ export function SetlistOrder({ setlist, findSong, onRemove, onMove }: SetlistOrd
     return song ? [{ entry, song }] : [];
   });
 
+  // 스크린 리더 안내. id 대신 곡 제목과 1부터 센 자리로 말한다
+  const titleOf = (id: UniqueIdentifier) =>
+    rows.find(({ entry }) => entry.songId === id)?.song.title ?? "곡";
+  const orderOf = (id: UniqueIdentifier) =>
+    rows.findIndex(({ entry }) => entry.songId === id) + 1;
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => `${titleOf(active.id)}을(를) 들었어요.`,
+    onDragOver: ({ active, over }) =>
+      over ? `${titleOf(active.id)}을(를) ${orderOf(over.id)}번째 자리 위에 두었어요.` : undefined,
+    onDragEnd: ({ active, over }) =>
+      over
+        ? `${titleOf(active.id)}을(를) ${orderOf(over.id)}번째로 옮겼어요.`
+        : `${titleOf(active.id)}을(를) 놓았어요.`,
+    onDragCancel: ({ active }) =>
+      `옮기기를 취소했어요. ${titleOf(active.id)}은(는) 제자리에 있어요.`,
+  };
+
   return (
     <section>
       <h2>셋리스트 순서</h2>
@@ -62,6 +88,7 @@ export function SetlistOrder({ setlist, findSong, onRemove, onMove }: SetlistOrd
           collisionDetection={closestCenter}
           modifiers={[restrictToVerticalAxis, restrictToParentElement]}
           onDragEnd={handleDragEnd}
+          accessibility={{ announcements, screenReaderInstructions: SCREEN_READER_INSTRUCTIONS }}
         >
           <SortableContext
             items={rows.map(({ entry }) => entry.songId)}
