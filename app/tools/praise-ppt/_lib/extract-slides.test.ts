@@ -234,6 +234,34 @@ describe(".pptx", () => {
     expect(slides).toEqual([{ index: 0, image: dataUrl("image/png", first) }]);
   });
 
+  it("<p:bg>의 배경 그림보다 본문의 그림을 먼저 쓴다", async () => {
+    const lyric = png(6, 1);
+    const backgroundOnly = jpeg(2);
+    const background = `<p:bg><p:bgPr><a:blipFill><a:blip r:embed="rId9"/></a:blipFill></p:bgPr></p:bg>`;
+    const slides = await extractSlides(
+      pptx({
+        // 배경 그림이 XML에서 먼저 나온다
+        "ppt/slides/slide1.xml": slideXml("rId2").replace("<p:cSld>", `<p:cSld>${background}`),
+        "ppt/slides/_rels/slide1.xml.rels": rels([
+          { id: "rId2", type: "image", target: "../media/lyric.png" },
+          { id: "rId9", type: "image", target: "../media/bg.jpeg" },
+        ]),
+        // 본문에 그림이 없으면 배경 그림이라도 쓴다
+        "ppt/slides/slide2.xml": slideXml().replace("<p:cSld>", `<p:cSld>${background}`),
+        "ppt/slides/_rels/slide2.xml.rels": rels([
+          { id: "rId9", type: "image", target: "../media/bg2.jpeg" },
+        ]),
+        "ppt/media/lyric.png": lyric,
+        "ppt/media/bg.jpeg": jpeg(9),
+        "ppt/media/bg2.jpeg": backgroundOnly,
+      }),
+    );
+    expect(slides).toEqual([
+      { index: 0, image: dataUrl("image/png", lyric) },
+      { index: 1, image: dataUrl("image/jpeg", backgroundOnly) },
+    ]);
+  });
+
   it("그림을 못 뽑은 슬라이드는 건너뛰고 번호를 빈틈없이 다시 매긴다", async () => {
     const one = png(6, 1);
     const five = jpeg(5);

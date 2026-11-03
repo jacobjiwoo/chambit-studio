@@ -1,11 +1,13 @@
 /**
  * 슬라이드 추출 — 담당자가 올린 `.ppt`·`.pptx`에서 슬라이드 이미지를 뽑는다(seam 1).
  *
- * 원본 praise-ppt의 `extract-ppt-client`를 동작과 오류 문구 그대로 옮겼다. 다른 점은 `.pptx`의
- * ZIP을 JSZip 대신 이미 의존성에 있는 `fflate`로 푸는 것 하나다.
+ * 원본 praise-ppt의 `extract-ppt-client`를 동작과 오류 문구 그대로 옮겼다. 다른 점은 둘이다.
+ * `.pptx`의 ZIP을 JSZip 대신 이미 의존성에 있는 `fflate`로 풀고, 배경 그림보다 본문 그림을
+ * 먼저 고른다.
  *
  * - `.ppt`(OLE): `Pictures` 스트림의 BLIP 레코드에서 PNG·JPEG 바이트를 그대로 꺼낸다.
- * - `.pptx`(ZIP): 슬라이드마다 처음 나오는 그림을 따라가 `ppt/media/`에서 꺼낸다.
+ * - `.pptx`(ZIP): 슬라이드마다 처음 나오는 그림을 따라가 `ppt/media/`에서 꺼낸다. 배경(`<p:bg>`)
+ *   그림은 본문에 그림이 없을 때만 쓴다.
  *
  * 이미지는 디코딩하지 않는다. 바이트를 그대로 data URL로 옮긴다.
  */
@@ -211,11 +213,19 @@ function mimeOf(path: string): ImageMime | null {
   return null;
 }
 
-/** 슬라이드에서 처음 나오는 그림을 꺼낸다. 못 찾으면 `null`이고 그 슬라이드는 건너뛴다 */
+const BLIP_EMBED = /<a:blip\b[^>]*r:embed="([^"]+)"/;
+
+/**
+ * 슬라이드에서 처음 나오는 그림을 꺼낸다. 못 찾으면 `null`이고 그 슬라이드는 건너뛴다.
+ * `<p:bg>`의 배경 그림은 본문보다 먼저 나오니, 본문에 그림이 없을 때만 쓴다.
+ */
 function firstImage(files: Unzipped, slidePath: string): RasterImage | null {
   const slide = files[slidePath];
   if (!slide) return null;
-  const embedId = /<a:blip\b[^>]*r:embed="([^"]+)"/.exec(strFromU8(slide))?.[1];
+  const xml = strFromU8(slide);
+  const embedId =
+    BLIP_EMBED.exec(xml.replace(/<p:bg\b[\s\S]*?<\/p:bg>/g, ""))?.[1] ??
+    BLIP_EMBED.exec(xml)?.[1];
   if (!embedId) return null;
 
   const rels = files[slidePath.replace(/^(.*\/)([^/]+)$/, "$1_rels/$2.rels")];
