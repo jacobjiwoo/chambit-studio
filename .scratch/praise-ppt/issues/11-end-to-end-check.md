@@ -1,6 +1,6 @@
 # 11: 브라우저와 PowerPoint로 끝까지 확인
 
-Status: ready-for-human
+Status: resolved
 Blocked by: 02, 04, 05, 06, 07, 08, 09, 10
 
 ## 무엇을 하나
@@ -15,8 +15,8 @@ PowerPoint로 여는 일이 있어 사람이 한다. 브라우저 흐름은 에�
 - [x] 곡 목록 곡 셋 이상과 올린 곡 하나(`.ppt` 하나, `.pptx` 하나면 더 좋다)를 셋리스트에 담고 순서를 바꾼다
 - [x] 일부 장을 빼고, 공통 배경을 색으로, 한 곡의 곡별 배경을 이미지로 정한다
 - [x] 새로고침하면 곡 목록 곡의 셋리스트·제외·곡별 배경이 남고 올린 곡은 빠진다(다시 올린 뒤 진행)
-- [ ] 만들기가 성공하고 `찬양_YYYYMMDD.pptx`가 받힌다
-- [ ] PowerPoint에서 열면 16:9이고, 순서·뺀 장·배경이 화면에서 정한 대로이며, 투명 가사가 배경 위에 제대로 보인다
+- [x] 만들기가 성공하고 `찬양_YYYYMMDD.pptx`가 받힌다
+- [x] PowerPoint에서 열면 16:9이고, 순서·뺀 장·배경이 화면에서 정한 대로이며, 투명 가사가 배경 위에 제대로 보인다
 - [x] 문제가 있으면 해당 티켓 번호와 함께 `## Comments`에 적는다
 
 ## Comments
@@ -61,3 +61,7 @@ PowerPoint로 여는 일이 있어 사람이 한다. 브라우저 흐름은 에�
 ### 찾은 문제 고침 (2026-11-03)
 
 `fix/praise-ppt-11-findings`에서 세 문제를 고쳤다. 문제 1은 썸네일 `<img>`(`slide-thumb.tsx`)에 `crossOrigin="anonymous"`를 붙여 처음부터 CORS 응답이 캐시되게 했다. R2 URL을 쓰는 `<img>`는 이것 하나이고, 배경은 data URL이다. `pptx.ts`의 `fetch`는 교차 출처라 기본이 `mode: "cors"`여서 손대지 않았다. 문제 2는 `.pptx` 추출이 `<p:bg>`를 뺀 본문에서 blip을 먼저 찾고, 본문에 그림이 없을 때만 배경 그림을 쓰게 했다. 배경 + 가사 그림 테스트를 먼저 실패시키고 고쳤고, spec의 user story 32와 `.pptx` 추출 설명을 고쳤다. 문제 3은 `setlist-order.tsx`의 `DndContext`에 한국어 `announcements`와 `screenReaderInstructions`를 주어 곡 제목과 1부터 센 자리로 안내하게 했다. `pnpm lint`·`pnpm typecheck`·`pnpm test`·`pnpm build`는 통과했다. 브라우저로 다시 밟는 확인(썸네일을 본 뒤 만들기, 실물 `test-output.pptx` 올리기, 스크린 리더 안내)은 하지 않았다.
+
+### 사람 확인 (2026-11-03)
+
+고친 뒤 담당자가 로컬(`localhost:3000`)에서 썸네일을 본 뒤 PPT를 만들어 받았고, 받은 `.pptx`를 PowerPoint에서 열어 확인했다. 블로그에서 받은 `.ppt` 올리기와 커스텀 도메인의 최소 TLS 1.2는 이 확인에 들지 않아 남은 일이다.
