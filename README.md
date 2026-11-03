@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 참빛 스튜디오
 
-## Getting Started
+참빛교회 방송부의 내부 사이트다. 방송 장비와 프로그램 문서, 예배를 준비하는 도구를 한곳에 모은다.
 
-First, run the development server:
+**https://chambitstudio.com**
+
+## 무엇이 있나
+
+| 도구 | 하는 일 |
+| - | - |
+| [자막 추출](https://chambitstudio.com/subtitle-extractor) | 설교 원고(`.hwp`)에서 빨간 글자를 뽑아 나비CG 임포트 파일로 만든다 |
+| [찬양 PPT](https://chambitstudio.com/tools/praise-ppt) | 곡을 골라 셋리스트를 짜고 예배용 PPT로 내려받는다 |
+| [NABI 매뉴얼](https://chambitstudio.com/docs/nabi) | Compix NABI 매뉴얼을 웹 문서로 옮긴 것 |
+| [방송 시스템](https://chambitstudio.com/docs/broadcast-system) | 방송실 장비, 연결, 운영 문서. 이 저장소가 유일한 원천이다 |
+
+## 전제
+
+- **서버가 없다.** Next.js의 `output: "export"`로 정적 파일만 만들고, `main`에 머지하면 Cloudflare Pages가 빌드해 배포한다.
+- **파일 파싱과 생성은 모두 브라우저에서 한다.** 원고와 PPT는 사용자 컴퓨터 밖으로 나가지 않는다.
+- **저장소와 사이트가 public이다.** 실제 설교 원고는 커밋하지 않는다. 테스트용 원고는 gitignore된 `fixtures/`에만 둔다.
+
+## 로컬에서 돌리기
+
+Node 26과 pnpm 11이 필요하다.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+변경을 마치면 CI와 같은 검사를 돌린다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm lint && pnpm typecheck && pnpm test
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`fixtures/`에 원고가 없으면 원고를 읽는 테스트는 실패하지 않고 skip된다.
 
-## Learn More
+## 기여하기
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 기능을 고치기 전에 그 기능의 `.scratch/<feature>/`에 있는 `map.md`나 `spec.md`를 읽는다. 결정과 이유가 거기 있다.
+- `main`에 직접 커밋하지 않는다. 브랜치 이름과 머지 방식은 [branching.md](.claude/rules/branching.md)를 따른다.
+- 파일을 어디에 둘지는 [project-structure.md](.claude/rules/project-structure.md)를 따른다.
+- 문서, 커밋, PR, 주석은 한국어로 쓴다. 자세한 내용은 [language.md](.claude/rules/language.md)에 있다.
