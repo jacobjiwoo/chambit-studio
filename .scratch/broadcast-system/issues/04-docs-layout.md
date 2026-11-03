@@ -1,7 +1,7 @@
 # 04: 방송 시스템 레이아웃과 첫 페이지
 
 Type: task
-Status: ready-for-agent
+Status: resolved
 Blocked by: 01, 02
 
 ## 무엇을 하나
@@ -22,3 +22,17 @@ Blocked by: 01, 02
 - 임시 샘플 페이지 둘로 사이드바 순서, 현재 페이지 강조, 첫 페이지 링크 목록을 빌드한 HTML에서 본 뒤 샘플을 지운다.
 - `/docs/nabi`가 그대로다.
 - `pnpm lint`, `pnpm typecheck`, `pnpm build`가 통과한다.
+
+## Answer
+
+### 만든 것
+
+- `app/docs/broadcast-system/_lib/pages.ts` — `toPages(sources)` 순수 함수와 `loadPages()` loader. `sources`는 `{ dir, source? }` 목록이다. `_` 폴더와 `source`가 없는 폴더(`page.mdx` 없음)를 건너뛰고, 01의 `readBaseFrontmatter`·`sortByOrder`로 읽고 정렬한다. `slug`·폴더 불일치에서 멈춘다. frontmatter 없음, 키 누락, `description` 150자 초과, `order` 중복은 공용 함수가 멈춘다.
+- `pages.test.ts` — 원문 문자열로 정렬, 빈 목록, 폴더 건너뛰기, 위의 멈춤 조건 다섯을 확인한다.
+- `layout.tsx`(title 템플릿 `%s — 방송 시스템`, 기본 `방송 시스템`), `_components/sidebar.tsx`(한 단계), `_components/page-links.tsx`, 첫 페이지 `page.mdx`(문서 소개, `<Unconfirmed />` 배지 설명, `<PageLinks />`).
+
+### 확인
+
+- 임시 샘플 둘(`a-sample` order 1, `b-sample` order 2)을 두고 빌드해 `out/docs/broadcast-system*.html`을 봤다: 사이드바 순서 a → b, `b-sample` 페이지에서 b 링크에만 `aria-current="page"`, 첫 페이지 링크 목록 a → b, `<title>`은 `b-sample 제목 — 방송 시스템`. 샘플은 지웠고 커밋하지 않았다.
+- `app/docs/nabi/`는 건드리지 않았다(`git diff` 없음).
+- `pnpm lint`, `pnpm typecheck`, `pnpm build`(vitest 168 통과, 4 skip) 통과. 샘플 없이 빌드해도 `/docs/broadcast-system`이 만들어진다.
