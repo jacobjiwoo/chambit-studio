@@ -42,6 +42,7 @@ Label: `wayfinder:map`
 - **데이터 모듈은 `app/docs/broadcast-system/_lib/system.ts`다.** 장비 `toConfirm`은 배지 자리를 정하려고 `{ cell, what }[]`로 넓혔고, 끝점은 `{ id, unit?, port? }` 또는 `{ unknown, candidates? }`다. 확인 필요 목록 대응표와 옮기며 찾은 어긋남 8건은 [01](issues/01-system-data.md) Answer·Comments에 있다.
 - **anatomy kit 복사본은 `_lib/anatomy/`와 `_components/anatomy/`에 있다.** CG 출력 원리 그림이 이것으로 그려진다. lint 규칙 셋을 이 두 폴더에서만 껐고, 그림은 실제와 다른 점 셋을 캡션에 밝힌다. [04](issues/04-cg-output-figure.md) Answer.
 - **확인 필요 목록은 데이터에서 모은다.** 우선순위 1–15는 `system.ts`의 `priorities` 표에 두고, 장비 `toConfirm` 항목과 연결에 `priority`를 단다. 장비 행 앵커는 `장비-<id>`다. 손 목록의 빈 곳을 메우려고 `toConfirm` 몇 개를 더했다. [03](issues/03-unconfirmed-list.md) Answer.
+- **신호 흐름도는 위에서 아래로 흐르고 단계 필드를 두지 않는다.** 연결 방향만으로 입력 → 출력 순서가 나온다. 배지는 미상 끝점과 미확인 연결에만 단다. `?device=<id>`로 장비를 고른 채 연다. [02](issues/02-signal-flow-page.md) Answer.
 
 ## Tickets
 

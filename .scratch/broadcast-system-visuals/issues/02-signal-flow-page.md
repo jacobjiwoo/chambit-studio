@@ -1,7 +1,7 @@
 # 02: 신호 흐름도 페이지
 
 Type: task
-Status: claimed
+Status: resolved
 Blocked by: 01
 
 ## 무엇을 하나
