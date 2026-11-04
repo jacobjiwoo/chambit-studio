@@ -5,7 +5,7 @@
  * 하류·상류는 연결 방향을 따라가는 단순 탐색이다. 장비마다 필수 입력을 정하는 정밀 모델은
  * 직렬 구조가 확인될 때까지 미룬다(.scratch/broadcast-system-visuals/map.md).
  */
-import type { Connection, Endpoint } from "./system";
+import type { AnyEndpoint, AnyLink } from "./system";
 
 /** 그래프의 점. 장비, 외부 지점, 연결마다 따로 생기는 미상 끝점 셋이다. */
 export type FlowNode = {
@@ -40,7 +40,7 @@ type Item = { readonly id: string };
 export function flowGraph(
   equipment: readonly Item[],
   externals: readonly Item[],
-  connections: readonly Connection[],
+  connections: readonly (AnyLink & { readonly unconfirmed: boolean })[],
 ): FlowGraph {
   const nodes: FlowNode[] = [
     ...equipment.map(
@@ -51,7 +51,7 @@ export function flowGraph(
     ),
   ];
 
-  const endpointId = (end: Endpoint, index: number, side: "from" | "to"): string => {
+  const endpointId = (end: AnyEndpoint, index: number, side: "from" | "to"): string => {
     if (!("unknown" in end)) return end.id;
     const id = unknownNodeId(index, side);
     nodes.push({ id, kind: "unknown", label: end.unknown, unconfirmed: true });
@@ -112,4 +112,18 @@ export function tracedEdges(graph: FlowGraph, id: string): string[] {
   const down = new Set([id, ...downstream(graph, id)]);
   const up = new Set([id, ...upstream(graph, id)]);
   return graph.edges.filter((e) => down.has(e.source) || up.has(e.target)).map((e) => e.id);
+}
+
+/**
+ * 점을 골랐을 때 보일 확인할 거리. 점 자신의 거리(`own`) 뒤에 그 점에 닿는 연결의 거리를 연결
+ * 순서대로 붙인다. 미상 점은 자신의 거리가 없으니 그 연결의 거리만 나온다. 같은 글은 한 번만 둔다.
+ */
+export function confirmsOf(
+  graph: FlowGraph,
+  id: string,
+  own: readonly string[],
+  links: readonly { readonly toConfirm: readonly string[] }[],
+): string[] {
+  const touching = graph.edges.filter((e) => e.source === id || e.target === id);
+  return [...new Set([...own, ...touching.flatMap((e) => links[e.index].toConfirm)])];
 }

@@ -8,7 +8,8 @@ import { equipmentRowId } from "./equipment-table";
  * 장비 목록표의 "확인 필요 목록" 절. `_lib/system.ts`의 `toConfirm`을 모아 그린다.
  *
  * 먼저 쓰이는 우선순위 번호와 이름을 보이고, 그 아래에 파트별로 확인할 거리를 우선순위 순서로
- * 늘어놓는다. 각 줄의 장비 이름은 장비 목록표의 그 행으로 가는 링크다.
+ * 늘어놓는다. 각 줄의 장비 이름은 장비 목록표의 그 행으로 가는 링크다. 줄 끝에는 신호 흐름도에서
+ * 그 줄의 첫 장비를 고른 채로 여는 링크를 단다.
  *
  * MDX가 아니라서 `mdx-components.tsx`의 스타일이 닿지 않는다. 같은 class를 쓴다.
  */
@@ -22,10 +23,10 @@ export function ToConfirmList() {
       <h3 className="mt-8 text-xl font-semibold">우선순위</h3>
       <ol className="mt-4 list-decimal space-y-1 pl-6">
         {ranks.map((rank) => {
-          const p: { title: string; note?: string; deferred?: true } = priorities[rank];
+          const p: { title: string; note?: string } = priorities[rank];
           return (
             <li key={rank} value={rank}>
-              {p.deferred && "(보류) "}
+              {isDeferred(rank) && "(보류) "}
               {p.title}
               {p.note && ` — ${p.note}`}
             </li>
@@ -48,7 +49,13 @@ export function ToConfirmList() {
                   </Fragment>
                 ))}
                 : {item.connection && `${item.connection} — `}
-                {item.what}
+                {item.what}{" "}
+                <a
+                  className="text-sm whitespace-nowrap text-blue-700 underline"
+                  href={signalFlowHref(item.subjects[0])}
+                >
+                  흐름도에서 보기
+                </a>
               </li>
             ))}
           </ul>
@@ -60,7 +67,7 @@ export function ToConfirmList() {
 
 /** 우선순위 번호 표. 보류면 함께 적는다. */
 function Rank({ rank }: { rank: Priority }) {
-  const deferred = "deferred" in priorities[rank];
+  const deferred = isDeferred(rank);
   return (
     <span
       title={priorities[rank].title}
@@ -70,4 +77,15 @@ function Rank({ rank }: { rank: Priority }) {
       {deferred && " 보류"}
     </span>
   );
+}
+
+/** 보류인 우선순위인지. 보류는 `priorities`의 `deferred`로만 읽는다. */
+function isDeferred(rank: Priority): boolean {
+  const p: { title: string; deferred?: true } = priorities[rank];
+  return p.deferred === true;
+}
+
+/** 신호 흐름도에서 그 장비를 고른 채로 여는 주소. `signal-flow.tsx`가 `?device=`를 읽는다. */
+function signalFlowHref(id: string): string {
+  return `/docs/broadcast-system/signal-flow?device=${encodeURIComponent(id)}`;
 }
