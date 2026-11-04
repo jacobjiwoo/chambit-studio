@@ -1,7 +1,7 @@
 # 03: 확인 필요 목록 자동 수집
 
 Type: task
-Status: claimed
+Status: resolved
 Blocked by: 01
 
 ## 무엇을 하나
