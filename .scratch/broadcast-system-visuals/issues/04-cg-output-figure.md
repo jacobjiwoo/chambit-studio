@@ -1,7 +1,7 @@
 # 04: CG 출력 원리 anatomy 그림
 
 Type: task
-Status: ready-for-agent
+Status: claimed
 Blocked by: —
 
 ## 무엇을 하나

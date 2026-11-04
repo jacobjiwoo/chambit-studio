@@ -1,7 +1,7 @@
 # 01: 장비·연결 데이터 모듈과 장비 목록표 렌더링
 
 Type: task
-Status: ready-for-agent
+Status: claimed
 Blocked by: —
 
 ## 무엇을 하나
