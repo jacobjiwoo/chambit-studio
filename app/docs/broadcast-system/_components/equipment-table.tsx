@@ -41,7 +41,7 @@ export function EquipmentTable({ part }: { part: Part }) {
         </thead>
         <tbody>
           {rows.map((e) => (
-            <tr key={e.id}>
+            <tr key={e.id} id={equipmentRowId(e.id)} className="scroll-mt-6 target:bg-yellow-50">
               <Td>{e.aside ? `${e.id} (${e.aside})` : e.id}</Td>
               <Td>
                 <Text item={e} cell="model" text={e.model} />
@@ -68,6 +68,14 @@ export function EquipmentTable({ part }: { part: Part }) {
       </table>
     </div>
   );
+}
+
+/**
+ * 장비 행의 앵커. 확인 필요 목록 등이 `#장비-영상-스위처`처럼 그 행으로 건다. 장비 id에서
+ * 만들므로 id가 바뀌지 않는 한 그대로다.
+ */
+export function equipmentRowId(id: string): string {
+  return `장비-${id.replace(/\s+/g, "-")}`;
 }
 
 function Th({ children }: { children: React.ReactNode }) {
