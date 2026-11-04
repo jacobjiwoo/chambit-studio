@@ -39,6 +39,19 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // anatomy kit 복사본. 원본과 같게 두려고 고치지 않고, 원본이 따르지 않는 규칙만 이 폴더에서 끈다.
+  // 쓰지 않는 훅(useLoop·useEased)이 렌더 중 ref를 읽고, .mjs는 `a && b()` 식 문장을 쓴다.
+  {
+    files: [
+      "app/docs/broadcast-system/_components/anatomy/**",
+      "app/docs/broadcast-system/_lib/anatomy/**",
+    ],
+    rules: {
+      "react-hooks/refs": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
