@@ -13,7 +13,7 @@ export function CgOutputFigure() {
   return (
     <div className="iso cg-output">
       <Plate
-        fig="그림 1"
+        fig="Fig 1"
         title="FILL + KEY → DSK"
         hint="눌러서 DSK 켜기·끄기"
         readout={readoutOf(REST)}

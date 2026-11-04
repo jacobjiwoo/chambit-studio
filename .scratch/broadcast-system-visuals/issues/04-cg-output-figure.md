@@ -25,7 +25,7 @@ Blocked by: —
 
 ## Answer
 
-- **kit 위치.** anatomy `kit/`에서 쓰는 파일만 복사했다. React를 import하지 않는 `iso-kit.ts`, `iso-kit.mjs`, `lathe.mjs`, `tube.mjs`, `audit.mjs`와 MIT 고지 `license.txt`는 `_lib/anatomy/`에, `react/draw.tsx`, `react/live.tsx`, `iso.css`는 `_components/anatomy/`에 둔다. 원본과 다른 곳은 두 군데다. `draw.tsx`의 `iso-kit` import 경로, 그리고 `iso.css`가 사이트처럼 `prefers-color-scheme`으로 테마를 고르도록 밝은 토큰을 기본으로, 어두운 토큰을 미디어 쿼리 아래로 옮긴 것이다.
+- **kit 위치.** anatomy `kit/`에서 쓰는 파일만 복사했다. React를 import하지 않는 `iso-kit.ts`, `iso-kit.mjs`, `lathe.mjs`, `tube.mjs`, `audit.mjs`는 `_lib/anatomy/`에, `react/draw.tsx`, `react/live.tsx`, `iso.css`는 `_components/anatomy/`에 둔다. MIT 고지 `license.txt`는 두 폴더에 같은 글로 둔다. 원본과 다른 곳은 두 군데다. `draw.tsx`의 `iso-kit` import 경로, 그리고 `iso.css`가 사이트처럼 `prefers-color-scheme`으로 테마를 고르도록 밝은 토큰을 기본으로, 어두운 토큰을 미디어 쿼리 아래로 옮긴 것이다.
 - **끈 lint 규칙.** `eslint.config.mjs`에서 `app/docs/broadcast-system/_components/anatomy/**`와 `app/docs/broadcast-system/_lib/anatomy/**`에만 끈다.
   - `react-hooks/refs`: 이 그림이 쓰지 않는 `useLoop`·`useEased`가 렌더 중에 ref를 읽는다.
   - `react-hooks/exhaustive-deps`: `useInView`가 의존성 배열 없이 effect를 돈다(원본 설계).
