@@ -1,0 +1,33 @@
+---
+title: 신호 흐름도
+description: 장비와 장비 사이의 논리적 연결(SDI, XLR, HDMI…)을 그림으로 본다. 장비를 누르면 꺼질 때 영향 받을 수 있는 곳과 거슬러 확인할 곳이 칠해진다. 온라인 송출 직렬 구조를 담는다.
+slug: signal-flow
+order: 3
+---
+
+import { SignalFlowFigure } from "../_components/signal-flow-figure";
+
+# 신호 흐름도
+
+장비 사이의 논리적 연결이다. 실제 자리와는 상관없다. 위가 입력, 아래가 출력이다. 그림은 [장비 목록표](/docs/broadcast-system/equipment)와 같은 장비·연결 데이터에서 그려서, 장비 목록표가 바뀌면 함께 바뀐다.
+
+<SignalFlowFigure />
+
+"영향"과 "확인"은 연결을 따라가기만 해서 칠하므로 실제로는 끊기지 않는 곳(예: 제어 신호만 받는 카메라)도 "영향"으로 칠해질 수 있다.
+
+## 온라인 송출 신호 흐름 (선임 설명 반영, 2026-11-01)
+
+장비 4대가 SDI 케이블로 한 줄로 이어진 <Unconfirmed>직렬 구조</Unconfirmed>(선임 설명).
+
+1. <Unconfirmed>영상 스위처 → 영상 hub</Unconfirmed> (SDI, PGM+CG)
+2. 영상 hub → 오디오 임베더 SDI IN (SDI)
+3. 음향 콘솔 → (<Unconfirmed>오디오 분배기 출력1 "스트리밍" 경유 여부</Unconfirmed>) → 오디오 임베더 CH1·CH2 (XLR ×2)
+4. 오디오 임베더 → 백업 송출 장비 SDI IN (SDI, 영상+소리) ← 화면과 소리가 처음 합쳐진 뒤
+5. 백업 송출 장비 SDI OUT → 백업 녹화기 SDI IN (SDI)
+6. 백업 녹화기 SDI OUT → 송출 PC 캡처카드 (SDI)
+7. 송출 PC OBS → 유튜브 (RTMP)
+
+- 이 구조를 택한 이유(선임 설명)와 확인할 거리:
+  - 선임 설명: "오디오 임베더 → 송출 PC로 긴 SDI 선을 사기에 비쌌다". 확인할 거리: 일반 HD-SDI 케이블은 10m급도 수만 원대이고, 같은 영상 데스크 안이라 거리도 길지 않을 것으로 보인다. <Unconfirmed>당시 다른 사정이 있었는지</Unconfirmed>.
+  - 선임 설명: "OBS 도입 당시, 문제가 생겨도 기존 백업 녹화·송출로 넘어갈 수 있게". 직렬 구조에서는 송출 PC가 고장 나도 백업 장비는 신호를 계속 받는다. 반대로 백업 장비가 고장 나면 주 송출도 끊긴다. OBS 도입 전 주 장비였던 줄 끝에 송출 PC를 덧붙인 구조로 추정.
+- 개선 제안은 [업그레이드 제안](https://github.com/jacobjiwoo/chambit-studio/blob/main/.scratch/broadcast-system/upgrade-proposals.md) 1번 참고. 사이트에 올리지 않는 작업 문서라 GitHub 저장소에서 열린다.

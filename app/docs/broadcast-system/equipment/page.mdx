@@ -1,6 +1,6 @@
 ---
 title: 장비 목록표
-description: 방송실 장비별 제조사·모델명, 위치, 용도, 입력/출력 연결. 전원, 영상·온라인 송출, 네트워크, 음향, 조명 파트와 온라인 송출 신호 흐름, 확인 필요 목록을 담는다.
+description: 방송실 장비별 제조사·모델명, 위치, 용도, 입력/출력 연결. 전원, 영상·온라인 송출, 네트워크, 음향, 조명 파트와 확인 필요 목록을 담는다.
 slug: equipment
 order: 2
 ---
@@ -65,22 +65,9 @@ import { CgOutputFigure } from "../_components/cg-output-figure";
 - DSK는 PGM 맨 마지막 단계에서 얹히므로, 카메라를 전환해도 CG는 유지되고 PGM을 받는 모든 곳(LED 스크린·온라인 송출 등)에 함께 나간다.
 - 출력 포맷은 다른 장비와 동일하게 HD 1080i 59.94여야 한다(NABI 매뉴얼 권장값, 백업 녹화기 표시값과 일치, 문자발생기 보드 설정값 확인 완료).
 
-## 온라인 송출 신호 흐름 (선임 설명 반영, 2026-11-01)
+## 온라인 송출 신호 흐름
 
-장비 4대가 SDI 케이블로 한 줄로 이어진 <Unconfirmed>직렬 구조</Unconfirmed>(선임 설명).
-
-1. <Unconfirmed>영상 스위처 → 영상 hub</Unconfirmed> (SDI, PGM+CG)
-2. 영상 hub → 오디오 임베더 SDI IN (SDI)
-3. 음향 콘솔 → (<Unconfirmed>오디오 분배기 출력1 "스트리밍" 경유 여부</Unconfirmed>) → 오디오 임베더 CH1·CH2 (XLR ×2)
-4. 오디오 임베더 → 백업 송출 장비 SDI IN (SDI, 영상+소리) ← 화면과 소리가 처음 합쳐진 뒤
-5. 백업 송출 장비 SDI OUT → 백업 녹화기 SDI IN (SDI)
-6. 백업 녹화기 SDI OUT → 송출 PC 캡처카드 (SDI)
-7. 송출 PC OBS → 유튜브 (RTMP)
-
-- 이 구조를 택한 이유(선임 설명)와 확인할 거리:
-  - 선임 설명: "오디오 임베더 → 송출 PC로 긴 SDI 선을 사기에 비쌌다". 확인할 거리: 일반 HD-SDI 케이블은 10m급도 수만 원대이고, 같은 영상 데스크 안이라 거리도 길지 않을 것으로 보인다. <Unconfirmed>당시 다른 사정이 있었는지</Unconfirmed>.
-  - 선임 설명: "OBS 도입 당시, 문제가 생겨도 기존 백업 녹화·송출로 넘어갈 수 있게". 직렬 구조에서는 송출 PC가 고장 나도 백업 장비는 신호를 계속 받는다. 반대로 백업 장비가 고장 나면 주 송출도 끊긴다. OBS 도입 전 주 장비였던 줄 끝에 송출 PC를 덧붙인 구조로 추정.
-- 개선 제안은 [업그레이드 제안](https://github.com/jacobjiwoo/chambit-studio/blob/main/.scratch/broadcast-system/upgrade-proposals.md) 1번 참고. 사이트에 올리지 않는 작업 문서라 GitHub 저장소에서 열린다.
+온라인 송출 직렬 구조와 장비 사이의 연결 그림은 [신호 흐름도](/docs/broadcast-system/signal-flow)에 있다.
 
 ## 현황 메모
 
