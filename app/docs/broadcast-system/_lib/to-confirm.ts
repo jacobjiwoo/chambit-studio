@@ -3,54 +3,51 @@
  *
  * 확인이 끝나 데이터에서 `toConfirm`을 지우면 목록에서도 사라진다. 목록을 손으로 고치지 않는다.
  */
-import { connectionText, type Part } from "./system";
+import {
+  connectionText,
+  type AnyEndpoint,
+  type AnyLink,
+  type Connection,
+  type Equipment,
+  type EquipmentToConfirm,
+  type Part,
+  type Priority,
+} from "./system";
 
 /** 우선순위가 없는 줄은 맨 끝이다. */
 const UNRANKED = Number.MAX_SAFE_INTEGER;
 
 const PART_ORDER: readonly Part[] = ["전원", "영상·온라인 송출", "네트워크", "음향", "조명", "기타"];
 
-type ItemSource<P> = { readonly what: string; readonly priority?: P };
-type EquipmentSource<P> = {
+/** 장비 목록 밖(테스트 등)에서도 쓰도록 id를 `string`으로 넓힌 장비. */
+type EquipmentSource = Pick<Equipment, "part"> & {
   readonly id: string;
-  readonly part: Part;
-  readonly toConfirm: readonly ItemSource<P>[];
+  readonly toConfirm: readonly Pick<EquipmentToConfirm, "what" | "priority">[];
 };
 
-type EndSource =
-  | { readonly id: string; readonly unit?: string; readonly port?: string }
-  | { readonly unknown: string; readonly candidates?: readonly string[] };
-type LinkSource<P> = {
-  readonly from: EndSource;
-  readonly to: EndSource;
-  readonly signal?: string;
-  readonly detail?: string;
-  readonly evidence?: string;
-  readonly toConfirm: readonly string[];
-  readonly priority?: P;
-};
+type LinkSource = AnyLink &
+  Pick<Connection, "signal" | "detail" | "evidence" | "toConfirm" | "priority">;
 
 /**
  * 목록의 한 줄. `subjects`는 장비 목록표에서 이 줄이 걸린 행(장비 id)이다. 연결의 확인할
  * 거리면 `connection`에 연결 한 줄이 있다.
  */
-export type ToConfirmItem<P extends number = number> = {
+export type ToConfirmItem = {
   readonly subjects: readonly string[];
   readonly connection?: string;
   readonly what: string;
-  readonly priority?: P;
+  readonly priority?: Priority;
 };
 
-export type ToConfirmGroup<P extends number = number> = {
+export type ToConfirmGroup = {
   readonly part: Part;
-  readonly items: readonly ToConfirmItem<P>[];
+  readonly items: readonly ToConfirmItem[];
 };
 
-/** `P`는 우선순위 번호의 타입이다. 실제 데이터에서는 `system.ts`의 `Priority`가 된다. */
-export function collectToConfirm<P extends number>(
-  list: readonly EquipmentSource<P>[],
-  links: readonly LinkSource<P>[],
-): ToConfirmGroup<P>[] {
+export function collectToConfirm(
+  list: readonly EquipmentSource[],
+  links: readonly LinkSource[],
+): ToConfirmGroup[] {
   const partOf = new Map(list.map((e) => [e.id, e.part]));
   const fromEquipment = list.flatMap((e) =>
     e.toConfirm.map((t) => ({
@@ -80,10 +77,10 @@ export function collectToConfirm<P extends number>(
   })).filter((g) => g.items.length > 0);
 }
 
-function knownIds(end: EndSource): string[] {
+function knownIds(end: AnyEndpoint): string[] {
   return "id" in end ? [end.id] : [];
 }
 
-function candidateIds(end: EndSource): string[] {
+function candidateIds(end: AnyEndpoint): string[] {
   return "unknown" in end ? [...(end.candidates ?? [])] : [];
 }
