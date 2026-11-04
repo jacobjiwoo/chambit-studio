@@ -1,0 +1,196 @@
+/*
+ * 신호 흐름도 생김새. 색·톤 위계는 anatomy skill(MIT, github.com/wheresryan22/anatomy)의
+ * `kit/iso.css` 토큰 값을 따른다: 장비는 mid, 고른 장비와 경로만 lit(밝은 테마 검정, 어두운 테마
+ * 흰색), 미확인은 흐린 톤과 배지. 점선은 쓰지 않는다. 테마는 사이트처럼 prefers-color-scheme을 따른다.
+ */
+.sf-figure,
+.sf-legend {
+  --sf-card: #fbfbfa;
+  --sf-text: #57575a;
+  --sf-strong: #18181a;
+  --sf-muted: #8c8c90;
+  --sf-face: #ffffff;
+  --sf-shade: #ededea;
+  --sf-hi: #26262a;
+  --sf-mid: #8a8a8f;
+  --sf-lo: #b4b4b8;
+  --sf-faint: #d4d4d6;
+  --sf-lit: #000000;
+  --sf-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sf-lift: inset 0 1px 0 0 #ffffff, 0 0 0 1px #0000000f, 0 1px 1px -0.5px #0000000a,
+    0 3px 3px -1.5px #0000000a;
+}
+.sf-figure { margin: 24px 0 8px; }
+@media (prefers-color-scheme: dark) {
+  .sf-figure,
+  .sf-legend {
+    --sf-card: #131313;
+    --sf-text: #a3a3a3;
+    --sf-strong: #e6e6e6;
+    --sf-muted: #6e6e6e;
+    --sf-face: #1b1b1b;
+    --sf-shade: #151515;
+    --sf-hi: #d4d4d4;
+    --sf-mid: #6a6a6a;
+    --sf-lo: #3e3e3e;
+    --sf-faint: #2a2a2a;
+    --sf-lit: #ffffff;
+    --sf-lift: inset 0 1px 0 0 #ffffff0a, inset 0 0 0 1px #ffffff06, 0 0 0 1px #00000026,
+      0 1px 1px -0.5px #00000014;
+  }
+}
+
+/* 카드 틀: Fig n·제목·힌트·readout을 네 귀에 둔다. */
+.sf-plate {
+  position: relative;
+  padding: 44px 16px;
+  background: var(--sf-card);
+  box-shadow: 0 0 0 1px var(--sf-mid);
+}
+.sf-corner {
+  position: absolute;
+  color: var(--sf-muted);
+  font-family: var(--sf-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.sf-corner[data-corner="fig"] { top: 18px; left: 20px; color: var(--sf-text); }
+.sf-corner[data-corner="title"] { top: 18px; right: 20px; letter-spacing: 0.1em; }
+.sf-corner[data-corner="hint"] { bottom: 18px; left: 20px; letter-spacing: 0.1em; }
+.sf-corner[data-corner="readout"] {
+  right: 20px;
+  bottom: 18px;
+  color: var(--sf-text);
+  font-variant-numeric: tabular-nums;
+  max-width: calc(100% - 40px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 560px) {
+  .sf-plate { padding: 40px 8px 64px; }
+  .sf-corner[data-corner="hint"] { bottom: 40px; }
+}
+
+.sf-canvas {
+  height: min(70vh, 640px);
+  min-height: 360px;
+  touch-action: none;
+}
+/* 휴대폰에서는 전체 그림이 폭에 맞춰 작아지므로 빈 세로 공간을 줄여 페이지 스크롤 자리를 남긴다. */
+@media (max-width: 560px) {
+  .sf-canvas { height: min(70vh, 110vw); min-height: 0; }
+}
+.sf-canvas .react-flow { --xy-background-color: transparent; }
+
+/* 장비 */
+.sf-device {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  background: var(--sf-face);
+  box-shadow: var(--sf-lift), 0 0 0 1px var(--sf-mid);
+  color: var(--sf-strong);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: box-shadow 240ms cubic-bezier(0.32, 0.72, 0, 1), opacity 240ms;
+}
+.sf-device:focus-visible { outline: 2px solid var(--sf-lit); outline-offset: 2px; }
+.sf-device-label { flex: 1; text-align: center; }
+.sf-device[data-kind="external"] { border-radius: 999px; background: var(--sf-shade); color: var(--sf-text); }
+.sf-device[data-kind="unknown"] {
+  background: var(--sf-card);
+  box-shadow: 0 0 0 1px var(--sf-lo);
+  color: var(--sf-muted);
+}
+.sf-device[data-role="selected"] { box-shadow: var(--sf-lift), 0 0 0 2px var(--sf-lit); font-weight: 600; }
+.sf-device[data-role="down"],
+.sf-device[data-role="up"] { box-shadow: var(--sf-lift), 0 0 0 1px var(--sf-lit); }
+.sf-device[data-role="rest"] { opacity: 0.35; }
+
+/* 미확인 배지 아이콘 */
+.sf-badge {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--sf-mid);
+  color: var(--sf-text);
+  font-family: var(--sf-mono);
+  font-size: 9px;
+  font-weight: 600;
+}
+/* 하류·상류 표시. 같은 lit 테두리라 글로 가른다. */
+.sf-tag {
+  position: absolute;
+  top: -8px;
+  right: 6px;
+  padding: 1px 4px;
+  background: var(--sf-lit);
+  color: var(--sf-card);
+  font-size: 9.5px;
+  line-height: 1.2;
+}
+.sf-canvas .react-flow__handle { opacity: 0; width: 1px; height: 1px; min-width: 0; min-height: 0; border: 0; }
+
+/* 연결 */
+.sf-wire path { vector-effect: non-scaling-stroke; }
+.sf-wire .react-flow__edge-path { stroke: var(--sf-mid); stroke-width: 1; fill: none; }
+.sf-wire .sf-arrow { fill: none; stroke: var(--sf-mid); stroke-width: 1; stroke-linejoin: round; stroke-linecap: round; }
+.sf-wire[data-unconfirmed] .react-flow__edge-path,
+.sf-wire[data-unconfirmed] .sf-arrow { stroke: var(--sf-lo); }
+.sf-wire[data-state="lit"] .react-flow__edge-path,
+.sf-wire[data-state="lit"] .sf-arrow { stroke: var(--sf-lit); stroke-width: 1.6; }
+.sf-wire[data-state="dim"] { opacity: 0.3; }
+.sf-wire-badge circle { fill: var(--sf-card); stroke: var(--sf-lo); stroke-width: 1; }
+.sf-wire-badge text { fill: var(--sf-text); font-family: var(--sf-mono); font-size: 8.5px; font-weight: 600; text-anchor: middle; }
+.sf-canvas .react-flow__edge { cursor: pointer; }
+
+/* 확대 버튼 */
+.sf-canvas .react-flow__controls { box-shadow: 0 0 0 1px var(--sf-mid); }
+.sf-canvas .react-flow__controls-button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-bottom: 1px solid var(--sf-faint);
+  background: var(--sf-face);
+  color: var(--sf-hi);
+}
+.sf-canvas .react-flow__controls-button svg { fill: currentColor; max-width: 11px; max-height: 11px; }
+
+/* 카드 아래 자세히 */
+.sf-details {
+  margin-top: 12px;
+  color: var(--sf-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.sf-details p { margin: 0 0 4px; }
+.sf-name { color: var(--sf-strong); font-weight: 600; }
+.sf-muted { color: var(--sf-muted); }
+.sf-counts { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--sf-mono); font-size: 12.5px; }
+.sf-facts { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 4px 0; }
+.sf-facts dt { color: var(--sf-muted); }
+.sf-confirm { margin-top: 8px; }
+.sf-confirm ul { margin: 2px 0 0; padding-left: 20px; list-style: disc; }
+
+.sf-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; color: var(--sf-muted); font-size: 13px; }
+.sf-key { display: inline-flex; align-items: center; gap: 7px; }
+.sf-swatch { width: 18px; height: 10px; flex: none; }
+.sf-swatch[data-mark="mid"] { box-shadow: 0 0 0 1px var(--sf-mid); background: var(--sf-face); }
+.sf-swatch[data-mark="lit"] { box-shadow: 0 0 0 1.5px var(--sf-lit); background: var(--sf-face); }
+.sf-swatch[data-mark="dim"] { box-shadow: 0 0 0 1px var(--sf-lo); background: var(--sf-card); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-device { transition: none; }
+}
