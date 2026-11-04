@@ -18,8 +18,64 @@ export type Part = "전원" | "영상·온라인 송출" | "네트워크" | "음
 /** 장비 목록표의 칸. `toConfirm` 항목이 어느 칸의 배지로 보일지 정한다. */
 export type Cell = "model" | "location" | "purpose" | "connections" | "notes";
 
-/** 장비의 확인할 거리 하나. `what`은 그 칸에서 배지와 함께 보이는 글이다. */
-export type EquipmentToConfirm = { readonly cell: Cell; readonly what: string };
+type PriorityDef = {
+  /** 그 번호의 확인할 거리를 한데 부르는 이름. */
+  readonly title: string;
+  /** 어느 장비·연결의 `toConfirm`에도 담기지 않은 손 목록의 말. 확인 방법이나 가능성 등이다. */
+  readonly note?: string;
+  /** 손 목록의 "(보류)". */
+  readonly deferred?: true;
+};
+
+/**
+ * 확인 필요 목록의 우선순위. 장비 목록표 끝에 손으로 쓰던 목록(1–15)을 옮겼다. 숫자가 작을수록
+ * 먼저 확인한다. 장비·연결의 `toConfirm`이 `priority`로 이 번호를 가리킨다.
+ *
+ * 한 번호의 확인할 거리가 모두 풀려 아무 `toConfirm`도 가리키지 않으면 여기서도 지운다.
+ * 남겨 두면 `to-confirm.test.ts`가 멈춘다.
+ */
+export const priorities = {
+  1: {
+    title: "평소 녹화 방식",
+    note: "홈페이지에 올리는 녹화본이 OBS 녹화 파일인지, 백업 녹화기 SD카드 파일인지",
+  },
+  2: { title: "영상 hub 사진" },
+  3: {
+    title: "직렬 구조 실물 확인",
+    note: "백업 녹화기 앞 화면의 입력·오디오 레벨, 백업 송출 장비 웹 화면, 케이블 추적",
+  },
+  4: {
+    title: "백업 녹화기 동작",
+    note: "평소 녹화 상태로 두는지, 재생 상태가 되면 송출 PC로 재생 영상이 나가는지",
+  },
+  5: { title: "오디오 임베더 XLR 2개의 출발 장비" },
+  6: { title: "영상 스위처 출력 설정", note: "스위처 메뉴의 출력 할당 화면으로 확인" },
+  7: { title: "백업 송출 장비 HDMI IN 출발 장비, 입력 선택(SDI/HDMI)과 SDI OUT의 관계" },
+  8: {
+    title: "HDMI 입력 출발 장비",
+    note: "영상 스위처는 HDMI 출력이 없어 중간 변환기 가능성",
+  },
+  9: { title: 'OBS 비디오 설정, 프로필 이름 "백업"의 의미' },
+  10: { title: '오디오 분배기 출력2 "RF-" 용도' },
+  // 음향 앰프는 장비 목록에 행이 없어 note에만 둔다.
+  11: { title: "전원 계통", note: "음향 앰프 전원 위치" },
+  12: { title: "무선 마이크 수신기 5~6 사용 여부" },
+  13: { title: '스위처 버튼 "CP"의 뜻, CAM5·CAM6 위치' },
+  14: { title: "영상 스위처 · 백업 녹화기 · LED 프로세서 · TV 채널 변환기 뒷면 연결", deferred: true },
+  15: { title: "PTZ 컨트롤러 정확한 모델명", deferred: true },
+} as const satisfies Record<number, PriorityDef>;
+
+export type Priority = keyof typeof priorities;
+
+/**
+ * 장비의 확인할 거리 하나. `what`은 그 칸에서 배지와 함께 보이는 글이다. `priority`는
+ * 확인 필요 목록의 우선순위이고, 없으면 목록 끝에 놓인다.
+ */
+export type EquipmentToConfirm = {
+  readonly cell: Cell;
+  readonly what: string;
+  readonly priority?: Priority;
+};
 
 type EquipmentDef = {
   /** 용어집 이름. */
@@ -58,7 +114,7 @@ const equipmentDefs = [
     location: "음향 콘솔 아래",
     purpose: "정전 시 배터리로 전원 유지",
     notes: "켜는 순서 ③. 위에 Furman 전원 장치 있음",
-    toConfirm: [{ cell: "connections", what: "음향 콘솔 외 공급 장비" }],
+    toConfirm: [{ cell: "connections", what: "음향 콘솔 외 공급 장비", priority: 11 }],
   },
   {
     id: "음향 파워 컨디셔너",
@@ -78,7 +134,10 @@ const equipmentDefs = [
     location: "영상 데스크 아래 오른쪽",
     purpose: "8개 채널 전원을 순서대로 켜고 끔",
     notes: "DIRECT OUT 최대 2500W. BYPASS 버튼 있음. 전압 표시창",
-    toConfirm: [{ cell: "connections", what: "채널별 할당, 그 외 연결 장비" }],
+    toConfirm: [
+      { cell: "connections", what: "채널별 할당, 그 외 연결 장비", priority: 11 },
+      { cell: "notes", what: "켜는 순서", priority: 11 },
+    ],
   },
 
   // 영상·온라인 송출
@@ -95,10 +154,10 @@ const equipmentDefs = [
     ],
     notes: "CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인.",
     toConfirm: [
-      { cell: "purpose", what: "각 출력 할당" },
-      { cell: "notes", what: '"CP" 뜻' },
+      { cell: "purpose", what: "각 출력 할당", priority: 6 },
+      { cell: "notes", what: '"CP" 뜻', priority: 13 },
       { cell: "notes", what: "AUX1 라벨" },
-      { cell: "notes", what: "본체 위치·뒷면 연결" },
+      { cell: "notes", what: "본체 위치·뒷면 연결", priority: 14 },
     ],
   },
   {
@@ -111,9 +170,9 @@ const equipmentDefs = [
     notes:
       '선임 설명은 "출력 2개 = 오디오 임베더, 멀티뷰". 확인할 거리: 멀티뷰는 분할 화면(영상 스위처 멀티뷰 전용 출력)을, 오디오 임베더는 PGM을 받으므로, 영상 hub가 일반 분배기라면 두 출력에는 같은 신호가 나간다. 정식 이름은 확인 후 결정',
     toConfirm: [
-      { cell: "model", what: "제조사·모델" },
-      { cell: "location", what: "위치" },
-      { cell: "notes", what: "사진으로 모델·포트·연결" },
+      { cell: "model", what: "제조사·모델", priority: 2 },
+      { cell: "location", what: "위치", priority: 2 },
+      { cell: "notes", what: "사진으로 모델·포트·연결", priority: 2 },
     ],
   },
   {
@@ -137,7 +196,7 @@ const equipmentDefs = [
     location: "영상 데스크, 영상 스위처 왼쪽 위",
     purpose: "CAM1·CAM2 원격 조작",
     notes: "최근 교체. 상세 조사 보류",
-    toConfirm: [{ cell: "model", what: "정확한 모델" }],
+    toConfirm: [{ cell: "model", what: "정확한 모델", priority: 15 }],
   },
   {
     id: "구형 카메라 컨트롤러",
@@ -183,7 +242,7 @@ const equipmentDefs = [
     notes: "버튼 대응은 사용자 확인.",
     toConfirm: [
       { cell: "model", what: "제조사·모델" },
-      { cell: "notes", what: "카메라 위치" },
+      { cell: "notes", what: "카메라 위치", priority: 13 },
       {
         cell: "notes",
         what: '연결 패널의 "CH5 PATCH/외부기기", "AV-HS410E/강단" BNC가 이 입력과 관련 있는 것으로 보임',
@@ -201,7 +260,7 @@ const equipmentDefs = [
       "사진 확인(2026-11-01): SDI IN·SDI OUT·CH1·CH2·전원 연결, ALT SDI IN 비어 있음, CH3·CH4 비어 있는 것으로 보임. 전원 +12V 어댑터. 상판 SDI LOCK 표시등 = 영상 입력 정상 여부. 꺼지면 주 송출·백업 송출·백업 녹화의 영상·소리가 모두 끊김",
     toConfirm: [
       { cell: "location", what: "정확한 위치" },
-      { cell: "notes", what: "+12V 어댑터가 꽂힌 곳" },
+      { cell: "notes", what: "+12V 어댑터가 꽂힌 곳", priority: 11 },
     ],
   },
   {
@@ -213,7 +272,11 @@ const equipmentDefs = [
       "주 송출(OBS) + 주 녹화(OBS). 일반 PC에 SDI 입력용 캡처카드를 꽂은 구성",
     notes:
       '아래 "송출 PC OBS 설정" 참고. OBS는 캡처카드 외의 소리 입력을 쓰지 않음. 인코딩에 NVIDIA GPU(NVENC) 사용',
-    toConfirm: [{ cell: "model", what: "PC 본체 사양" }],
+    toConfirm: [
+      { cell: "model", what: "PC 본체 사양" },
+      { cell: "notes", what: "OBS 비디오 설정(FPS, 해상도)과 소스 디인터레이스 설정", priority: 9 },
+      { cell: "notes", what: '프로필 이름 "백업"의 의미', priority: 9 },
+    ],
   },
   {
     id: "송출 PC 캡처카드",
@@ -262,7 +325,11 @@ const equipmentDefs = [
     notes:
       "동시 2곳 송출 + SD/USB 녹화 가능. 전원: 영상 전원 시퀀서. 주 송출 경로 중간에 있음 → 꺼지거나 고장 나면 주 송출도 끊김(선임 설명 기준).",
     toConfirm: [
-      { cell: "notes", what: "입력 선택(SDI/HDMI)에 따라 SDI OUT 내용이 바뀌는지" },
+      {
+        cell: "notes",
+        what: "입력 선택(SDI/HDMI)에 따라 SDI OUT 내용이 바뀌는지",
+        priority: 7,
+      },
     ],
   },
   {
@@ -274,10 +341,14 @@ const equipmentDefs = [
     notes:
       '1080i59.94, SD 슬롯 2개. 전원: 영상 전원 시퀀서. 기존 기록 "SD카드 → 홈페이지 업로드"와 용어집 정의(OBS = 주 녹화)가 다름. 주 송출 경로 중간에 있음 → 꺼지면 주 송출도 끊김. HyperDeck은 재생 상태에서 SDI OUT으로 입력 대신 재생 영상을 내보내는 방식이라 예배 중 재생 시 유튜브에 재생 영상이 나갈 위험',
     toConfirm: [
-      { cell: "purpose", what: "실제 운영 방식" },
-      { cell: "notes", what: "정확한 모델(뒷면 라벨)" },
-      { cell: "notes", what: "기존 기록과 용어집 정의 중 어느 쪽이 실제 녹화 방식인지" },
-      { cell: "notes", what: "재생 시 실제 동작" },
+      { cell: "purpose", what: "실제 운영 방식", priority: 4 },
+      { cell: "notes", what: "정확한 모델(뒷면 라벨)", priority: 14 },
+      {
+        cell: "notes",
+        what: "기존 기록과 용어집 정의 중 어느 쪽이 실제 녹화 방식인지",
+        priority: 1,
+      },
+      { cell: "notes", what: "재생 시 실제 동작", priority: 4 },
     ],
   },
   {
@@ -287,7 +358,7 @@ const equipmentDefs = [
     location: "영상 데스크 왼쪽 랙",
     purpose: "영상을 LED 스크린 규격으로 변환",
     notes: '버튼 메모 "HDMI(항상)". 밝기 77%.',
-    toConfirm: [],
+    toConfirm: [{ cell: "notes", what: "뒷면 연결", priority: 14 }],
   },
   {
     id: "LED 스크린 전원 버튼",
@@ -307,6 +378,7 @@ const equipmentDefs = [
     toConfirm: [
       { cell: "notes", what: '채널명 "CBS" 표시 의미' },
       { cell: "notes", what: "수신 TV 위치" },
+      { cell: "notes", what: "뒷면 연결", priority: 14 },
     ],
   },
   {
@@ -370,12 +442,17 @@ const equipmentDefs = [
       '출력1: 라벨 "스트리밍" (사용자 확인) / 출력2: "RF-" (용도 모름) / 출력4: "음성녹음" / 출력6: "유아실"',
     ],
     toConfirm: [
-      { cell: "notes", what: '출력1 "스트리밍"은 오디오 임베더로 가는 것으로 보임' },
+      {
+        cell: "notes",
+        what: '출력1 "스트리밍"은 오디오 임베더로 가는 것으로 보임',
+        priority: 5,
+      },
       {
         cell: "notes",
         what: "오디오 임베더 소리 입력은 XLR 2개라 출력1 하나로 둘 다 채워지는지",
+        priority: 5,
       },
-      { cell: "notes", what: "출력2 → TV 채널 변환기 가능성" },
+      { cell: "notes", what: "출력2 → TV 채널 변환기 가능성", priority: 10 },
     ],
   },
   {
@@ -394,7 +471,7 @@ const equipmentDefs = [
     location: "멀티뷰 아래, 영상 스위처 위",
     purpose: "무선 마이크 수신",
     notes: '한 대에 "5" 메모. 촬영 시 화면 꺼짐/미표시',
-    toConfirm: [{ cell: "notes", what: "사용 여부" }],
+    toConfirm: [{ cell: "notes", what: "사용 여부", priority: 12 }],
   },
   {
     id: "안테나 분배기 A",
@@ -505,6 +582,11 @@ export type Connection = {
   /** 연결이 있는지, 끝점이 맞는지부터 확인해야 하면 true다. 흐린 톤으로 그린다. */
   readonly unconfirmed: boolean;
   readonly toConfirm: readonly string[];
+  /**
+   * `toConfirm`의 확인 필요 목록 우선순위. 연결의 확인할 거리는 지금 모두 하나라 연결에 둔다.
+   * 한 연결에 우선순위가 다른 거리가 생기면 장비처럼 항목마다 두도록 바꾼다.
+   */
+  readonly priority?: Priority;
 };
 
 /** 장비 목록표 순서로 늘어놓은 연결. 같은 연결은 한 번만 적는다. */
@@ -517,6 +599,7 @@ export const connections: readonly Connection[] = [
     signal: "전원",
     unconfirmed: false,
     toConfirm: ["연결 범위"],
+    priority: 11,
   },
   {
     from: { id: "전압조정기" },
@@ -553,6 +636,7 @@ export const connections: readonly Connection[] = [
     evidence: "선임 설명",
     unconfirmed: false,
     toConfirm: ["영상 스위처 출력 단자 번호"],
+    priority: 6,
   },
   {
     from: { id: "영상 hub" },
@@ -570,6 +654,7 @@ export const connections: readonly Connection[] = [
     evidence: "선임 설명",
     unconfirmed: true,
     toConfirm: ["연결 여부"],
+    priority: 2,
   },
   {
     from: { id: "영상 스위처" },
@@ -578,6 +663,7 @@ export const connections: readonly Connection[] = [
     evidence: "추정",
     unconfirmed: true,
     toConfirm: ["출력 단자·영상 hub 경유 여부"],
+    priority: 6,
   },
   {
     from: { id: "PTZ 컨트롤러" },
@@ -632,6 +718,7 @@ export const connections: readonly Connection[] = [
     evidence: "선임 설명(음향 콘솔)",
     unconfirmed: true,
     toConfirm: ['출발 장비: 음향 콘솔 직결 또는 오디오 분배기 출력1 "스트리밍" 경유'],
+    priority: 5,
   },
   {
     from: { id: "오디오 임베더", port: "SDI OUT" },
@@ -640,7 +727,8 @@ export const connections: readonly Connection[] = [
     detail: "영상+소리",
     evidence: "선임 설명",
     unconfirmed: false,
-    toConfirm: [],
+    toConfirm: ["실물 연결(직렬 구조)"],
+    priority: 3,
   },
   {
     from: { id: "백업 녹화기", port: "SDI OUT" },
@@ -650,6 +738,7 @@ export const connections: readonly Connection[] = [
     evidence: "선임 설명",
     unconfirmed: true,
     toConfirm: ["실물 연결(직렬 구조)"],
+    priority: 3,
   },
   {
     from: { id: "송출 PC 캡처카드" },
@@ -700,6 +789,7 @@ export const connections: readonly Connection[] = [
     signal: "HDMI",
     unconfirmed: false,
     toConfirm: ["출발 장비"],
+    priority: 7,
   },
   {
     from: { id: "백업 송출 장비", port: "SDI OUT" },
@@ -707,7 +797,8 @@ export const connections: readonly Connection[] = [
     signal: "SDI",
     evidence: "선임 설명",
     unconfirmed: false,
-    toConfirm: [],
+    toConfirm: ["실물 연결(직렬 구조)"],
+    priority: 3,
   },
   {
     from: { id: "백업 송출 장비", port: "LAN" },
@@ -722,6 +813,7 @@ export const connections: readonly Connection[] = [
     detail: "1920×1080@59.94",
     unconfirmed: false,
     toConfirm: ["출발 장비"],
+    priority: 8,
   },
   {
     from: { id: "LED 프로세서" },
@@ -736,6 +828,7 @@ export const connections: readonly Connection[] = [
     signal: "HDMI",
     unconfirmed: false,
     toConfirm: ["출발 장비"],
+    priority: 8,
   },
   {
     from: { id: "TV 채널 변환기" },
@@ -776,6 +869,7 @@ export const connections: readonly Connection[] = [
     evidence: "추정",
     unconfirmed: true,
     toConfirm: ["입력 출발 장비"],
+    priority: 5,
   },
   {
     from: { id: "안테나 분배기 A" },
