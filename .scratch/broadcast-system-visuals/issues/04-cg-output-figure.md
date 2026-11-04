@@ -1,7 +1,7 @@
 # 04: CG 출력 원리 anatomy 그림
 
 Type: task
-Status: claimed
+Status: resolved
 Blocked by: —
 
 ## 무엇을 하나
@@ -22,3 +22,13 @@ Blocked by: —
 - skill의 Verify를 따른다. 케이블·둥근 부품이 있으면 audit이 `audit passed`로 끝난다. 데스크톱·휴대폰 폭, 밝은·어두운 테마, 움직임 여러 순간을 캡처해 사람이 확인한다.
 - `prefers-reduced-motion`에서 움직이지 않는다.
 - `pnpm lint && pnpm typecheck && pnpm test`, `pnpm build`가 통과한다. kit 복사본 때문에 lint 규칙을 끄게 되면 끄는 범위와 이유를 Answer에 적는다.
+
+## Answer
+
+- **kit 위치.** anatomy `kit/`에서 쓰는 파일만 복사했다. React를 import하지 않는 `iso-kit.ts`, `iso-kit.mjs`, `lathe.mjs`, `tube.mjs`, `audit.mjs`와 MIT 고지 `license.txt`는 `_lib/anatomy/`에, `react/draw.tsx`, `react/live.tsx`, `iso.css`는 `_components/anatomy/`에 둔다. 원본과 다른 곳은 두 군데다. `draw.tsx`의 `iso-kit` import 경로, 그리고 `iso.css`가 사이트처럼 `prefers-color-scheme`으로 테마를 고르도록 밝은 토큰을 기본으로, 어두운 토큰을 미디어 쿼리 아래로 옮긴 것이다.
+- **끈 lint 규칙.** `eslint.config.mjs`에서 `app/docs/broadcast-system/_components/anatomy/**`와 `app/docs/broadcast-system/_lib/anatomy/**`에만 끈다.
+  - `react-hooks/refs`: 이 그림이 쓰지 않는 `useLoop`·`useEased`가 렌더 중에 ref를 읽는다.
+  - `react-hooks/exhaustive-deps`: `useInView`가 의존성 배열 없이 effect를 돈다(원본 설계).
+  - `@typescript-eslint/no-unused-expressions`: `.mjs`가 `a && b()`, `(x = 1), (y = 2)` 식 문장을 쓴다(경고).
+  - 원본과 같게 두려고 kit 코드는 고치지 않았다.
+- **audit.** `_lib/cg-output-figure.test.ts`가 그림을 만든 기록으로 `auditOrExit`을 돌리고 `audit passed`를 확인한다. `pnpm test`에 들어 있다.
