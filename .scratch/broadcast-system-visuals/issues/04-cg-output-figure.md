@@ -1,7 +1,7 @@
 # 04: CG 출력 원리 anatomy 그림
 
 Type: task
-Status: claimed
+Status: resolved
 Blocked by: —
 
 ## 무엇을 하나

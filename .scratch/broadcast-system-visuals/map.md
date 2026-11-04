@@ -40,6 +40,7 @@ Label: `wayfinder:map`
 - **배치도는 공간마다 anatomy 그림 하나다.** 그림 속 장비에 데이터 `id`를 달아 누르면 장비 정보가 열린다. 모양은 손으로 그린다. 그 공간의 장비 구성이 안정된 뒤 그린다. 영상 데스크는 확인 필요 2번(영상 hub)과 3번(직렬 구조)이 풀린 뒤다.
 - **페이지 배치.** 신호 흐름도는 새 페이지이고, 장비 목록표의 "온라인 송출 신호 흐름" 절이 그리로 옮겨 간다. CG 출력 원리 그림은 장비 목록표의 해당 절 안에 넣는다. 배치도는 나중에 새 페이지다.
 - **데이터 모듈은 `app/docs/broadcast-system/_lib/system.ts`다.** 장비 `toConfirm`은 배지 자리를 정하려고 `{ cell, what }[]`로 넓혔고, 끝점은 `{ id, unit?, port? }` 또는 `{ unknown, candidates? }`다. 확인 필요 목록 대응표와 옮기며 찾은 어긋남 8건은 [01](issues/01-system-data.md) Answer·Comments에 있다.
+- **anatomy kit 복사본은 `_lib/anatomy/`와 `_components/anatomy/`에 있다.** CG 출력 원리 그림이 이것으로 그려진다. lint 규칙 셋을 이 두 폴더에서만 껐고, 그림은 실제와 다른 점 셋을 캡션에 밝힌다. [04](issues/04-cg-output-figure.md) Answer.
 
 ## Tickets
 
