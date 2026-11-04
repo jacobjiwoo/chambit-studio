@@ -5,6 +5,8 @@ slug: equipment
 order: 2
 ---
 
+import { EquipmentTable } from "../_components/equipment-table";
+
 # 장비 목록표 (초안)
 
 장비명은 [용어집](/docs/broadcast-system/glossary) 기준으로 문서 전체에서 같게 쓴다. 연결은 "출발 장비 → 도착 장비 (케이블/신호 종류)"로 적는다. 불확실한 정보에는 <Unconfirmed /> 배지를 붙인다.
@@ -13,38 +15,11 @@ order: 2
 
 ## 전원
 
-| 장비명 | 제조사·모델명 | 위치 | 용도 | 입력/출력 연결 | 비고 |
-|---|---|---|---|---|---|
-| 전압조정기 | 세계전원(WE) Sound Clinic AV100 (AVR 자동전압조정기 + Balanced Power Isolation Transformer) | 음향 데스크 오른쪽 (흰색 바퀴 캐비닛) | 들어오는 전압을 일정하게 유지하고, 절연 트랜스로 전기 잡음을 줄여 장비에 공급 | 건물 전원 → 전압조정기 → 하위 장비 (<Unconfirmed>연결 범위</Unconfirmed>) | 켜는 순서 ①POWER 차단기 ②OUT ON(파란 버튼). 고장 시 입력 OFF 후 BY-PASS로 전환해 수동 사용 가능(본체 운전요령) |
-| 음향 UPS | APC Smart-UPS C1000 (1000VA / 600W) | 음향 콘솔 아래 | 정전 시 배터리로 전원 유지 | <Unconfirmed>전압조정기 → 음향 UPS 추정</Unconfirmed><br /><Unconfirmed>음향 UPS → 음향 콘솔 외</Unconfirmed> | 켜는 순서 ③. 위에 Furman 전원 장치 있음 |
-| 음향 파워 컨디셔너 | Furman (<Unconfirmed>모델</Unconfirmed>) | 음향 UPS 위 | 전원 분배·필터 추정 | <Unconfirmed /> | |
-| 영상 전원 시퀀서 | LEEM NS-8SW (NS-series Ver.3 Sequence Power Supply) | 영상 데스크 아래 오른쪽 | 8개 채널 전원을 순서대로 켜고 끔 | 영상 전원 시퀀서 → 공유기, 멀티뷰, 백업 녹화기, 백업 송출 장비 외 (<Unconfirmed>채널별 할당</Unconfirmed>) | DIRECT OUT 최대 2500W. BYPASS 버튼 있음. 전압 표시창 |
+<EquipmentTable part="전원" />
 
 ## 영상·온라인 송출
 
-| 장비명 | 제조사·모델명 | 위치 | 용도 | 입력/출력 연결 | 비고 |
-|---|---|---|---|---|---|
-| 영상 스위처 | Panasonic AV-HS410 (연결 패널 표기: AV-HS410E) | 영상 데스크 오른쪽 | 모든 영상 원본이 처음 들어오는 곳. 카메라·PC 화면 선택 및 전환. 여기서 고른 화면(PGM)에 CG가 합쳐져 LED 스크린·온라인 송출·녹화 등으로 나감 (<Unconfirmed>각 출력 할당</Unconfirmed>). 예배 소리는 여기서 섞지 않음(소리는 오디오 임베더에서 합쳐짐) | 입력(버튼 라벨 = 멀티뷰 표시): CAM1\~4, CAM5(버튼 "CP") = SDI IN5, CAM6(버튼 "강단") = SDI IN6, PC, CG FILL, CG KEY (SDI 8 + DVI 1)<br />출력: SDI 5 + DVI 1, AUX1\~4<br />영상 스위처 AUX4 → 방송실 TV<br />영상 스위처 → 영상 hub → 오디오 임베더 (SDI, PGM+CG, 선임 설명, <Unconfirmed>출력 단자 번호</Unconfirmed>) | CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인. <Unconfirmed>"CP" 뜻</Unconfirmed>. <Unconfirmed>AUX1 라벨</Unconfirmed>. <Unconfirmed>본체 위치·뒷면 연결</Unconfirmed> |
-| 영상 hub (가칭) | <Unconfirmed /> | <Unconfirmed /> | 영상 스위처 출력을 나눠 보내는 장비로 추정 | 영상 스위처 → 영상 hub (SDI 추정)<br />영상 hub → 오디오 임베더 (선임 설명)<br /><Unconfirmed>영상 hub → 멀티뷰</Unconfirmed> (선임 설명, 비고의 확인할 거리 참고) | 선임 설명은 "출력 2개 = 오디오 임베더, 멀티뷰". 확인할 거리: 멀티뷰는 분할 화면(영상 스위처 멀티뷰 전용 출력)을, 오디오 임베더는 PGM을 받으므로, 영상 hub가 일반 분배기라면 두 출력에는 같은 신호가 나간다. 사진으로 <Unconfirmed>모델·포트·연결</Unconfirmed>. 정식 이름은 확인 후 결정 |
-| 멀티뷰 | <Unconfirmed /> | 영상 데스크 위 대형 TV | PVW(다음에 내보낼 예비 화면)·PGM(실제 출력 화면)·전체 입력을 한 화면에 표시. 영상 스위처에서 나온 영상만 보여줌 | 영상 스위처 → 멀티뷰 (영상 스위처 멀티뷰 전용 출력 추정, <Unconfirmed>출력 단자·영상 hub 경유 여부</Unconfirmed>) | 표시 입력: CAM1\~4, SDI IN5, SDI IN6, PC, CG_FILL. 사진 촬영 시 SDI IN5·6에 "!"(신호 없음) 표시. 전원: 영상 전원 시퀀서. <Unconfirmed>TV 입력 단자 종류(HDMI/SDI)</Unconfirmed> |
-| PTZ 컨트롤러 | Sony (Remote Camera Controller RC-…, <Unconfirmed>정확한 모델</Unconfirmed>) | 영상 데스크, 영상 스위처 왼쪽 위 | CAM1·CAM2 원격 조작 | PTZ 컨트롤러 → CAM1·CAM2 (<Unconfirmed>IP 제어</Unconfirmed>) | 최근 교체. 상세 조사 보류 |
-| 구형 카메라 컨트롤러 | <Unconfirmed /> | 영상 데스크, 구리색 패널 | CAM3·CAM4 원격 조작 | <Unconfirmed>구형 카메라 컨트롤러 → CAM3·CAM4</Unconfirmed> | 패널에 조이스틱 4개 |
-| CAM1·CAM2 (원격 카메라) | Sony PTZ 카메라 추정 (<Unconfirmed>모델</Unconfirmed>) | 본당 (<Unconfirmed>위치</Unconfirmed>) | 방송실 원격 촬영 | CAM1·CAM2 → 영상 스위처 (SDI 추정) | 최근 교체 |
-| CAM3·CAM4 (원격 카메라) | <Unconfirmed /> (구형) | 본당 (<Unconfirmed>위치</Unconfirmed>) | 방송실 원격 촬영 | CAM3·CAM4 → 영상 스위처 (SDI 추정) | |
-| CAM5·CAM6 (유인 카메라) | <Unconfirmed /> | 본당 | 사람이 직접 조작하는 촬영 | CAM5 → 영상 스위처 SDI IN5 (버튼 "CP")<br />CAM6 → 영상 스위처 SDI IN6 (버튼 "강단") | 버튼 대응은 사용자 확인. <Unconfirmed>카메라 위치</Unconfirmed>. <Unconfirmed>연결 패널의 "CH5 PATCH/외부기기", "AV-HS410E/강단" BNC가 이 입력과 관련 있는 것으로 보임</Unconfirmed> |
-| 오디오 임베더 | Blackmagic Mini Converter Audio to SDI | 영상 데스크 뒷면 케이블 사이 (<Unconfirmed>정확한 위치</Unconfirmed>) | 영상 스위처 화면(SDI)에 음향 소리를 실어(embed) 영상+소리를 SDI 신호 하나로 만듦. 화면과 소리가 처음 합쳐지는 곳 | 영상 hub → 오디오 임베더 SDI IN (SDI, PGM+CG, 선임 설명)<br />음향 소리 → 오디오 임베더 CH1·CH2 (XLR ×2, <Unconfirmed>출발 장비</Unconfirmed>: 음향 콘솔 직결 또는 오디오 분배기 출력1 "스트리밍")<br />오디오 임베더 SDI OUT → 백업 송출 장비 SDI IN (SDI, 영상+소리, 선임 설명) | 사진 확인(2026-11-01): SDI IN·SDI OUT·CH1·CH2·전원 연결, ALT SDI IN 비어 있음, CH3·CH4 비어 있는 것으로 보임. 전원 +12V 어댑터(<Unconfirmed>꽂힌 곳</Unconfirmed>). 상판 SDI LOCK 표시등 = 영상 입력 정상 여부. 꺼지면 주 송출·백업 송출·백업 녹화의 영상·소리가 모두 끊김 |
-| 송출 PC | <Unconfirmed>PC 본체 사양</Unconfirmed> | 영상 데스크 (송출 PC 모니터: 맨 왼쪽 작은 LG) | 주 송출(OBS) + 주 녹화(OBS). 일반 PC에 SDI 입력용 캡처카드를 꽂은 구성 | <Unconfirmed>백업 녹화기 SDI OUT → 송출 PC 캡처카드</Unconfirmed> (SDI 1개, 영상+소리 embedded, 선임 설명)<br /><Unconfirmed>송출 PC → 공유기</Unconfirmed> → 유튜브 | 아래 "송출 PC OBS 설정" 참고. OBS는 캡처카드 외의 소리 입력을 쓰지 않음. 인코딩에 NVIDIA GPU(NVENC) 사용 |
-| 송출 PC 캡처카드 | Blackmagic DeckLink Mini Recorder 4K | 송출 PC 내부 (메인보드 PCIe 슬롯에 꽂는 확장 카드) | SDI로 들어온 영상·소리를 OBS로 받음 | <Unconfirmed>백업 녹화기 SDI OUT → 송출 PC 캡처카드</Unconfirmed> (SDI, 선임 설명) | OBS 소스 "Blackmagic 장치"에서 확인: 비디오 연결 SDI, 오디오 연결 Embedded(SDI 신호 안에 실린 소리), 2채널, 방식 Auto. "Recorder" = 입력 전용(SDI를 내보낼 수 없음). CG PC 문자발생기 보드와 같은 DeckLink 계열이지만 용도가 반대(출력용) |
-| CG PC | <Unconfirmed /> | 영상 데스크 (CG PC 모니터: 가운데 LG) | CG 생성 및 CG 출력. Compix NABI-CG 사용 | CG PC 문자발생기 보드 FILL Out → 영상 스위처 CG FILL (HD-SDI)<br />CG PC 문자발생기 보드 KEY Out → 영상 스위처 CG KEY (HD-SDI)<br />CG PC → 영상 스위처 PC 입력 (PC 화면, 디스플레이 확장 모드, <Unconfirmed>신호 종류</Unconfirmed> — 스위처 유일한 DVI 입력일 가능성) | 아래 "CG PC 문자발생기 보드" 참고 |
-| CG PC 문자발생기 보드 | Blackmagic DeckLink 4K Extreme | CG PC 내부 | NABI-CG의 CG를 방송 신호(HD-SDI)로 출력 | CG PC 문자발생기 보드 → 영상 스위처 (FILL / KEY, HD-SDI) | Desktop Video Setup에서 모델 확인(2026-11-01). 출력 설정 SDI·HDMI·Component 모두 1080i59.94. 스위처에 CG FILL·CG KEY 버튼이 모두 있어 Fill+Key 방식으로 판단. 드라이버 Desktop Video. USB 동글 필수. Media Express 실행 시 보드를 점유해 CG 출력이 끊길 수 있으므로 예배 중 실행 금지 |
-| NABI USB 동글 | Compix (SafeNet HASP) | CG PC에 꽂혀 있음 (<Unconfirmed>위치</Unconfirmed>) | NABI-CG 정품 인증 | — | 없거나 인식 안 되면 작업창에 빨간 십자선. 분실 시 재구매 비용 큼 → 관리 주의 |
-| 백업 송출 장비 | AJA HELO Plus | 영상 데스크 상판 | 백업 송출 + 녹화. 주 송출 문제 시 대체 | 오디오 임베더 → 백업 송출 장비 SDI IN (SDI, 영상+소리, 선임 설명)<br />HDMI IN 연결됨 (<Unconfirmed>출발 장비</Unconfirmed>)<br />백업 송출 장비 SDI OUT → 백업 녹화기 SDI IN (SDI, 선임 설명)<br />백업 송출 장비 LAN → 공유기 | 동시 2곳 송출 + SD/USB 녹화 가능. 전원: 영상 전원 시퀀서. 주 송출 경로 중간에 있음 → 꺼지거나 고장 나면 주 송출도 끊김(선임 설명 기준). <Unconfirmed>입력 선택(SDI/HDMI)에 따라 SDI OUT 내용이 바뀌는지</Unconfirmed> |
-| 백업 녹화기 | Blackmagic HyperDeck Studio 계열 (HD Mini 추정) | 영상 데스크 상판 | 백업 녹화 (<Unconfirmed>실제 운영 방식</Unconfirmed>) | 백업 송출 장비 SDI OUT → 백업 녹화기 SDI IN (SDI, 선임 설명)<br />백업 녹화기 SDI OUT → 송출 PC 캡처카드 (SDI, 선임 설명) | 1080i59.94, SD 슬롯 2개. <Unconfirmed>정확한 모델</Unconfirmed>(뒷면 라벨). 전원: 영상 전원 시퀀서. 기존 기록 "SD카드 → 홈페이지 업로드"와 용어집 정의(OBS = 주 녹화)가 다름 <Unconfirmed />. 주 송출 경로 중간에 있음 → 꺼지면 주 송출도 끊김. HyperDeck은 재생 상태에서 SDI OUT으로 입력 대신 재생 영상을 내보내는 방식이라 예배 중 재생 시 유튜브에 재생 영상이 나갈 위험(<Unconfirmed>실제 동작</Unconfirmed>) |
-| LED 프로세서 | Colorlight X8E | 영상 데스크 왼쪽 랙 | 영상을 LED 스크린 규격으로 변환 | 입력: HDMI1 사용 중 (1920×1080@59.94)<br />LED 프로세서 → LED 스크린 (이더넷) | 버튼 메모 "HDMI(항상)". 밝기 77%. <Unconfirmed>입력 출발 장비</Unconfirmed> |
-| LED 스크린 전원 버튼 | — | LED 프로세서 바로 위 | LED 스크린 전원 ON/OFF | — | 빨간 버튼, 라벨 "LED스크린전원" |
-| TV 채널 변환기 | Nextwill NWBM-200HD (8VSB HD Media Caster) | 영상 데스크 왼쪽 랙 | 예배 화면을 TV 채널로 변환해 교회 내 TV로 배포 | 입력: HDMI (<Unconfirmed>출발 장비</Unconfirmed>)<br />TV 채널 변환기 → 교회 내 TV (동축, CATV 채널 004 = 4-1) | <Unconfirmed>채널명 "CBS" 표시 의미</Unconfirmed>. <Unconfirmed>수신 TV 위치</Unconfirmed> |
-| 연결 패널 | — | TV 채널 변환기 아래 | 외부 장비 연결 단자 모음 | BNC "AV-HS410E/강단", BNC "CH5 PATCH/외부기기", HDMI "외부기기", USB (HD Recorder PC / HD CG PC), AC 220V | <Unconfirmed>용도</Unconfirmed> |
-| 방송실 TV | <Unconfirmed /> | 방송실 창문 위 벽걸이 | 방송실 모니터링 | 영상 스위처 AUX4 → 방송실 TV | |
+<EquipmentTable part="영상·온라인 송출" />
 
 ## 송출 PC OBS 설정 (2026-11-01 화면 기준)
 
@@ -62,35 +37,19 @@ order: 2
 
 ## 네트워크
 
-| 장비명 | 제조사·모델명 | 위치 | 용도 | 입력/출력 연결 | 비고 |
-|---|---|---|---|---|---|
-| 공유기 | ipTIME (<Unconfirmed>모델</Unconfirmed>) | 영상 데스크 상판 | 인터넷 연결·분배 | 인터넷 → 공유기 WAN (2.5G 포트, 검정 랜선)<br />공유기 LAN → 네트워크 스위치 외 장비 | 전원: 영상 전원 시퀀서 |
-| 네트워크 스위치 | netis PE6108G | 공유기 아래 | 유선 랜 포트 확장 (PoE 지원) | 1·2번 포트 사용 중 | PoE 미사용(표시등 꺼짐). <Unconfirmed>연결 장비</Unconfirmed> |
+<EquipmentTable part="네트워크" />
 
 ## 음향 (온라인 송출 관련 우선 기록)
 
-| 장비명 | 제조사·모델명 | 위치 | 용도 | 입력/출력 연결 | 비고 |
-|---|---|---|---|---|---|
-| 음향 콘솔 | Soundcraft Vi3000 | 음향 데스크 | 전체 소리 믹싱 | 음향 콘솔 → 오디오 임베더 (XLR, 선임 설명. <Unconfirmed>오디오 분배기 경유 여부</Unconfirmed>)<br /><Unconfirmed>그 외</Unconfirmed> | 상세는 음향 파트에서 |
-| 오디오 분배기 | Drawmer DA-6 | 영상 데스크 랙 (PTZ 컨트롤러 위) | 소리 1개를 6곳으로 분배 | 입력: <Unconfirmed /> (음향 콘솔 추정)<br />출력1: 라벨 "스트리밍" (사용자 확인) / 출력2: "RF-" (용도 모름) / 출력4: "음성녹음" / 출력6: "유아실" | <Unconfirmed>출력1 "스트리밍"은 오디오 임베더로 가는 것으로 보임</Unconfirmed>. 다만 오디오 임베더 소리 입력은 XLR 2개라 <Unconfirmed>출력1 하나로 둘 다 채워지는지</Unconfirmed>. <Unconfirmed>출력2 → TV 채널 변환기</Unconfirmed> 가능성 |
-| 무선 마이크 수신기 1\~4 | Shure QLXD4 ×4 | 오디오 분배기 아래 | 무선 마이크 수신 | 안테나 분배기 A → 무선 마이크 수신기 1\~4 (RF)<br /><Unconfirmed>무선 마이크 수신기 → 음향 콘솔</Unconfirmed> | X51 대역(925–937.5MHz), 채널 1·10·12·20 |
-| 무선 마이크 수신기 5\~6 | Shure QLXD4 ×2 | 멀티뷰 아래, 영상 스위처 위 | 무선 마이크 수신 | 안테나 분배기 B → 무선 마이크 수신기 5\~6 (RF)<br />출력(XLR) <Unconfirmed>연결처</Unconfirmed> | 한 대에 "5" 메모. 촬영 시 화면 꺼짐/미표시 → <Unconfirmed>사용 여부</Unconfirmed> |
-| 안테나 분배기 A | Shure UA844+SWB | 무선 마이크 수신기 1\~4 위 | 안테나·전원을 수신기에 분배 | 안테나 → 안테나 분배기 A → 무선 마이크 수신기 1\~4 | |
-| 안테나 분배기 B | Shure UA844+SWB | 무선 마이크 수신기 5\~6 아래 | 안테나·전원을 수신기에 분배 | 안테나 → 안테나 분배기 B → 무선 마이크 수신기 5\~6 | <Unconfirmed>안테나 분배기 A와의 cascade(연결) 여부</Unconfirmed> |
-| CD/USB 플레이어 | Numark MP103USB | 멀티뷰 아래, 안테나 분배기 B 아래 | 음원 재생 | CD/USB 플레이어 → <Unconfirmed /> (LINE OUT RCA 사용 중, BALANCED OUT·DIGITAL OUT 미사용 추정) | 2014년 5월 제조 |
-| 방송실 스피커 | <Unconfirmed /> (Yamaha HS 계열 추정) | 방송실 창문 위 좌우 | 방송실 청취용 | <Unconfirmed /> | |
+<EquipmentTable part="음향" />
 
 ## 조명
 
-| 장비명 | 제조사·모델명 | 위치 | 용도 | 입력/출력 연결 | 비고 |
-|---|---|---|---|---|---|
-| 조명 콘솔 | Botex DC-2448 Light Operator 48 | 영상 데스크 왼쪽 상판 | 본당 조명 제어 (DMX 48채널) | 조명 콘솔 → 조명 (DMX) | 라벨: ①강대상(위) ②새벽기도 ④성가대1 ⑤성가대2 ⑥강대상(아래) ⑧지휘자 |
+<EquipmentTable part="조명" />
 
 ## 기타 (용도 확인 필요)
 
-| 장비명 | 제조사·모델명 | 위치 | 비고 |
-|---|---|---|---|
-| DVD 레코더 | <Unconfirmed /> (…-DVM70, DV/HDD/DVD Recorder) | 영상 데스크 왼쪽 랙 | <Unconfirmed>현재 사용 여부</Unconfirmed> |
+<EquipmentTable part="기타" />
 
 ## CG 출력 원리 (하드웨어)
 
