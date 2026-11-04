@@ -17,20 +17,25 @@ import {
 } from "@xyflow/react";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
-import { downstream, flowGraph, tracedEdges, upstream, type FlowNode } from "../_lib/flow";
+import {
+  confirmsOf,
+  downstream,
+  tracedEdges,
+  upstream,
+  type FlowGraph,
+  type FlowNode,
+} from "../_lib/flow";
 import type { FlowLayout, Point } from "../_lib/flow-layout";
-import { connectionText, connections, equipment, externals } from "../_lib/system";
+import { connectionText, connections, equipment } from "../_lib/system";
 
 /**
- * 신호 흐름도의 움직이는 쪽. 좌표는 서버 컴포넌트가 빌드 때 계산해 `layout`으로 넘긴다.
+ * 신호 흐름도의 움직이는 쪽. 그래프와 좌표는 서버 컴포넌트가 빌드 때 만들어 `graph`·`layout`으로
+ * 넘긴다. 여기서 그래프를 다시 만들지 않아야 좌표와 그래프가 어긋나지 않는다.
  *
  * 장비를 누르면 하류를 "영향 받을 수 있음", 상류를 "여기부터 확인"으로 칠하고, 선을 누르면
  * 그 연결의 신호 종류·근거·확인할 거리를 보인다. `?device=<장비 id>`로 열면 그 장비를 고른
  * 채로 시작한다(확인 필요 목록 등에서 링크한다).
  */
-
-const graph = flowGraph(equipment, externals, connections);
-const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
 
 /** 하류·상류에서 그 점이 맡는 역할. 아무것도 고르지 않으면 모두 `idle`이다. */
 type Role = "idle" | "selected" | "down" | "up" | "rest";
@@ -72,7 +77,8 @@ function DeviceView({ data }: NodeProps<DeviceNode>) {
 }
 
 function WireView({ id, data, interactionWidth }: EdgeProps<WireEdge>) {
-  if (!data) return null;
+  // 좌표가 없는 선은 넘어오지 않지만, 화살촉 계산이 두 점을 쓰니 한 번 더 막는다.
+  if (!data || data.points.length < 2) return null;
   const { points } = data;
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
   const end = points[points.length - 1];
@@ -134,15 +140,20 @@ function writeDeviceParam(id: string | null) {
   window.history.replaceState(window.history.state, "", url);
 }
 
+type NodeById = ReadonlyMap<string, FlowNode>;
+
 export function SignalFlow({
+  graph,
   layout,
   fig,
   title,
 }: {
+  graph: FlowGraph;
   layout: FlowLayout;
   fig: string;
   title: string;
 }) {
+  const nodeById: NodeById = useMemo(() => new Map(graph.nodes.map((n) => [n.id, n])), [graph]);
   const fromUrl = useDeviceParam();
   // 사용자가 한 번이라도 고르면 주소보다 그 선택을 따른다.
   const [picked, setPicked] = useState<Selection | undefined>(undefined);
@@ -178,7 +189,7 @@ export function SignalFlow({
             up: new Set(upstream(graph, nodeId)),
             edges: new Set(tracedEdges(graph, nodeId)),
           },
-    [nodeId],
+    [graph, nodeId],
   );
 
   const nodes = useMemo((): DeviceNode[] => {
@@ -206,28 +217,33 @@ export function SignalFlow({
         data: { ...n, role },
       };
     });
-  }, [layout, nodeId, edgeId, trace]);
+  }, [graph, layout, nodeId, edgeId, trace]);
 
   const edges = useMemo(
     (): WireEdge[] =>
-      graph.edges.map((e) => {
+      graph.edges.flatMap((e) => {
+        // ELK가 길을 내지 못한 선은 좌표가 없다. 그리지 않는다.
+        const points = layout.edges[e.id];
+        if (!points || points.length < 2) return [];
         const lit = edgeId !== null ? edgeId === e.id : (trace?.edges.has(e.id) ?? false);
-        return {
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          type: "wire",
-          interactionWidth: 14,
-          ariaLabel: connectionText(connections[e.index]),
-          data: {
-            points: layout.edges[e.id],
-            unconfirmed: e.unconfirmed,
-            lit,
-            dim: (nodeId !== null || edgeId !== null) && !lit,
+        return [
+          {
+            id: e.id,
+            source: e.source,
+            target: e.target,
+            type: "wire",
+            interactionWidth: 14,
+            ariaLabel: connectionText(connections[e.index]),
+            data: {
+              points,
+              unconfirmed: e.unconfirmed,
+              lit,
+              dim: (nodeId !== null || edgeId !== null) && !lit,
+            },
           },
-        };
+        ];
       }),
-    [layout, nodeId, edgeId, trace],
+    [graph, layout, nodeId, edgeId, trace],
   );
 
   // 처음에는 전체를 맞춰 보인다. 주소로 고른 장비가 있으면 그 장비를 읽을 수 있는 크기로
@@ -248,7 +264,7 @@ export function SignalFlow({
     } else {
       void flow.fitView(FIT);
     }
-  }, [flow, fromUrl, layout, userPicked]);
+  }, [flow, fromUrl, layout, nodeById, userPicked]);
 
   return (
     <figure className="sf-figure">
@@ -283,16 +299,18 @@ export function SignalFlow({
         </div>
         <div className="sf-corner" data-corner="hint">장비·선을 누른다 · 끌어서 이동</div>
         <div className="sf-corner" data-corner="readout" aria-hidden>
-          {readoutOf(selection, trace)}
+          {readoutOf(graph, nodeById, selection, trace)}
         </div>
       </div>
-      <Details selection={selection} trace={trace} />
+      <Details graph={graph} nodeById={nodeById} selection={selection} trace={trace} />
     </figure>
   );
 }
 
 /** 카드 오른쪽 아래의 짧은 readout. 자세한 것은 카드 아래 `Details`가 읽어 준다. */
 function readoutOf(
+  graph: FlowGraph,
+  nodeById: NodeById,
   selection: Selection,
   trace: { down: Set<string>; up: Set<string> } | null,
 ): string {
@@ -305,9 +323,13 @@ function readoutOf(
 }
 
 function Details({
+  graph,
+  nodeById,
   selection,
   trace,
 }: {
+  graph: FlowGraph;
+  nodeById: NodeById;
   selection: Selection;
   trace: { down: Set<string>; up: Set<string> } | null;
 }) {
@@ -319,27 +341,30 @@ function Details({
           칠해집니다. 선을 누르면 연결 정보가 보입니다.
         </p>
       )}
-      {selection?.kind === "node" && <NodeDetails id={selection.id} trace={trace} />}
-      {selection?.kind === "edge" && <EdgeDetails id={selection.id} />}
+      {selection?.kind === "node" && (
+        <NodeDetails graph={graph} nodeById={nodeById} id={selection.id} trace={trace} />
+      )}
+      {selection?.kind === "edge" && <EdgeDetails graph={graph} id={selection.id} />}
     </div>
   );
 }
 
+/** 고른 점의 자세히. 확인할 거리는 점 자신의 것과 그 점에 닿는 연결 모두의 것이다. */
 function NodeDetails({
+  graph,
+  nodeById,
   id,
   trace,
 }: {
+  graph: FlowGraph;
+  nodeById: NodeById;
   id: string;
   trace: { down: Set<string>; up: Set<string> } | null;
 }) {
   const node = nodeById.get(id);
   const item = equipment.find((e) => e.id === id);
-  const incoming = graph.edges.find((e) => e.target === id);
-  const toConfirm = item
-    ? item.toConfirm.map((t) => t.what)
-    : incoming
-      ? connections[incoming.index].toConfirm
-      : (connections[graph.edges.find((e) => e.source === id)?.index ?? -1]?.toConfirm ?? []);
+  const own = item ? item.toConfirm.map((t) => t.what) : [];
+  const toConfirm = confirmsOf(graph, id, own, connections);
   return (
     <>
       <p className="sf-name">
@@ -358,7 +383,7 @@ function NodeDetails({
   );
 }
 
-function EdgeDetails({ id }: { id: string }) {
+function EdgeDetails({ graph, id }: { graph: FlowGraph; id: string }) {
   const edge = graph.edges.find((e) => e.id === id);
   if (!edge) return null;
   const c = connections[edge.index];

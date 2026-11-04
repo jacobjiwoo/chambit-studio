@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from "vitest";
 
-import { downstream, flowGraph, tracedEdges, upstream } from "./flow";
+import { confirmsOf, downstream, flowGraph, tracedEdges, upstream } from "./flow";
 import { connections, equipment, externals } from "./system";
 
 const graph = flowGraph(equipment, externals, connections);
@@ -62,5 +62,34 @@ describe("칠할 선", () => {
     expect(lines).toContain("공유기 → 유튜브");
     // 상류의 영상 전원 시퀀서가 하류의 공유기에 주는 전원은 백업 녹화기를 지나지 않는다.
     expect(lines).not.toContain("영상 전원 시퀀서 → 공유기");
+  });
+});
+
+describe("고른 점의 확인할 거리", () => {
+  const list = [{ id: "가" }, { id: "나" }, { id: "다" }];
+  const links = [
+    { from: { id: "가" }, to: { id: "나" }, unconfirmed: false, toConfirm: ["가→나 단자"] },
+    { from: { id: "다" }, to: { id: "나" }, unconfirmed: false, toConfirm: ["다→나 케이블"] },
+    { from: { id: "나" }, to: { unknown: "미상" }, unconfirmed: true, toConfirm: ["연결처"] },
+    { from: { id: "가" }, to: { id: "다" }, unconfirmed: false, toConfirm: ["가→다만"] },
+  ];
+  const g = flowGraph(list, [], links);
+
+  it("점 자신의 거리 뒤에 그 점에 닿는 모든 연결의 거리를 붙인다", () => {
+    expect(confirmsOf(g, "나", ["모델"], links)).toEqual([
+      "모델",
+      "가→나 단자",
+      "다→나 케이블",
+      "연결처",
+    ]);
+  });
+
+  it("미상 점은 그 연결의 거리를 보인다", () => {
+    const unknown = g.nodes.find((n) => n.kind === "unknown");
+    expect(confirmsOf(g, unknown?.id ?? "", [], links)).toEqual(["연결처"]);
+  });
+
+  it("같은 글은 한 번만 보인다", () => {
+    expect(confirmsOf(g, "가", ["가→나 단자"], links)).toEqual(["가→나 단자", "가→다만"]);
   });
 });

@@ -12,10 +12,10 @@ import type { FlowGraph, FlowNode } from "./flow";
 export type Point = { readonly x: number; readonly y: number };
 export type Box = Point & { readonly width: number; readonly height: number };
 
-/** 점 id → 왼쪽 위 자리와 크기, 선 id → 꺾인 선의 점들(출발 → 도착). */
+/** 점 id → 왼쪽 위 자리와 크기, 선 id → 꺾인 선의 점들(출발 → 도착). ELK가 길을 못 낸 선은 없다. */
 export type FlowLayout = {
   readonly nodes: Record<string, Box>;
-  readonly edges: Record<string, Point[]>;
+  readonly edges: Partial<Record<string, Point[]>>;
 };
 
 export const NODE_HEIGHT = 34;
@@ -56,14 +56,20 @@ export async function layoutFlow(graph: FlowGraph): Promise<FlowLayout> {
     children: graph.nodes.map((n) => ({ id: n.id, width: nodeWidth(n), height: NODE_HEIGHT })),
     edges: graph.edges.map((e) => ({ id: e.id, sources: [e.source], targets: [e.target] })),
   };
-  const result = await elk.layout(input);
+  return toFlowLayout(await elk.layout(input));
+}
 
+/**
+ * ELK 결과를 그리는 쪽이 쓰는 좌표로 옮긴다. ELK가 길(`sections`)을 내지 못한 선은 빼므로
+ * `edges`에 없는 선이 있을 수 있다. 그리는 쪽은 좌표가 없는 선을 그리지 않는다.
+ */
+export function toFlowLayout(result: ElkNode): FlowLayout {
   const nodes: Record<string, Box> = {};
   for (const c of result.children ?? []) {
     nodes[c.id] = { x: c.x ?? 0, y: c.y ?? 0, width: c.width ?? 0, height: c.height ?? 0 };
   }
 
-  const edges: Record<string, Point[]> = {};
+  const edges: Partial<Record<string, Point[]>> = {};
   for (const e of result.edges ?? []) {
     const section = e.sections?.[0];
     if (!section) continue;

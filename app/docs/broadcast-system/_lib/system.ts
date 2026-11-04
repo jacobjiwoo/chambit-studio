@@ -919,10 +919,10 @@ export const connections: readonly Connection[] = [
 ];
 
 /** 데이터 밖(테스트 등)에서도 쓰도록 이름을 `string`으로 넓힌 끝점과 연결. */
-type AnyEndpoint =
+export type AnyEndpoint =
   | { readonly id: string; readonly unit?: string; readonly port?: string }
   | { readonly unknown: string; readonly candidates?: readonly string[] };
-type AnyLink = { readonly from: AnyEndpoint; readonly to: AnyEndpoint };
+export type AnyLink = { readonly from: AnyEndpoint; readonly to: AnyEndpoint };
 
 /** 그 장비가 끝점이거나 미상의 후보인지. */
 function touches(end: AnyEndpoint, id: string): boolean {
