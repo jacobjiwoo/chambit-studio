@@ -1,0 +1,85 @@
+/* CG 출력 원리 그림. 색은 모두 anatomy 토큰에서 가져와 밝은·어두운 테마를 함께 따른다 */
+
+.cg-live {
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cg-live:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.cg-live .iso-svg {
+  overflow: visible;
+}
+
+.cg-live rect {
+  vector-effect: non-scaling-stroke;
+}
+
+.cg-wall {
+  fill: var(--anatomy-shade-2);
+}
+
+.cg-floor {
+  fill: var(--anatomy-shade-0);
+}
+
+.cg-figure {
+  fill: var(--anatomy-lo);
+}
+
+.cg-object {
+  fill: var(--anatomy-shade-1);
+  stroke: var(--anatomy-lo);
+  stroke-width: var(--anatomy-weight);
+}
+
+.cg-mark {
+  fill: none;
+  stroke: var(--anatomy-lo);
+  stroke-width: 1;
+}
+
+.cg-hole {
+  fill: var(--anatomy-paper);
+  stroke: var(--anatomy-lit);
+  stroke-width: 0.9;
+}
+
+.cg-fill-body {
+  fill: var(--anatomy-hi);
+}
+
+.cg-fill-tag {
+  fill: var(--anatomy-mid);
+}
+
+.cg-fill-text,
+.cg-fill-ring {
+  fill: none;
+  stroke: var(--anatomy-paper);
+  stroke-width: 1.2;
+}
+
+.cg-glass {
+  fill: none;
+  stroke: var(--anatomy-lo);
+  stroke-width: var(--anatomy-weight);
+}
+
+@media (max-width: 640px) {
+  .cg-live {
+    overflow: hidden;
+  }
+
+  .iso-plate .cg-live .iso-svg {
+    width: 116%;
+    margin: -4% -8% -3%;
+  }
+}
