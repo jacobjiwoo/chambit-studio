@@ -149,10 +149,10 @@ const equipmentDefs = [
     purpose:
       "모든 영상 원본이 처음 들어오는 곳. 카메라·PC 화면 선택 및 전환. 여기서 고른 화면(PGM)에 CG가 합쳐져 LED 스크린·온라인 송출·녹화 등으로 나감. 예배 소리는 여기서 섞지 않음(소리는 오디오 임베더에서 합쳐짐)",
     ports: [
-      '입력(버튼 라벨 = 멀티뷰 표시): CAM1~4, CAM5(버튼 "CP") = SDI IN5, CAM6(버튼 "강단") = SDI IN6, PC, CG FILL, CG KEY (SDI 8 + DVI 1)',
+      '입력(SDI 8 + DVI 1): SDI IN1~4 = CAM1~4, SDI IN5 = CAM5(버튼 "CP"), SDI IN6 = CAM6(버튼 "강단"), SDI IN7 = CG KEY, SDI IN8 = CG FILL. 그 밖에 PC',
       "출력: SDI 5 + DVI 1, AUX1~4",
     ],
-    notes: "CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인.",
+    notes: "CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인. SDI IN1~8 배치는 사용자 확인(2026-11-08).",
     toConfirm: [
       { cell: "purpose", what: "각 출력 할당", priority: 6 },
       { cell: "notes", what: '"CP" 뜻', priority: 13 },
@@ -214,7 +214,7 @@ const equipmentDefs = [
     model: "Sony PTZ 카메라 추정",
     location: "본당",
     purpose: "방송실 원격 촬영",
-    notes: "최근 교체",
+    notes: "최근 교체. 신형 IP 카메라(사용자 확인, 2026-11-08).",
     toConfirm: [
       { cell: "model", what: "모델" },
       { cell: "location", what: "위치" },
@@ -323,7 +323,7 @@ const equipmentDefs = [
     location: "영상 데스크 상판",
     purpose: "백업 송출 + 녹화. 주 송출 문제 시 대체",
     notes:
-      "동시 2곳 송출 + SD/USB 녹화 가능. 전원: 영상 전원 시퀀서. 주 송출 경로 중간에 있음 → 꺼지거나 고장 나면 주 송출도 끊김(선임 설명 기준).",
+      "동시 2곳 송출 + SD/USB 녹화 가능. 전원: 영상 전원 시퀀서. 주 송출 경로 중간에 있음 → 꺼지거나 고장 나면 주 송출도 끊김(선임 설명 기준). 입력 상태의 비디오 소스 = SDI(사용자 확인, 2026-11-07).",
     toConfirm: [
       {
         cell: "notes",
@@ -680,18 +680,34 @@ export const connections: readonly Connection[] = [
     toConfirm: ["연결 여부"],
   },
   {
-    from: { id: "CAM1·CAM2" },
-    to: { id: "영상 스위처" },
+    from: { id: "CAM1·CAM2", unit: "CAM1" },
+    to: { id: "영상 스위처", port: "SDI IN1" },
     signal: "SDI",
-    evidence: "추정",
+    evidence: "사용자 확인",
     unconfirmed: false,
     toConfirm: [],
   },
   {
-    from: { id: "CAM3·CAM4" },
-    to: { id: "영상 스위처" },
+    from: { id: "CAM1·CAM2", unit: "CAM2" },
+    to: { id: "영상 스위처", port: "SDI IN2" },
     signal: "SDI",
-    evidence: "추정",
+    evidence: "사용자 확인",
+    unconfirmed: false,
+    toConfirm: [],
+  },
+  {
+    from: { id: "CAM3·CAM4", unit: "CAM3" },
+    to: { id: "영상 스위처", port: "SDI IN3" },
+    signal: "SDI",
+    evidence: "사용자 확인",
+    unconfirmed: false,
+    toConfirm: [],
+  },
+  {
+    from: { id: "CAM3·CAM4", unit: "CAM4" },
+    to: { id: "영상 스위처", port: "SDI IN4" },
+    signal: "SDI",
+    evidence: "사용자 확인",
     unconfirmed: false,
     toConfirm: [],
   },
@@ -764,15 +780,19 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CG PC 문자발생기 보드", port: "FILL Out" },
-    to: { id: "영상 스위처", port: "CG FILL" },
+    to: { id: "영상 스위처", port: "SDI IN8" },
     signal: "HD-SDI",
+    detail: "CG FILL",
+    evidence: "사용자 확인",
     unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "CG PC 문자발생기 보드", port: "KEY Out" },
-    to: { id: "영상 스위처", port: "CG KEY" },
+    to: { id: "영상 스위처", port: "SDI IN7" },
     signal: "HD-SDI",
+    detail: "CG KEY",
+    evidence: "사용자 확인",
     unconfirmed: false,
     toConfirm: [],
   },
