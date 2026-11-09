@@ -5,18 +5,22 @@ import { describe, expect, it } from "vitest";
 
 import { flowGraph } from "./flow";
 import { layoutFlow, toFlowLayout } from "./flow-layout";
+import { viewGraph, views } from "./flow-views";
 import { connections, equipment, externals } from "./system";
 
-const graph = flowGraph(equipment, externals, connections);
+const full = flowGraph(equipment, externals, connections);
+const graph = viewGraph(full, connections, "video");
 const layout = await layoutFlow(graph);
 
 describe("배치", () => {
-  it("모든 점과 선이 자리를 받는다", () => {
-    for (const n of graph.nodes) {
-      expect(layout.nodes[n.id], n.id).toBeDefined();
+  it.each(views.map((v) => v.id))("%s 그림의 모든 점과 선이 자리를 받는다", async (view) => {
+    const g = viewGraph(full, connections, view);
+    const l = await layoutFlow(g);
+    for (const n of g.nodes) {
+      expect(l.nodes[n.id], n.id).toBeDefined();
     }
-    for (const e of graph.edges) {
-      expect(layout.edges[e.id]?.length, e.id).toBeGreaterThanOrEqual(2);
+    for (const e of g.edges) {
+      expect(l.edges[e.id]?.length, e.id).toBeGreaterThanOrEqual(2);
     }
   });
 

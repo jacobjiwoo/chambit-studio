@@ -4,6 +4,7 @@
  * 흰색), 미확인은 흐린 톤과 배지. 점선은 쓰지 않는다. 테마는 사이트처럼 prefers-color-scheme을 따른다.
  */
 .sf-figure,
+.sf-tabs,
 .sf-legend {
   --sf-card: #fbfbfa;
   --sf-text: #57575a;
@@ -23,6 +24,7 @@
 .sf-figure { margin: 24px 0 8px; }
 @media (prefers-color-scheme: dark) {
   .sf-figure,
+  .sf-tabs,
   .sf-legend {
     --sf-card: #131313;
     --sf-text: #a3a3a3;
@@ -193,4 +195,42 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sf-device { transition: none; }
+}
+
+/* 탭 */
+.sf-views { margin: 24px 0 8px; }
+.sf-views .sf-figure { margin-top: 0; }
+.sf-views [role="tabpanel"] { margin-top: 12px; }
+.sf-tabs { display: flex; }
+.sf-tab {
+  flex: 1 1 auto;
+  padding: 10px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--sf-mid);
+  background: transparent;
+  color: var(--sf-text);
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sf-tab[aria-selected="true"] {
+  color: var(--sf-strong);
+  font-weight: 600;
+  border-bottom: 2px solid var(--sf-lit);
+  margin-bottom: -1px;
+}
+.sf-tab:focus-visible { outline: 2px solid var(--sf-lit); outline-offset: -2px; }
+@media (max-width: 560px) { .sf-tab { padding: 10px 4px; font-size: 12.5px; } }
+
+/* 고른 장비가 나오는 다른 그림으로 가는 링크 */
+.sf-view-links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.sf-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sf-strong);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
