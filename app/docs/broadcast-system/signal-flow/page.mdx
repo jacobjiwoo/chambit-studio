@@ -15,13 +15,13 @@ import { SignalFlowFigure } from "../_components/signal-flow-figure";
 
 "영향"과 "확인"은 연결을 따라가기만 해서 칠하므로 실제로는 끊기지 않는 곳(예: 제어 신호만 받는 카메라)도 "영향"으로 칠해질 수 있다.
 
-## 온라인 송출 신호 흐름 (선임 설명 반영, 2026-11-01)
+## 온라인 송출 신호 흐름 (사용자 확인, 2026-11-09)
 
-장비 4대가 SDI 케이블로 한 줄로 이어진 <Unconfirmed>직렬 구조</Unconfirmed>(선임 설명).
+장비 4대가 SDI 케이블로 한 줄로 이어진 직렬 구조(사용자 확인).
 
-1. <Unconfirmed>영상 스위처 → 영상 hub</Unconfirmed> (SDI, PGM+CG)
-2. 영상 hub → 오디오 임베더 SDI IN (SDI)
-3. 음향 콘솔 → (<Unconfirmed>오디오 분배기 출력1 "스트리밍" 경유 여부</Unconfirmed>) → 오디오 임베더 CH1·CH2 (XLR ×2)
+1. <Unconfirmed>영상 스위처 → SDI-HDMI 변환기</Unconfirmed> (SDI, PGM+CG, 추정)
+2. SDI-HDMI 변환기 → 오디오 임베더 SDI IN (SDI)
+3. <Unconfirmed>음향 콘솔 → 오디오 분배기</Unconfirmed> (추정) → 출력4(라벨 "음성녹음") → 오디오 임베더 CH1·CH2 (L·R 2개)
 4. 오디오 임베더 → 백업 송출 장비 SDI IN (SDI, 영상+소리) ← 화면과 소리가 처음 합쳐진 뒤
 5. 백업 송출 장비 SDI OUT → 백업 녹화기 SDI IN (SDI)
 6. 백업 녹화기 SDI OUT → 송출 PC 캡처카드 (SDI)
