@@ -598,6 +598,9 @@ export type UnknownEndpoint = {
 
 export type Endpoint = KnownEndpoint | UnknownEndpoint;
 
+/** 신호 흐름도의 그림(탭) 종류. */
+export type Layer = "video" | "audio" | "power" | "network";
+
 export type Connection = {
   readonly from: Endpoint;
   readonly to: Endpoint;
@@ -607,6 +610,11 @@ export type Connection = {
   readonly detail?: string;
   /** 근거. "추정", "선임 설명", "사용자 확인" 등을 글자 그대로 둔다. */
   readonly evidence?: string;
+  /**
+   * 이 연결이 나오는 그림(탭). 필수라서 연결을 더할 때 빠뜨리면 타입 에러가 난다. `signal` 글자로는
+   * 가를 수 없어(비어 있거나, 같은 SDI에 소리 유무가 섞인다) 연결마다 직접 정한다.
+   */
+  readonly layers: readonly Layer[];
   /** 연결이 있는지, 끝점이 맞는지부터 확인해야 하면 true다. 흐린 톤으로 그린다. */
   readonly unconfirmed: boolean;
   readonly toConfirm: readonly string[];
@@ -620,12 +628,12 @@ export type Connection = {
 /** 장비 목록표 순서로 늘어놓은 연결. 같은 연결은 한 번만 적는다. */
 export const connections: readonly Connection[] = [
   // 전원
-  { from: { id: "건물 전원" }, to: { id: "전압조정기" }, signal: "전원", unconfirmed: false, toConfirm: [] },
+  { from: { id: "건물 전원" }, to: { id: "전압조정기" }, signal: "전원", layers: ["power"], unconfirmed: false, toConfirm: [] },
   {
     from: { id: "전압조정기" },
     to: { unknown: "하위 장비" },
     signal: "전원",
-    unconfirmed: false,
+    layers: ["power"], unconfirmed: false,
     toConfirm: ["연결 범위"],
     priority: 11,
   },
@@ -634,20 +642,20 @@ export const connections: readonly Connection[] = [
     to: { id: "음향 UPS" },
     signal: "전원",
     evidence: "추정",
-    unconfirmed: true,
+    layers: ["power"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
   {
     from: { id: "음향 UPS" },
     to: { id: "음향 콘솔" },
     signal: "전원",
-    unconfirmed: true,
+    layers: ["power"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
-  { from: { id: "영상 전원 시퀀서" }, to: { id: "공유기" }, signal: "전원", unconfirmed: false, toConfirm: [] },
-  { from: { id: "영상 전원 시퀀서" }, to: { id: "멀티뷰" }, signal: "전원", unconfirmed: false, toConfirm: [] },
-  { from: { id: "영상 전원 시퀀서" }, to: { id: "백업 녹화기" }, signal: "전원", unconfirmed: false, toConfirm: [] },
-  { from: { id: "영상 전원 시퀀서" }, to: { id: "백업 송출 장비" }, signal: "전원", unconfirmed: false, toConfirm: [] },
+  { from: { id: "영상 전원 시퀀서" }, to: { id: "공유기" }, signal: "전원", layers: ["power"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "영상 전원 시퀀서" }, to: { id: "멀티뷰" }, signal: "전원", layers: ["power"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "영상 전원 시퀀서" }, to: { id: "백업 녹화기" }, signal: "전원", layers: ["power"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "영상 전원 시퀀서" }, to: { id: "백업 송출 장비" }, signal: "전원", layers: ["power"], unconfirmed: false, toConfirm: [] },
 
   // 영상·온라인 송출
   {
@@ -656,14 +664,14 @@ export const connections: readonly Connection[] = [
     signal: "DVI",
     detail: "멀티뷰 화면",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "HDMI 분배기" },
     to: { id: "방송실 TV" },
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -671,7 +679,7 @@ export const connections: readonly Connection[] = [
     to: { id: "미니박스", port: "HDMI IN" },
     signal: "HDMI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -679,7 +687,7 @@ export const connections: readonly Connection[] = [
     to: { id: "멀티뷰" },
     signal: "One Connect 케이블",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -687,7 +695,7 @@ export const connections: readonly Connection[] = [
     to: { id: "5층 로비" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -696,7 +704,7 @@ export const connections: readonly Connection[] = [
     signal: "SDI",
     detail: "PGM+CG",
     evidence: "추정",
-    unconfirmed: true,
+    layers: ["video"], unconfirmed: true,
     toConfirm: ["입력 출발 장비, 영상 스위처 출력 단자 번호"],
     priority: 3,
   },
@@ -705,7 +713,7 @@ export const connections: readonly Connection[] = [
     to: { id: "오디오 임베더", port: "SDI IN" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -713,7 +721,7 @@ export const connections: readonly Connection[] = [
     to: { id: "카메라 스위칭 허브", port: "1번" },
     signal: "LAN",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -721,7 +729,7 @@ export const connections: readonly Connection[] = [
     to: { id: "CAM1·CAM2", unit: "CAM1" },
     signal: "LAN",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -729,14 +737,14 @@ export const connections: readonly Connection[] = [
     to: { id: "CAM1·CAM2", unit: "CAM2" },
     signal: "LAN",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "구형 카메라 컨트롤러" },
     to: { id: "CAM3·CAM4" },
     signal: "제어",
-    unconfirmed: true,
+    layers: ["network"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
   {
@@ -744,7 +752,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN1" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -752,7 +760,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN2" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -760,7 +768,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN3" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -768,7 +776,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN4" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -776,7 +784,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN5" },
     detail: '버튼 "CP"',
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -784,7 +792,7 @@ export const connections: readonly Connection[] = [
     to: { id: "영상 스위처", port: "SDI IN6" },
     detail: '버튼 "강단"',
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -793,7 +801,7 @@ export const connections: readonly Connection[] = [
     signal: "L·R 2개",
     detail: '라벨 "음성녹음"',
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -802,7 +810,7 @@ export const connections: readonly Connection[] = [
     signal: "L·R 2개",
     detail: '라벨 "스트리밍"',
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: ["이 입력을 실제 오디오로 쓰는지"],
     priority: 7,
   },
@@ -812,7 +820,7 @@ export const connections: readonly Connection[] = [
     signal: "SDI",
     detail: "영상+소리",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video", "audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -821,7 +829,7 @@ export const connections: readonly Connection[] = [
     signal: "SDI 1개",
     detail: "영상+소리 embedded",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video", "audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -829,13 +837,13 @@ export const connections: readonly Connection[] = [
     to: { id: "송출 PC" },
     signal: "PCIe",
     detail: "송출 PC 내부",
-    unconfirmed: false,
+    layers: ["video", "audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "송출 PC" },
     to: { id: "공유기" },
-    unconfirmed: true,
+    layers: ["video", "audio", "network"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
   {
@@ -843,7 +851,7 @@ export const connections: readonly Connection[] = [
     to: { id: "CG PC 문자발생기 보드" },
     signal: "PCIe",
     detail: "CG PC 내부",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -852,7 +860,7 @@ export const connections: readonly Connection[] = [
     signal: "HD-SDI",
     detail: "CG FILL",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -861,7 +869,7 @@ export const connections: readonly Connection[] = [
     signal: "HD-SDI",
     detail: "CG KEY",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -870,7 +878,7 @@ export const connections: readonly Connection[] = [
     signal: "DVI",
     detail: "PC 화면, 디스플레이 확장 모드",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -878,7 +886,7 @@ export const connections: readonly Connection[] = [
     to: { id: "백업 송출 장비", port: "HDMI IN" },
     signal: "HDMI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -886,13 +894,13 @@ export const connections: readonly Connection[] = [
     to: { id: "백업 녹화기", port: "SDI IN" },
     signal: "SDI",
     evidence: "사용자 확인",
-    unconfirmed: false,
+    layers: ["video", "audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "백업 송출 장비", port: "LAN" },
     to: { id: "공유기" },
-    unconfirmed: false,
+    layers: ["video", "audio", "network"], unconfirmed: false,
     toConfirm: [],
   },
   {
@@ -900,7 +908,7 @@ export const connections: readonly Connection[] = [
     to: { id: "LED 프로세서", port: "HDMI1" },
     signal: "HDMI",
     detail: "1920×1080@59.94",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: ["출발 장비"],
     priority: 8,
   },
@@ -908,14 +916,14 @@ export const connections: readonly Connection[] = [
     from: { id: "LED 프로세서" },
     to: { id: "LED 스크린" },
     signal: "이더넷",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { unknown: "미상" },
     to: { id: "TV 채널 변환기" },
     signal: "HDMI",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: ["출발 장비"],
     priority: 8,
   },
@@ -924,7 +932,7 @@ export const connections: readonly Connection[] = [
     to: { id: "교회 내 TV" },
     signal: "동축",
     detail: "CATV 채널 004 = 4-1",
-    unconfirmed: false,
+    layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
 
@@ -933,21 +941,21 @@ export const connections: readonly Connection[] = [
     from: { id: "인터넷" },
     to: { id: "공유기", port: "WAN" },
     detail: "2.5G 포트, 검정 랜선",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "공유기", port: "LAN" },
     to: { id: "네트워크 스위치" },
     detail: "공유기 LAN에는 그 외 장비도 연결",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "공유기" },
     to: { id: "유튜브" },
     detail: "송출 PC의 주 송출",
-    unconfirmed: false,
+    layers: ["video", "audio", "network"], unconfirmed: false,
     toConfirm: [],
   },
 
@@ -956,7 +964,7 @@ export const connections: readonly Connection[] = [
     from: { id: "음향 콘솔" },
     to: { id: "오디오 분배기" },
     evidence: "추정",
-    unconfirmed: true,
+    layers: ["audio"], unconfirmed: true,
     toConfirm: ["입력 출발 장비"],
     priority: 5,
   },
@@ -964,36 +972,36 @@ export const connections: readonly Connection[] = [
     from: { id: "안테나 분배기 A" },
     to: { id: "무선 마이크 수신기 1~4" },
     signal: "RF",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "무선 마이크 수신기 1~4" },
     to: { id: "음향 콘솔" },
-    unconfirmed: true,
+    layers: ["audio"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
   {
     from: { id: "안테나 분배기 B" },
     to: { id: "무선 마이크 수신기 5~6" },
     signal: "RF",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: [],
   },
   {
     from: { id: "무선 마이크 수신기 5~6", port: "출력" },
     to: { unknown: "미상" },
     signal: "XLR",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: ["연결처"],
   },
-  { from: { id: "안테나" }, to: { id: "안테나 분배기 A" }, unconfirmed: false, toConfirm: [] },
-  { from: { id: "안테나" }, to: { id: "안테나 분배기 B" }, unconfirmed: false, toConfirm: [] },
+  { from: { id: "안테나" }, to: { id: "안테나 분배기 A" }, layers: ["audio"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "안테나" }, to: { id: "안테나 분배기 B" }, layers: ["audio"], unconfirmed: false, toConfirm: [] },
   {
     from: { id: "CD/USB 플레이어", port: "LINE OUT" },
     to: { unknown: "미상" },
     signal: "RCA",
-    unconfirmed: false,
+    layers: ["audio"], unconfirmed: false,
     toConfirm: ["연결처"],
   },
 
@@ -1002,7 +1010,7 @@ export const connections: readonly Connection[] = [
     from: { id: "조명 콘솔" },
     to: { id: "본당 조명" },
     signal: "DMX",
-    unconfirmed: false,
+    layers: ["network"], unconfirmed: false,
     toConfirm: [],
   },
 ];

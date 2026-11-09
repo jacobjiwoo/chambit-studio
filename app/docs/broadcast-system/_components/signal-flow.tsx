@@ -15,7 +15,7 @@ import {
   type NodeProps,
   type ReactFlowInstance,
 } from "@xyflow/react";
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   confirmsOf,
@@ -26,6 +26,7 @@ import {
   type FlowNode,
 } from "../_lib/flow";
 import type { FlowLayout, Point } from "../_lib/flow-layout";
+import { views, type Selection, type ViewId } from "../_lib/flow-views";
 import { connectionText, connections, equipment } from "../_lib/system";
 
 /**
@@ -33,14 +34,12 @@ import { connectionText, connections, equipment } from "../_lib/system";
  * 넘긴다. 여기서 그래프를 다시 만들지 않아야 좌표와 그래프가 어긋나지 않는다.
  *
  * 장비를 누르면 하류를 "영향 받을 수 있음", 상류를 "여기부터 확인"으로 칠하고, 선을 누르면
- * 그 연결의 신호 종류·근거·확인할 거리를 보인다. `?device=<장비 id>`로 열면 그 장비를 고른
- * 채로 시작한다(확인 필요 목록 등에서 링크한다).
+ * 그 연결의 신호 종류·근거·확인할 거리를 보인다. 한 그림(탭) 하나를 그린다. 탭과 주소
+ * (`?view=&device=`)는 `signal-flow-views.tsx`가 다루고, 이 그림은 고른 것과 처음 맞출 장비를 받는다.
  */
 
 /** 하류·상류에서 그 점이 맡는 역할. 아무것도 고르지 않으면 모두 `idle`이다. */
 type Role = "idle" | "selected" | "down" | "up" | "rest";
-
-type Selection = { readonly kind: "node" | "edge"; readonly id: string } | null;
 
 // 누르기는 `onNodeClick`이 받는다. 버튼의 Enter·Space도 click으로 올라가 같은 길을 탄다.
 type DeviceData = FlowNode & { role: Role };
@@ -121,25 +120,6 @@ const nodeTypes = { device: DeviceView };
 const FIT = { padding: { top: "8px", right: "8px", bottom: "8px", left: "44px" } } as const;
 const edgeTypes = { wire: WireView };
 
-/** 주소의 `?device=`. 서버에서는 없다. 렌더 중에 `window`를 읽지 않으려고 store로 읽는다. */
-function useDeviceParam(): string | null {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => new URLSearchParams(window.location.search).get("device"),
-    () => null,
-  );
-}
-function noopSubscribe() {
-  return () => {};
-}
-
-function writeDeviceParam(id: string | null) {
-  const url = new URL(window.location.href);
-  if (id) url.searchParams.set("device", id);
-  else url.searchParams.delete("device");
-  window.history.replaceState(window.history.state, "", url);
-}
-
 type NodeById = ReadonlyMap<string, FlowNode>;
 
 export function SignalFlow({
@@ -147,37 +127,40 @@ export function SignalFlow({
   layout,
   fig,
   title,
+  selection,
+  onPick,
+  focusId,
+  interacted,
+  otherViews,
+  onOpenView,
 }: {
   graph: FlowGraph;
   layout: FlowLayout;
   fig: string;
   title: string;
+  /** 고른 것. 탭을 바꿔도 이어지도록 부모가 들고 있다. */
+  selection: Selection;
+  onPick: (next: Selection) => void;
+  /** 주소로 들어온 장비. 처음 열릴 때 가운데 둔다. */
+  focusId: string | null;
+  /** 사용자가 고르거나 탭을 바꾼 뒤인지. 그 뒤로는 주소 장비로 보는 자리를 옮기지 않는다. */
+  interacted: boolean;
+  /** 고른 장비가 나오는 다른 그림. 자세히에 링크로 둔다. */
+  otherViews: readonly ViewId[];
+  onOpenView: (view: ViewId) => void;
 }) {
   const nodeById: NodeById = useMemo(() => new Map(graph.nodes.map((n) => [n.id, n])), [graph]);
-  const fromUrl = useDeviceParam();
-  // 사용자가 한 번이라도 고르면 주소보다 그 선택을 따른다.
-  const [picked, setPicked] = useState<Selection | undefined>(undefined);
-  const selection: Selection =
-    picked !== undefined
-      ? picked
-      : fromUrl && nodeById.has(fromUrl)
-        ? { kind: "node", id: fromUrl }
-        : null;
   const nodeId = selection?.kind === "node" ? selection.id : null;
   const edgeId = selection?.kind === "edge" ? selection.id : null;
 
-  const pick = useCallback((next: Selection) => {
-    setPicked(next);
-    writeDeviceParam(next?.kind === "node" ? next.id : null);
-  }, []);
   // 같은 것을 다시 누르면 고른 것을 푼다.
   const pickNode = useCallback(
-    (id: string) => pick(nodeId === id ? null : { kind: "node", id }),
-    [pick, nodeId],
+    (id: string) => onPick(nodeId === id ? null : { kind: "node", id }),
+    [onPick, nodeId],
   );
   const pickEdge = useCallback(
-    (id: string) => pick(edgeId === id ? null : { kind: "edge", id }),
-    [pick, edgeId],
+    (id: string) => onPick(edgeId === id ? null : { kind: "edge", id }),
+    [onPick, edgeId],
   );
 
   const trace = useMemo(
@@ -251,11 +234,10 @@ export function SignalFlow({
   // 뒤에 맞춘다. `fitView` prop은 이 맞춤을 덮어써서 쓰지 않는다.
   const [flow, setFlow] = useState<ReactFlowInstance<DeviceNode, WireEdge> | null>(null);
   const framed = useRef<string | null>(null);
-  const userPicked = picked !== undefined;
   useEffect(() => {
-    // 사용자가 고르기 시작하면 보는 자리를 옮기지 않는다. 고를 때 주소도 바뀌기 때문이다.
-    if (!flow || userPicked) return;
-    const target = fromUrl && nodeById.has(fromUrl) ? fromUrl : "";
+    // 한 번 맞춘 뒤 사용자가 고르기 시작하면 보는 자리를 옮기지 않는다. 고를 때 주소도 바뀌기 때문이다.
+    if (!flow || (interacted && framed.current !== null)) return;
+    const target = focusId ?? "";
     if (framed.current === target) return;
     framed.current = target;
     if (target) {
@@ -264,7 +246,7 @@ export function SignalFlow({
     } else {
       void flow.fitView(FIT);
     }
-  }, [flow, fromUrl, layout, nodeById, userPicked]);
+  }, [flow, focusId, layout, interacted]);
 
   return (
     <figure className="sf-figure">
@@ -280,7 +262,7 @@ export function SignalFlow({
           onInit={setFlow}
           onNodeClick={(_, node) => pickNode(node.id)}
           onEdgeClick={(_, edge) => pickEdge(edge.id)}
-          onPaneClick={() => pick(null)}
+          onPaneClick={() => onPick(null)}
           fitViewOptions={FIT}
           minZoom={0.15}
           maxZoom={2}
@@ -302,7 +284,14 @@ export function SignalFlow({
           {readoutOf(graph, nodeById, selection, trace)}
         </div>
       </div>
-      <Details graph={graph} nodeById={nodeById} selection={selection} trace={trace} />
+      <Details
+        graph={graph}
+        nodeById={nodeById}
+        selection={selection}
+        trace={trace}
+        otherViews={otherViews}
+        onOpenView={onOpenView}
+      />
     </figure>
   );
 }
@@ -314,7 +303,10 @@ function readoutOf(
   selection: Selection,
   trace: { down: Set<string>; up: Set<string> } | null,
 ): string {
-  if (selection === null) return `장비 ${equipment.length} · 연결 ${connections.length}`;
+  if (selection === null) {
+    const devices = graph.nodes.filter((n) => n.kind === "equipment").length;
+    return `장비 ${devices} · 연결 ${graph.edges.length}`;
+  }
   if (selection.kind === "edge") {
     const edge = graph.edges.find((e) => e.id === selection.id);
     return edge ? `${nodeById.get(edge.source)?.label} → ${nodeById.get(edge.target)?.label}` : "";
@@ -327,11 +319,15 @@ function Details({
   nodeById,
   selection,
   trace,
+  otherViews,
+  onOpenView,
 }: {
   graph: FlowGraph;
   nodeById: NodeById;
   selection: Selection;
   trace: { down: Set<string>; up: Set<string> } | null;
+  otherViews: readonly ViewId[];
+  onOpenView: (view: ViewId) => void;
 }) {
   return (
     <div className="sf-details" aria-live="polite">
@@ -342,7 +338,14 @@ function Details({
         </p>
       )}
       {selection?.kind === "node" && (
-        <NodeDetails graph={graph} nodeById={nodeById} id={selection.id} trace={trace} />
+        <NodeDetails
+          graph={graph}
+          nodeById={nodeById}
+          id={selection.id}
+          trace={trace}
+          otherViews={otherViews}
+          onOpenView={onOpenView}
+        />
       )}
       {selection?.kind === "edge" && <EdgeDetails graph={graph} id={selection.id} />}
     </div>
@@ -355,11 +358,15 @@ function NodeDetails({
   nodeById,
   id,
   trace,
+  otherViews,
+  onOpenView,
 }: {
   graph: FlowGraph;
   nodeById: NodeById;
   id: string;
   trace: { down: Set<string>; up: Set<string> } | null;
+  otherViews: readonly ViewId[];
+  onOpenView: (view: ViewId) => void;
 }) {
   const node = nodeById.get(id);
   const item = equipment.find((e) => e.id === id);
@@ -378,6 +385,15 @@ function NodeDetails({
         <span data-role="down">영향 받을 수 있음 {trace?.down.size ?? 0}곳</span>
         <span data-role="up">여기부터 확인 {trace?.up.size ?? 0}곳</span>
       </p>
+      {otherViews.length > 0 && (
+        <p className="sf-view-links">
+          {otherViews.map((v) => (
+            <button key={v} type="button" className="sf-link" onClick={() => onOpenView(v)}>
+              {views.find((x) => x.id === v)?.label} 그림에서 보기
+            </button>
+          ))}
+        </p>
+      )}
       <ToConfirm items={toConfirm} />
     </>
   );
