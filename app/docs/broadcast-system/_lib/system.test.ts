@@ -57,7 +57,7 @@ const ONLY_IN_EQUIPMENT_LIST = [
 ];
 
 /** 정식 이름이 아직 없는 가칭. 확인 후 이름이 정해지면 용어집에 올리고 여기서 뺀다. */
-const PROVISIONAL = ["영상 hub"];
+const PROVISIONAL: string[] = [];
 
 describe("장비·연결 데이터", () => {
   it("연결의 양 끝은 장비, 외부 지점, 또는 후보가 장비인 미상이다", () => {

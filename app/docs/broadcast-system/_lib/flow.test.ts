@@ -35,7 +35,7 @@ describe("상류", () => {
       "백업 녹화기",
       "백업 송출 장비",
       "오디오 임베더",
-      "영상 hub",
+      "SDI-HDMI 변환기",
       "영상 스위처",
     ]) {
       expect(up).toContain(id);
@@ -44,10 +44,21 @@ describe("상류", () => {
   });
 
   it("출발을 모르는 연결은 미상 점이 되고 후보 장비로 잇지 않는다", () => {
-    const up = upstream(graph, "오디오 임베더");
-    const unknown = graph.nodes.find((n) => n.kind === "unknown" && n.label === "음향 소리");
+    const g = flowGraph(
+      [{ id: "임베더" }, { id: "분배기" }],
+      [],
+      [
+        {
+          from: { unknown: "음향 소리", candidates: ["분배기"] },
+          to: { id: "임베더" },
+          unconfirmed: true,
+        },
+      ],
+    );
+    const up = upstream(g, "임베더");
+    const unknown = g.nodes.find((n) => n.kind === "unknown" && n.label === "음향 소리");
     expect(up).toContain(unknown?.id);
-    expect(up).not.toContain("오디오 분배기");
+    expect(up).not.toContain("분배기");
   });
 });
 

@@ -87,17 +87,17 @@ describe("방송실 데이터의 확인 필요 목록", () => {
     expect(items).toHaveLength(total);
   });
 
-  it("손으로 쓰던 목록의 우선순위 1–15가 모두 남고, 14·15만 보류다", () => {
+  it("남은 우선순위는 모두 확인할 거리가 있고, 14만 보류다", () => {
     const used = [...new Set(items.flatMap((i) => (i.priority ? [i.priority] : [])))].sort(
       (a, b) => a - b,
     );
 
-    expect(used).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+    expect(used).toEqual([1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
     expect(Object.keys(priorities).map(Number)).toEqual(used);
     expect(
       Object.entries(priorities)
         .filter(([, p]) => "deferred" in p && p.deferred)
         .map(([rank]) => Number(rank)),
-    ).toEqual([14, 15]);
+    ).toEqual([14]);
   });
 });
