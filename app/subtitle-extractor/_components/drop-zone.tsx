@@ -19,7 +19,7 @@ export function DropZone({ onFile }: { onFile: (file: File) => void }) {
   const picker = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-[calc(100vh-4rem)] flex-col bg-white">
       <TitleBar />
       <div className="flex flex-1 items-center justify-center p-8">
         <button

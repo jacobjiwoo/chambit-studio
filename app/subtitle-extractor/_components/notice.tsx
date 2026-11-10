@@ -48,7 +48,7 @@ export function Notice({
   const tone = TONE[guidance.tone];
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-[calc(100vh-4rem)] flex-col bg-white">
       <TitleBar />
       <div className="flex flex-1 items-center justify-center overflow-y-auto px-6 py-10">
         <div className={`max-w-lg rounded-2xl border ${tone.card} p-8 shadow-sm`}>

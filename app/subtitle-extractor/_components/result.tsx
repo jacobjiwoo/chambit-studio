@@ -83,7 +83,7 @@ export function Result({
   const download = () => downloadNabiTxt(texts, name);
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-[calc(100vh-4rem)] flex-col bg-white">
       <Header
         filename={filename}
         count={subtitles.length}
