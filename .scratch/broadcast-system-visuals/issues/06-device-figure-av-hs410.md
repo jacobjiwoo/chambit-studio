@@ -1,7 +1,7 @@
 # 06: 장비 생김새 그림의 공통 틀과 AV-HS410
 
 Type: task
-Status: claimed
+Status: resolved
 Blocked by: —
 
 ## 무엇을 하나
@@ -22,3 +22,16 @@ Blocked by: —
 - 휴대폰 너비에서 단자 이름이 읽힌다.
 - `pnpm lint && pnpm typecheck && pnpm test`, `pnpm build`가 통과한다.
 - 끝나면 멈추고 사람이 실물과 비교한다.
+
+## Answer
+
+- **그림.** `_lib/av-hs410-figure.ts`가 앞·뒤 두 시점을 만든다. 앞은 조작 패널의 버튼 109개와 손잡이 6개, 조이스틱, 페이더 레버를, 뒤는 BNC 15개, D-sub 4개, DVI 2개, LAN, 옵션 슬롯 덮개 2개, 팬 그릴, 전원 스위치, AC IN, 접지 단자를 매뉴얼 27쪽 배열대로 그린다. 버튼과 단자의 자리는 매뉴얼 그림에서 재서 mm로 옮겼다.
+- **매뉴얼에 없어 추정한 것.** 옆모습이 없어 패널이 기울어진 각도(앞 40mm → 뒤 108mm)와 디스플레이가 선 각도는 추정이다. 캡션에 밝힌다. 크로스포인트 줄은 버튼 12개이고 12번째에 `SHIFT`가 인쇄돼 있다(매뉴얼 18쪽 그림과 "[PGM/A 1 to 12]").
+- **틀.** `_lib/device-figure.ts`가 장비 좌표(mm)를 시점에 맞춰 옮기고, 기울어진 면 위에 상자·원기둥·글자를 놓는다. 부품마다 실제 모양을 anatomy audit 기록기에 남겨 앞뒤 순서를 `A.settle`로 정한다. 다음 장비는 이 틀 위에 부품만 놓으면 된다.
+- **이름.** 그림 속 부품을 `data-spot`으로 묶는다. dialog의 이름 목록과 그림이 서로를 켠다. 앞은 매뉴얼의 번호 매긴 묶음(23개), 뒤는 단자(25개)와 전원 스위치·BOOT·팬이다. 켜진 자리는 윗면을 짙게 뒤집는다.
+- **단자 대조.** `device-figures.test.ts`가 영상 스위처 연결의 `port`가 모두 매뉴얼 단자 이름인지 본다. 지금 데이터는 `SDI IN1`, `SDI OUT5`, `DVI IN`, `DVI OUT`으로 적혀 있어 그림 모듈의 `aliases`가 매뉴얼 이름(`SDI INPUTS 1`, `SDI OUTPUTS 5`, `DVI-D IN`, `DVI-D OUT`)으로 잇는다. 데이터를 매뉴얼 표기로 고치면 `aliases`를 비운다. 고칠지는 사람이 정한다.
+- **매뉴얼과 데이터의 어긋남.** 위 이름 표기 넷, 그리고 장비 `ports` 글의 "출력: SDI 5 + DVI 1, AUX1~4"다. AUX1–4는 단자가 아니라 버스다. `SDI OUTPUTS 1`은 같은 신호가 BNC 둘로 나온다. 옵션 슬롯 장착 여부는 `toConfirm`에 더했다(우선순위 14).
+- **여는 자리.** 장비 목록표의 모델 칸과 신호 흐름도 자세히에 "생김새 보기" 버튼이 있다. 두 페이지 끝의 `<DeviceFigureHost />`가 dialog를 그린다. 그림이 있는 장비 id는 `_lib/device-figure-ids.ts`에 따로 둔다. 버튼(클라이언트)이 그림 모듈과 audit 코드를 끌어오지 않게 하려는 것이다.
+- **검증.** `pnpm lint && pnpm typecheck && pnpm test`, `next build` 통과. anatomy audit은 두 시점 모두 0건이다. 시점 하나에 1분쯤 걸려 `ANATOMY_AUDIT=1 pnpm test`일 때만 돈다. 선 끝 검사(`scripts/lines.mjs`)는 두 시점·두 테마 모두 0건. 데스크톱과 375px 폭에서 dialog를 열어 이름 목록, 앞·뒤 넘기기, 고른 자리 켜기를 확인했다.
+- **남은 걱정.** 그림 SVG가 앞 340KB, 뒤 510KB다. 정적 HTML에는 두 번(HTML과 RSC payload) 실려 장비 목록표 페이지가 1.65MB(gzip 257KB)가 됐다. 장비가 셋이 되면 페이지마다 gzip 600KB 안팎이 된다. 07을 시작하기 전에 그림을 dialog를 열 때 받도록 바꿀지 정한다. `pnpm test`는 그림을 만드는 데 15초쯤 더 걸린다.
+- **AV-HS410E.** 읽은 매뉴얼의 표지 모델은 AV-HS410N이다. E판 뒷면과의 대조는 아직 못 했다.

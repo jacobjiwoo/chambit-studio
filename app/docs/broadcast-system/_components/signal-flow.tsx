@@ -28,6 +28,7 @@ import {
 import type { FlowLayout, Point } from "../_lib/flow-layout";
 import { views, type Selection, type ViewId } from "../_lib/flow-views";
 import { connectionText, connections, equipment, type Signal } from "../_lib/system";
+import { DeviceFigureButton } from "./device-figure-button";
 
 /**
  * 신호 흐름도의 움직이는 쪽. 그래프와 좌표는 서버 컴포넌트가 빌드 때 만들어 `graph`·`layout`으로
@@ -397,6 +398,7 @@ function NodeDetails({
         {node?.kind === "unknown" && <span className="sf-muted"> (끝점 미상)</span>}
       </p>
       {item && <p>{item.model || "제조사·모델 미상"}</p>}
+      {item && <DeviceFigureButton id={item.id} className="sf-link" />}
       <p className="sf-counts">
         <span data-role="down">영향 받을 수 있음 {trace?.down.size ?? 0}곳</span>
         <span data-role="up">여기부터 확인 {trace?.up.size ?? 0}곳</span>

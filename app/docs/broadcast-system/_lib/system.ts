@@ -162,6 +162,7 @@ const equipmentDefs = [
       { cell: "notes", what: '"CP" 뜻', priority: 13 },
       { cell: "notes", what: "AUX1 라벨" },
       { cell: "notes", what: "본체 위치·뒷면 연결", priority: 14 },
+      { cell: "connections", what: "옵션 슬롯 A·B의 보드 장착 여부", priority: 14 },
     ],
   },
   {

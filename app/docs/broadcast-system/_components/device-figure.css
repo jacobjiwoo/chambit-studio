@@ -1,0 +1,109 @@
+/* 장비 생김새 dialog. 색은 모두 anatomy 토큰에서 가져와 밝은·어두운 테마를 함께 따른다 */
+
+.device-figure-button {
+  display: block;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12.5px;
+  text-decoration: underline;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.device-dialog {
+  width: min(1040px, calc(100vw - 24px));
+  max-width: none;
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--anatomy-page);
+  color: var(--anatomy-text);
+  box-shadow: 0 0 0 1px var(--anatomy-mid), 0 24px 60px -20px #0006;
+  overflow: auto;
+}
+.device-dialog::backdrop { background: #0008; }
+.device-body { padding: 16px 18px 20px; }
+
+.device-head,
+.device-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.device-title { margin: 0; color: var(--anatomy-strong); font-size: 16px; font-weight: 600; }
+.device-model { margin-left: 6px; color: var(--anatomy-muted); font-family: var(--anatomy-mono); font-size: 12px; font-weight: 400; }
+.device-bar { margin: 10px 0 12px; }
+
+.device-close,
+.device-zoom,
+.device-tab {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 0;
+  background: var(--anatomy-card);
+  color: var(--anatomy-text);
+  box-shadow: 0 0 0 1px var(--anatomy-lo);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.device-tabs { display: flex; gap: 1px; }
+.device-tab { min-width: 64px; }
+.device-tab[aria-selected="true"],
+.device-zoom[aria-pressed="true"] { color: var(--anatomy-strong); font-weight: 600; box-shadow: 0 0 0 1.5px var(--anatomy-lit); position: relative; }
+.device-close:focus-visible,
+.device-zoom:focus-visible,
+.device-tab:focus-visible,
+.device-spot:focus-visible { outline: 2px solid var(--anatomy-lit); outline-offset: 2px; }
+
+.iso-plate.device-plate { padding: 40px 12px 40px; }
+.device-plate .iso-plate-corner[data-corner="readout"] { max-width: 70%; overflow: hidden; text-overflow: ellipsis; }
+.device-stage { overflow: auto; touch-action: pan-x pan-y pinch-zoom; }
+.device-stage .iso-svg { max-height: 58dvh; }
+.device-stage[data-large] .iso-svg { max-height: none; }
+.device-stage[data-large] .iso-svg { width: 240%; max-width: none; }
+.device-stage [data-spot] { cursor: pointer; }
+.device-glass { fill: var(--anatomy-shade-0); stroke: none; }
+/* 켜진 자리는 윗면을 짙게 뒤집어, 흰 장비 위에서 한눈에 보이게 한다 */
+.device-stage [data-spot][data-on] .iso-solid > .iso-top { fill: var(--anatomy-hi); }
+.device-stage [data-spot][data-on] .iso-solid > .iso-shade { fill: var(--anatomy-mid); }
+.device-stage [data-spot][data-on] .iso-solid > .iso-crease { stroke: var(--anatomy-mid); }
+.device-stage [data-spot][data-on] .iso-face-text { fill: var(--anatomy-paper); }
+.device-stage [data-spot][data-on] .iso-line:not(.iso-edge):not(.iso-crease) { stroke: var(--anatomy-paper); }
+.device-stage [data-spot][data-on] .iso-dots circle { fill: var(--anatomy-paper); opacity: 0.9; }
+.device-stage [data-spot][data-on] .device-glass { fill: var(--anatomy-mid); }
+
+.device-active { min-height: 22px; margin: 12px 0 8px; font-size: 14px; line-height: 1.55; }
+.device-name { color: var(--anatomy-strong); font-family: var(--anatomy-mono); font-size: 12.5px; letter-spacing: 0.02em; }
+.device-note { color: var(--anatomy-text); }
+
+.device-spots { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.device-spot {
+  display: grid;
+  gap: 2px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 0;
+  background: var(--anatomy-card);
+  box-shadow: 0 0 0 1px var(--anatomy-lo);
+  color: var(--anatomy-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.device-spot[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--anatomy-lit); }
+.device-plugged { font-size: 12.5px; }
+
+.device-caption { margin: 14px 0 0; color: var(--anatomy-muted); font-size: 13px; line-height: 1.55; }
+
+@media (max-width: 640px) {
+  .device-dialog { width: 100vw; max-height: 100dvh; height: 100dvh; }
+  .device-body { padding: 12px 12px 20px; }
+  .iso-plate.device-plate { padding: 36px 4px 36px; }
+  /* 휴대폰 너비에서는 처음부터 조금 키워 두고, 옆으로 밀어 본다 */
+  .device-stage .iso-svg { width: 150%; max-width: none; max-height: none; }
+  .device-stage[data-large] .iso-svg { width: 330%; }
+}
