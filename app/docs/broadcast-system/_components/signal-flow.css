@@ -156,6 +156,22 @@
 .sf-wire[data-state="dim"] { opacity: 0.3; }
 .sf-wire-badge circle { fill: var(--sf-card); stroke: var(--sf-lo); stroke-width: 1; }
 .sf-wire-badge text { fill: var(--sf-text); font-family: var(--sf-mono); font-size: 8.5px; font-weight: 600; text-anchor: middle; }
+/* 인터페이스 글자. 카드색 테두리로 선을 끊어 읽히게 한다. */
+.sf-wire-label {
+  fill: var(--sf-text);
+  stroke: var(--sf-card);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-family: var(--sf-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.sf-wire[data-unconfirmed] .sf-wire-label { fill: var(--sf-muted); }
+.sf-wire-label-mark { font-weight: 600; }
+.sf-wire[data-state="lit"] .sf-wire-label { fill: var(--sf-strong); }
 .sf-canvas .react-flow__edge { cursor: pointer; }
 
 /* 확대 버튼 */
@@ -192,6 +208,7 @@
 .sf-swatch[data-mark="mid"] { box-shadow: 0 0 0 1px var(--sf-mid); background: var(--sf-face); }
 .sf-swatch[data-mark="lit"] { box-shadow: 0 0 0 1.5px var(--sf-lit); background: var(--sf-face); }
 .sf-swatch[data-mark="dim"] { box-shadow: 0 0 0 1px var(--sf-lo); background: var(--sf-card); }
+.sf-key-text { color: var(--sf-text); font-family: var(--sf-mono); font-size: 10.5px; letter-spacing: 0.04em; }
 
 @media (prefers-reduced-motion: reduce) {
   .sf-device { transition: none; }

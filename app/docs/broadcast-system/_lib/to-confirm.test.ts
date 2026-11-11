@@ -28,7 +28,7 @@ describe("collectToConfirm", () => {
       { id: "임베더", part: "영상·온라인 송출", toConfirm: [] },
     ] as const;
     const links = [
-      { from: { id: "UPS" }, to: { id: "콘솔" }, signal: "전원", toConfirm: ["연결 여부"] },
+      { from: { id: "UPS" }, to: { id: "콘솔" }, signal: "전원" as const, toConfirm: ["연결 여부"] },
       {
         from: { unknown: "음향 소리", candidates: ["콘솔", "분배기"] },
         to: { id: "임베더", port: "CH1" },
