@@ -168,8 +168,9 @@ describe("connectionText", () => {
       connectionText({
         from: { unknown: "음향 소리", candidates: ["음향 콘솔", "오디오 분배기"] },
         to: { id: "오디오 임베더", port: "CH1·CH2" },
-        signal: "XLR ×2",
+        signal: "XLR",
+        detail: "2개",
       }),
-    ).toBe("음향 소리(후보: 음향 콘솔, 오디오 분배기) → 오디오 임베더 CH1·CH2 (XLR ×2)");
+    ).toBe("음향 소리(후보: 음향 콘솔, 오디오 분배기) → 오디오 임베더 CH1·CH2 (XLR, 2개)");
   });
 });

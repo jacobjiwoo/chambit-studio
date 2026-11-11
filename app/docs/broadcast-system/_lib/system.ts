@@ -598,14 +598,35 @@ export type UnknownEndpoint = {
 
 export type Endpoint = KnownEndpoint | UnknownEndpoint;
 
+/**
+ * 연결 인터페이스. 신호 흐름도의 선 위에 글자로 나오고 장비 목록표의 연결 칸에도 나온다. 정해진 값만
+ * 받아 같은 인터페이스가 다른 표기("SDI", "HD-SDI", "SDI 1개")로 갈라지지 않게 한다. 새 인터페이스가
+ * 나오면 여기에 더한다.
+ */
+export const signals = [
+  "SDI",
+  "HDMI",
+  "DVI",
+  "One Connect",
+  "아날로그 오디오",
+  "XLR",
+  "RCA",
+  "RF",
+  "LAN",
+  "DMX",
+  "PCIe",
+  "전원",
+] as const;
+export type Signal = (typeof signals)[number];
+
 /** 신호 흐름도의 그림(탭) 종류. */
 export type Layer = "video" | "audio" | "power" | "network";
 
 export type Connection = {
   readonly from: Endpoint;
   readonly to: Endpoint;
-  /** 케이블/신호 종류. */
-  readonly signal?: string;
+  /** 연결 인터페이스(단자·케이블 규격). 모르면 비워 둔다. 개수·해상도 같은 덧붙임은 `detail`에 쓴다. */
+  readonly signal?: Signal;
   /** 신호 내용 등 덧붙이는 말. */
   readonly detail?: string;
   /** 근거. "추정", "선임 설명", "사용자 확인" 등을 글자 그대로 둔다. */
@@ -670,6 +691,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "HDMI 분배기" },
     to: { id: "방송실 TV" },
+    signal: "HDMI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
@@ -685,7 +707,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "미니박스", port: "One Connect" },
     to: { id: "멀티뷰" },
-    signal: "One Connect 케이블",
+    signal: "One Connect",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
@@ -743,7 +765,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "구형 카메라 컨트롤러" },
     to: { id: "CAM3·CAM4" },
-    signal: "제어",
+    detail: "카메라 제어",
     layers: ["network"], unconfirmed: true,
     toConfirm: ["연결 여부"],
   },
@@ -782,6 +804,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "CAM5·CAM6", unit: "CAM5" },
     to: { id: "영상 스위처", port: "SDI IN5" },
+    signal: "SDI",
     detail: '버튼 "CP"',
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -790,6 +813,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "CAM5·CAM6", unit: "CAM6" },
     to: { id: "영상 스위처", port: "SDI IN6" },
+    signal: "SDI",
     detail: '버튼 "강단"',
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -798,8 +822,8 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "오디오 분배기", port: "출력4" },
     to: { id: "오디오 임베더", port: "CH1·CH2" },
-    signal: "L·R 2개",
-    detail: '라벨 "음성녹음"',
+    signal: "아날로그 오디오",
+    detail: 'L·R 2개, 라벨 "음성녹음"',
     evidence: "사용자 확인",
     layers: ["audio"], unconfirmed: false,
     toConfirm: [],
@@ -807,8 +831,8 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "오디오 분배기", port: "출력1" },
     to: { id: "백업 송출 장비", port: "AUDIO IN" },
-    signal: "L·R 2개",
-    detail: '라벨 "스트리밍"',
+    signal: "아날로그 오디오",
+    detail: 'L·R 2개, 라벨 "스트리밍"',
     evidence: "사용자 확인",
     layers: ["audio"], unconfirmed: false,
     toConfirm: ["이 입력을 실제 오디오로 쓰는지"],
@@ -826,7 +850,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "백업 녹화기", port: "SDI OUT" },
     to: { id: "송출 PC 캡처카드" },
-    signal: "SDI 1개",
+    signal: "SDI",
     detail: "영상+소리 embedded",
     evidence: "사용자 확인",
     layers: ["video", "audio"], unconfirmed: false,
@@ -857,8 +881,8 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "CG PC 문자발생기 보드", port: "FILL Out" },
     to: { id: "영상 스위처", port: "SDI IN8" },
-    signal: "HD-SDI",
-    detail: "CG FILL",
+    signal: "SDI",
+    detail: "CG FILL, HD-SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
@@ -866,8 +890,8 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "CG PC 문자발생기 보드", port: "KEY Out" },
     to: { id: "영상 스위처", port: "SDI IN7" },
-    signal: "HD-SDI",
-    detail: "CG KEY",
+    signal: "SDI",
+    detail: "CG KEY, HD-SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
@@ -900,6 +924,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "백업 송출 장비", port: "LAN" },
     to: { id: "공유기" },
+    signal: "LAN",
     layers: ["video", "audio", "network"], unconfirmed: false,
     toConfirm: [],
   },
@@ -915,7 +940,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "LED 프로세서" },
     to: { id: "LED 스크린" },
-    signal: "이더넷",
+    signal: "LAN",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
@@ -930,8 +955,8 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "TV 채널 변환기" },
     to: { id: "교회 내 TV" },
-    signal: "동축",
-    detail: "CATV 채널 004 = 4-1",
+    signal: "RF",
+    detail: "동축 케이블, CATV 채널 004 = 4-1",
     layers: ["video"], unconfirmed: false,
     toConfirm: [],
   },
@@ -940,6 +965,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "인터넷" },
     to: { id: "공유기", port: "WAN" },
+    signal: "LAN",
     detail: "2.5G 포트, 검정 랜선",
     layers: ["network"], unconfirmed: false,
     toConfirm: [],
@@ -947,6 +973,7 @@ export const connections: readonly Connection[] = [
   {
     from: { id: "공유기", port: "LAN" },
     to: { id: "네트워크 스위치" },
+    signal: "LAN",
     detail: "공유기 LAN에는 그 외 장비도 연결",
     layers: ["network"], unconfirmed: false,
     toConfirm: [],
@@ -995,8 +1022,8 @@ export const connections: readonly Connection[] = [
     layers: ["audio"], unconfirmed: false,
     toConfirm: ["연결처"],
   },
-  { from: { id: "안테나" }, to: { id: "안테나 분배기 A" }, layers: ["audio"], unconfirmed: false, toConfirm: [] },
-  { from: { id: "안테나" }, to: { id: "안테나 분배기 B" }, layers: ["audio"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "안테나" }, to: { id: "안테나 분배기 A" }, signal: "RF", layers: ["audio"], unconfirmed: false, toConfirm: [] },
+  { from: { id: "안테나" }, to: { id: "안테나 분배기 B" }, signal: "RF", layers: ["audio"], unconfirmed: false, toConfirm: [] },
   {
     from: { id: "CD/USB 플레이어", port: "LINE OUT" },
     to: { unknown: "미상" },

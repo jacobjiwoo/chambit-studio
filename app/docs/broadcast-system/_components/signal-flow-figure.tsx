@@ -37,6 +37,10 @@ export async function SignalFlowFigure() {
           <span className="sf-swatch" data-mark="dim" />
           흐린 톤, ? 배지 = 확인 필요
         </span>
+        <span className="sf-key">
+          <span className="sf-key-text">SDI</span>
+          선 위 글자 = 연결 인터페이스. 글자가 없으면 아직 기록되지 않은 연결
+        </span>
       </div>
     </>
   );

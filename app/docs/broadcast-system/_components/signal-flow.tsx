@@ -27,7 +27,7 @@ import {
 } from "../_lib/flow";
 import type { FlowLayout, Point } from "../_lib/flow-layout";
 import { views, type Selection, type ViewId } from "../_lib/flow-views";
-import { connectionText, connections, equipment } from "../_lib/system";
+import { connectionText, connections, equipment, type Signal } from "../_lib/system";
 
 /**
  * 신호 흐름도의 움직이는 쪽. 그래프와 좌표는 서버 컴포넌트가 빌드 때 만들어 `graph`·`layout`으로
@@ -44,7 +44,14 @@ type Role = "idle" | "selected" | "down" | "up" | "rest";
 // 누르기는 `onNodeClick`이 받는다. 버튼의 Enter·Space도 click으로 올라가 같은 길을 탄다.
 type DeviceData = FlowNode & { role: Role };
 type DeviceNode = Node<DeviceData, "device">;
-type WireData = { points: Point[]; unconfirmed: boolean; lit: boolean; dim: boolean };
+type WireData = {
+  points: Point[];
+  /** 연결 인터페이스. 선 위에 글자로 단다. */
+  signal?: Signal;
+  unconfirmed: boolean;
+  lit: boolean;
+  dim: boolean;
+};
 type WireEdge = Edge<WireData, "wire">;
 
 const ROLE_TAG: Partial<Record<Role, string>> = { down: "영향", up: "확인" };
@@ -93,17 +100,25 @@ function WireView({ id, data, interactionWidth }: EdgeProps<WireEdge>) {
     <g className="sf-wire" data-state={state} data-unconfirmed={data.unconfirmed || undefined}>
       <BaseEdge id={id} path={path} interactionWidth={interactionWidth} />
       <path className="sf-arrow" d={arrow} />
-      {data.unconfirmed && (
+      {data.signal ? (
+        // 인터페이스 글자. 미확인이면 같은 자리에 ?를 붙여 배지 둘이 겹치지 않게 한다.
+        <text className="sf-wire-label" x={mid.x} y={mid.y} dy="0.35em">
+          {data.signal}
+          {data.unconfirmed && <tspan className="sf-wire-label-mark"> ?</tspan>}
+        </text>
+      ) : (
+        data.unconfirmed && (
         <g className="sf-wire-badge" transform={`translate(${mid.x},${mid.y})`}>
           <circle r={6.5} />
           <text dy="0.35em">?</text>
         </g>
+        )
       )}
     </g>
   );
 }
 
-/** 선의 가장 긴 토막 가운데. 미확인 배지를 거기 둔다. */
+/** 선의 가장 긴 토막 가운데. 인터페이스 글자와 미확인 배지를 거기 둔다. */
 function badgeAt(points: Point[]): Point {
   let best = { a: points[0], b: points[1], len: -1 };
   for (let i = 1; i < points.length; i++) {
@@ -219,6 +234,7 @@ export function SignalFlow({
             ariaLabel: connectionText(connections[e.index]),
             data: {
               points,
+              signal: connections[e.index].signal,
               unconfirmed: e.unconfirmed,
               lit,
               dim: (nodeId !== null || edgeId !== null) && !lit,
@@ -407,7 +423,7 @@ function EdgeDetails({ graph, id }: { graph: FlowGraph; id: string }) {
     <>
       <p className="sf-name">{connectionText(c)}</p>
       <dl className="sf-facts">
-        <dt>신호 종류</dt>
+        <dt>인터페이스</dt>
         <dd>{c.signal ?? "적힌 것 없음"}</dd>
         {c.detail && (
           <>
