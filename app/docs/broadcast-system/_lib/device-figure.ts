@@ -249,12 +249,13 @@ export function scene({ view, width, height, azimuth, elevation, pad = 28, size,
    * 평면에 인쇄된 글자. 읽는 방향이 화면 오른쪽이 되도록 눕힌다. 조작 패널(법선이 위)은 앞 시점에서,
    * 뒷면 패널은 뒤 시점에서만 바로 읽힌다.
    */
-  function textOn(on: Plane, [X, s]: number[], text: string, { size = 3, tone = "lo", anchor = "middle", h = 0.05 }: { size?: number; tone?: string; anchor?: string; h?: number } = {}) {
+  function textOn(on: Plane, [X, s]: number[], text: string, { size = 3, tone = "lo", anchor = "middle", h = 0.05, turn = false }: { size?: number; tone?: string; anchor?: string; h?: number; turn?: boolean } = {}) {
     const facesBack = on.normal[1] > 0.5;
-    const along = facesBack ? -1 : 1;
+    // `turn`이면 반 바퀴 돌려 찍는다. 윗면 뒤쪽 가장자리의 글자처럼 뒤에서 읽도록 인쇄된 것에 쓴다
+    const along = (facesBack ? -1 : 1) * (turn ? -1 : 1);
     const origin = at(on.at(X, s, h));
     const right = at(on.at(X + along, s, h));
-    const down = at(on.at(X, s - 1, h));
+    const down = at(on.at(X, s + (turn ? 1 : -1), h));
     const matrix = [right[0] - origin[0], right[1] - origin[1], down[0] - origin[0], down[1] - origin[1], origin[0], origin[1]].map((value) => Math.round(value * 1000) / 1000);
     return `<text class="iso-face-text" data-tone="${tone}" transform="matrix(${matrix.join(" ")})" font-size="${size}" text-anchor="${anchor}">${escapeText(text)}</text>`;
   }
