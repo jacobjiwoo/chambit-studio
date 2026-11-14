@@ -6,9 +6,10 @@
  */
 import { AV_HS410_FIGURE } from "./av-hs410-figure";
 import type { DeviceFigure } from "./device-figure";
+import { RC_IP100_FIGURE } from "./rc-ip100-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {
