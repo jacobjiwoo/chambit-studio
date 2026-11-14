@@ -8,6 +8,7 @@
  * 좌표는 장비 좌표다. X: 조작하는 사람이 본 왼쪽 → 오른쪽, Y: 앞 → 뒤, Z: 위. 조작 패널의 자리는
  * 매뉴얼 평면도에서 뒤 모서리부터 잰 거리(`r`)로 적는다.
  */
+import * as C from "./device-connectors";
 import { plane, scene, type DeviceFigure, type DeviceView, type Scene, type ViewKey } from "./device-figure";
 
 const WIDTH = 440;
@@ -311,7 +312,7 @@ const uu = (u0: number, u1: number) => [U(u1), U(u0)];
 function rearPanel(sc: Scene) {
   const text = (u: number, z: number, value: string, size = 2.8, anchor = "middle") => sc.textOn(REAR, [U(u), z], value, { size, h: 0.05, anchor });
   const strip = (u0: number, u1: number, z: number, value: string) => sc.line(sc.rectOn(REAR, uu(u0, u1), [z, z + 4.2]), { tone: "lo" }) + text((u0 + u1) / 2, z + 0.9, value, 2.8);
-  const screw = (u: number, z: number, h = 0) => sc.line(sc.ringOn(REAR, [U(u), z], 1.7, h), { tone: "lo" }) + sc.dots(REAR, [[U(u), z]], h);
+  const screw = (u: number, z: number, h = 0) => C.screw(sc, REAR, [U(u), z], h);
 
   // 뒷면에 인쇄된 이름 띠와 번호
   const printed = [
@@ -349,33 +350,8 @@ function rearPanel(sc: Scene) {
     sc.box("rear.bracket", REAR, uu(u0, u1), [19, 100], [0, 2], { tone: "mid" }, { r: 1.5, extra: slots + screw((u0 + u1) / 2, 24, 2) + screw((u0 + u1) / 2, 95, 2) });
   }
 
-  const bnc = (u: number, z: number, spot: string) => {
-    sc.round("rear.bnc.nut", REAR, [U(u), z], 6.1, [FACE, FACE + 2], { tone: "mid" }, { spot });
-    sc.round("rear.bnc.barrel", REAR, [U(u), z], 4.6, [FACE + 2, FACE + 11], { tone: "mid" }, {
-      spot,
-      extra: sc.line(sc.ringOn(REAR, [U(u), z], 3, FACE + 11), { tone: "lo" }) + sc.dots(REAR, [[U(u), z]], FACE + 11, { size: 0.6 }),
-    });
-  };
-
-  const dsub = (u: number, z: number, pins: 9 | 15, spot: string) => {
-    const wide = pins === 9 ? 31 : 39.5;
-    const top = pins === 9 ? 17 : 25.4;
-    const columns = pins === 9 ? 5 : 8;
-    const dotsAt = [
-      ...Array.from({ length: columns }, (_, index) => [U(u) + (index - (columns - 1) / 2) * 2.75, z + 1.4]),
-      ...Array.from({ length: columns - 1 }, (_, index) => [U(u) + (index - (columns - 2) / 2) * 2.75, z - 1.4]),
-    ];
-    sc.box("rear.dsub.flange", REAR, [U(u) - wide / 2, U(u) + wide / 2], [z - 6.2, z + 6.2], [FACE, FACE + 1], { tone: "mid" }, { r: 1.2, spot });
-    sc.post(
-      "rear.dsub.shell",
-      REAR,
-      [[U(u) - top / 2, z + 4], [U(u) + top / 2, z + 4], [U(u) + top / 2 - 1.5, z - 4], [U(u) - top / 2 + 1.5, z - 4]],
-      [FACE + 1, FACE + 6.6],
-      { tone: "mid" },
-      { spot, extra: sc.dots(REAR, dotsAt, FACE + 6.6, { size: 0.4, tone: "lo" }) },
-    );
-    for (const side of [-1, 1]) sc.round("rear.dsub.post", REAR, [U(u) + side * (wide / 2 - 3.6), z], 2.3, [FACE + 1, FACE + 5], { tone: "mid" }, { spot });
-  };
+  const bnc = (u: number, z: number, spot: string) => C.bnc(sc, REAR, [U(u), z], FACE, spot);
+  const dsub = (u: number, z: number, pins: 9 | 15, spot: string) => C.dsub(sc, REAR, [U(u), z], FACE, pins, spot);
 
   const dvi = (u: number, z: number, spot: string) => {
     const grid = Array.from({ length: 24 }, (_, index) => [U(u) - 3.5 + ((index % 8) - 3.5) * 2.2, z + (Math.floor(index / 8) - 1) * 2.1]);
@@ -394,12 +370,7 @@ function rearPanel(sc: Scene) {
   dvi(69.5, LOW, "DVI-D IN");
   [[5, 101], [4, 116], [3, 132], [2, 147], [1, 165], [1, 181]].forEach(([n, u]) => bnc(u, LOW, sdiOut(n)));
   [[8, 197], [7, 213], [6, 233], [5, 248], [4, 265], [3, 282], [2, 298], [1, 315]].forEach(([n, u]) => bnc(u, LOW, sdiIn(n)));
-  const jack = [[U(334) - 5.6, LOW - 4.6], [U(334) + 5.6, LOW - 4.6], [U(334) + 5.6, LOW + 2.2], [U(334) + 2, LOW + 2.2], [U(334) + 2, LOW + 4.4], [U(334) - 2, LOW + 4.4], [U(334) - 2, LOW + 2.2], [U(334) - 5.6, LOW + 2.2]];
-  sc.box("rear.lan", REAR, [U(334) - 8, U(334) + 8], [LOW - 6.4, LOW + 6.4], [FACE, FACE + 1.4], { tone: "mid" }, {
-    r: 1,
-    spot: "LAN",
-    extra: sc.line(sc.lineOn(REAR, jack, FACE + 1.4, true), { tone: "lo" }) + sc.dots(REAR, [[U(334) - 5.4, LOW + 4.6], [U(334) + 5.4, LOW + 4.6]], FACE + 1.4, { size: 0.5 }),
-  });
+  C.rj45(sc, REAR, [U(334), LOW], FACE, "LAN");
 
   /* 옵션 슬롯: 빈 덮개 */
   for (const [name, u0, u1] of [["SLOT B", 16, 147], ["SLOT A", 152, 284]] as const) {

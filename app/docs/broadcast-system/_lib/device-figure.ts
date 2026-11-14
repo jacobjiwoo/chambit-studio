@@ -214,13 +214,13 @@ export function scene({ view, width, height, azimuth, elevation, pad = 28, size,
   }
 
   /** 평면에서 돌려 깎은 부품. `profile`은 `[높이, 반지름]`이다 */
-  function turned(name: string, on: Plane, [X, s]: number[], profile: number[][], style: Style = {}, options: PartOptions & { ribs?: [number, number, number, number] } = {}) {
+  function turned(name: string, on: Plane, [X, s]: number[], profile: number[][], style: Style = {}, options: PartOptions & { ribs?: number[] } = {}) {
     const F = frame(on.at(X, s, 0), on.normal, [1, 0, 0]);
     const meta = { radius: null, name };
     const shape = R.solid(A.solid(F as never, profile, meta));
     const mid = (profile[0][0] + profile[profile.length - 1][0]) / 2;
-    // 손잡이의 세로 홈. 옆으로 돌아가며 흐려진다
-    const ribs = options.ribs ? (k.fadedSvg(G.ribsOf(F as never, options.ribs[0], options.ribs[1], options.ribs[2], options.ribs[3], P as never, { fade: [0.1, 0.55] as never, r1: options.ribs[2] }), { tone: "lo" }) as string) : "";
+    // 손잡이의 세로 홈 `[시작 높이, 끝 높이, 반지름, 개수, 끝 반지름?]`. 옆으로 돌아가며 흐려진다
+    const ribs = options.ribs ? (k.fadedSvg(G.ribsOf(F as never, options.ribs[0], options.ribs[1], options.ribs[2], options.ribs[3], P as never, { fade: [0.1, 0.55] as never, r1: options.ribs[4] ?? options.ribs[2] }), { tone: "lo" }) as string) : "";
     put(name, on.at(X, s, mid), S(G.solidOf(profile, F as never, P as never, {}), { ...style, inner: ribs }) + (options.extra ?? ""), [shape], options);
     return F;
   }
