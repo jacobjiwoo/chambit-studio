@@ -61,7 +61,7 @@ Label: `wayfinder:map`
   - **매뉴얼만으로 모르는 구성은 비워 그린다.** 옵션 슬롯 등은 빈 채로 두고 `toConfirm`에 더한다. 매뉴얼과 데이터가 어긋나면 목록으로 보이고 승인받아 고친다.
   - **장비 목록표 행과 신호 흐름도 자세히의 "생김새 보기" 버튼이 같은 dialog를 연다.** 장비별 페이지는 만들지 않는다. 휴대폰 너비에서 단자 이름이 읽혀야 한다.
   - **AV-HS410 그림과 공통 틀이 들어갔다.** 틀은 `_lib/device-figure.ts`, 그림 모음과 단자 대조는 `_lib/device-figures.ts`다. 패널 기울기는 매뉴얼에 없어 추정이다. 페이지 크기가 장비마다 gzip 200KB쯤 늘어, 07 전에 그림을 늦게 받을지 정한다. [06](issues/06-device-figure-av-hs410.md) Answer.
-  - **3종 먼저다: AV-HS410, RC-IP100, HELO Plus.** 나머지 18종은 3종을 본 뒤 정한다. 06을 끝내면 멈추고 사람이 실물과 비교한 뒤 07·08을 시작한다.
+  - **3종이 들어갔다: AV-HS410, RC-IP100, HELO Plus.** 단자 부품(BNC, D-sub, RJ-45 등)은 `_lib/device-connectors.ts`를 같이 쓴다. 세 장비가 다 들어간 장비 목록표 페이지는 gzip 323KB다. 나머지 확정 모델 18종은 사람이 3종을 실물과 비교한 뒤 정한다. [07](issues/07-device-figure-rc-ip100.md), [08](issues/08-device-figure-helo-plus.md) Answer.
 
 ## Tickets
 
@@ -73,15 +73,15 @@ Label: `wayfinder:map`
 | [04](issues/04-cg-output-figure.md) | CG 출력 원리 anatomy 그림 | — |
 | [05](issues/05-layout-drawing.md) | 배치도 | 01, 사람 확인 |
 | [06](issues/06-device-figure-av-hs410.md) | 장비 생김새 그림의 공통 틀과 AV-HS410 | — |
-| [07](issues/07-device-figure-rc-ip100.md) | RC-IP100 생김새 그림 | 06, 사람 확인 |
-| [08](issues/08-device-figure-helo-plus.md) | HELO Plus 생김새 그림 | 06, 사람 확인 |
+| [07](issues/07-device-figure-rc-ip100.md) | RC-IP100 생김새 그림 | 06 |
+| [08](issues/08-device-figure-helo-plus.md) | HELO Plus 생김새 그림 | 06 |
 
 ```
 01 ─┬─ 02
     ├─ 03
     └─ 05 (확인 필요 2·3번이 풀린 뒤)
 04 (따로)
-06 ─┬─ 07 (06을 실물과 비교한 뒤)
+06 ─┬─ 07
     └─ 08
 ```
 
