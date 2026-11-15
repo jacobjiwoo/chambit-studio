@@ -10,6 +10,7 @@
 import * as A from "./anatomy/audit.mjs";
 import * as k from "./anatomy/iso-kit.mjs";
 import * as G from "./anatomy/lathe.mjs";
+import ORDER from "./device-figure-order.json";
 
 export type Point3 = number[];
 type Flat = number[];
@@ -60,6 +61,37 @@ export interface DeviceView {
   /** 테스트가 audit을 돌릴 기록 */
   recorder: unknown;
   P: unknown;
+  /** 부품을 그리는 순서. `device-figure-order.json`에 저장해 두는 값이다 */
+  order: StoredOrder & { name: string; stored: boolean };
+}
+
+/**
+ * 저장해 둔 그리는 순서. `hash`는 부품들의 이름과 SVG로 만든 지문이라, 그림이 조금이라도 바뀌면
+ * 달라져서 저장된 순서를 쓰지 않는다.
+ */
+export interface StoredOrder {
+  hash: string;
+  /** 부품을 놓은 차례의 번호를, 뒤에서 앞으로 그리는 순서대로 늘어놓은 것 */
+  order: number[];
+}
+
+/** 53비트 문자열 해시(cyrb53). 그림이 바뀌었는지만 가리면 돼서 암호학적일 필요가 없다 */
+function fingerprint(text: string): string {
+  let [h1, h2] = [0xdeadbeef, 0x41c6ce57];
+  for (let index = 0; index < text.length; index++) {
+    const code = text.charCodeAt(index);
+    h1 = Math.imul(h1 ^ code, 2654435761);
+    h2 = Math.imul(h2 ^ code, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+
+/** 기록기가 아직 순서를 재지 않았으면 잰다. 저장된 순서를 쓴 그림은 재지 않은 채라 audit 전에 부른다 */
+export function settleView(view: Pick<DeviceView, "recorder" | "P">) {
+  const R = view.recorder as { settled: unknown };
+  if (!R.settled) A.settle(R as never, view.P as never);
 }
 
 export interface DeviceFigure {
@@ -106,6 +138,8 @@ export function plane(y0: number, z0: number, degrees: number, flip = false): Pl
 }
 
 export interface SceneOptions {
+  /** 그리는 순서를 저장할 때 쓰는 그림 이름. 예: "av-hs410" */
+  name: string;
   view: ViewKey;
   width: number;
   height: number;
@@ -143,7 +177,7 @@ const escapeAttribute = (text: string) => escapeText(text).replace(/"/g, "&quot;
 
 export type Scene = ReturnType<typeof scene>;
 
-export function scene({ view, width, height, azimuth, elevation, pad = 28, size, extents }: SceneOptions) {
+export function scene({ name, view, width, height, azimuth, elevation, pad = 28, size, extents }: SceneOptions) {
   const [WIDTH, DEPTH, TALL] = size;
   // 앞 시점은 앞면이, 뒤 시점은 뒷면이 보는 사람 쪽(+y)으로 온다
   const sx = view === "front" ? 1 : -1;
@@ -266,10 +300,26 @@ export function scene({ view, width, height, azimuth, elevation, pad = 28, size,
     back.push(`<path class="iso-halo" d="${k.pathOf(corners, true)}"/>`);
   }
 
+  /**
+   * 부품을 뒤에서 앞으로 늘어놓아 그림을 끝낸다. 겹치는 곳의 앞뒤를 재는 `A.settle`은 시점 하나에
+   * 몇 초씩 걸려서, 잰 순서를 `device-figure-order.json`에 저장해 두고 그림이 그대로면 다시 재지 않는다.
+   * 그림이 바뀌어 지문이 달라지면 여기서 다시 재고, `device-figures.test.ts`가 저장 파일을 고치라고 알린다.
+   */
   function finish(label: string): DeviceView {
-    A.settle(R as never, P as never);
-    R.items.sort((a, b) => a.key - b.key);
-    return { key: view, width, height, label, svg: back.join("") + R.items.map((item) => item.svg).join(""), spots, recorder: R, P };
+    const orderName = `${name}:${view}`;
+    const hash = fingerprint(R.items.map((item) => `${item.name}\n${item.svg}`).join("\n"));
+    const found = (ORDER as Record<string, StoredOrder | undefined>)[orderName];
+    const stored = found !== undefined && found.hash === hash && found.order.length === R.items.length;
+    let order: number[];
+    if (stored) {
+      order = found.order;
+    } else {
+      A.settle(R as never, P as never);
+      // 같은 key면 놓은 차례를 따른다. 정렬이 차례를 지키므로 번호만 정렬해도 같다
+      order = R.items.map((_, index) => index).sort((a, b) => R.items[a].key - R.items[b].key);
+    }
+    const svg = back.join("") + order.map((index) => R.items[index].svg).join("");
+    return { key: view, width, height, label, svg, spots, recorder: R, P, order: { name: orderName, hash, order, stored } };
   }
 
   return { view, P, R, at, spot, put, box, post, round, turned, span, lineOn, rectOn, ringOn, patchOn, line, dots, textOn, halo, finish };
