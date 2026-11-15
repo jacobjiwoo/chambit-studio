@@ -163,6 +163,7 @@ function rearPanel(sc: Scene) {
 function build(view: ViewKey): DeviceView {
   const front = view === "front";
   const sc = scene({
+    name: "helo-plus",
     view,
     width: 760,
     height: 330,
