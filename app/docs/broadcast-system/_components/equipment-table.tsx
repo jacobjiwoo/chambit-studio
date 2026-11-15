@@ -2,6 +2,7 @@ import { Fragment } from "react";
 
 import { Unconfirmed } from "@/app/_components/unconfirmed";
 
+import { DeviceFigureButton } from "./device-figure-button";
 import {
   connectionText,
   connections,
@@ -45,6 +46,7 @@ export function EquipmentTable({ part }: { part: Part }) {
               <Td>{e.aside ? `${e.id} (${e.aside})` : e.id}</Td>
               <Td>
                 <Text item={e} cell="model" text={e.model} />
+                <DeviceFigureButton id={e.id} />
               </Td>
               <Td>
                 <Text item={e} cell="location" text={e.location} />

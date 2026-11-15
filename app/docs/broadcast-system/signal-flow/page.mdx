@@ -5,6 +5,7 @@ slug: signal-flow
 order: 3
 ---
 
+import { DeviceFigureHost } from "../_components/device-figure-host";
 import { SignalFlowFigure } from "../_components/signal-flow-figure";
 
 # 신호 흐름도
@@ -31,3 +32,5 @@ import { SignalFlowFigure } from "../_components/signal-flow-figure";
   - 선임 설명: "오디오 임베더 → 송출 PC로 긴 SDI 선을 사기에 비쌌다". 확인할 거리: 일반 HD-SDI 케이블은 10m급도 수만 원대이고, 같은 영상 데스크 안이라 거리도 길지 않을 것으로 보인다. <Unconfirmed>당시 다른 사정이 있었는지</Unconfirmed>.
   - 선임 설명: "OBS 도입 당시, 문제가 생겨도 기존 백업 녹화·송출로 넘어갈 수 있게". 직렬 구조에서는 송출 PC가 고장 나도 백업 장비는 신호를 계속 받는다. 반대로 백업 장비가 고장 나면 주 송출도 끊긴다. OBS 도입 전 주 장비였던 줄 끝에 송출 PC를 덧붙인 구조로 추정.
 - 개선 제안은 [업그레이드 제안](https://github.com/jacobjiwoo/chambit-studio/blob/main/.scratch/broadcast-system/upgrade-proposals.md) 1번 참고. 사이트에 올리지 않는 작업 문서라 GitHub 저장소에서 열린다.
+
+<DeviceFigureHost />
