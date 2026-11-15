@@ -1,6 +1,10 @@
+import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import * as A from "./anatomy/audit.mjs";
+import { settleView, type StoredOrder } from "./device-figure";
 import { DEVICE_FIGURE_IDS } from "./device-figure-ids";
 import { DEVICE_FIGURES, pluggedInto, portNameOf, portsInData } from "./device-figures";
 import { equipment } from "./system";
@@ -44,11 +48,24 @@ describe("장비 생김새 그림", () => {
   it.skipIf(!process.env.ANATOMY_AUDIT).each(DEVICE_FIGURES.flatMap((figure) => figure.views.map((view) => [`${figure.id} ${view.key}`, view] as const)))(
     "%s: anatomy audit을 통과한다",
     (_, view) => {
+      settleView(view);
       const result = A.auditOrExit(view.recorder as never, view.P as never, { argv: ["--audit"] });
       expect(result ? A.failures(result as never) : 1).toBe(0);
     },
     600_000,
   );
+
+  // 그림을 고치면 저장된 순서가 낡는다. 그대로 두면 틀리지는 않지만 불러올 때마다 다시 재느라 느리다
+  it("저장해 둔 그리는 순서가 그림과 맞는다. 어긋나면 `UPDATE_FIGURE_ORDER=1 pnpm test`로 고친다", () => {
+    const views = DEVICE_FIGURES.flatMap((figure) => figure.views);
+    if (process.env.UPDATE_FIGURE_ORDER) {
+      const stored: Record<string, StoredOrder> = Object.fromEntries(views.map((view) => [view.order.name, { hash: view.order.hash, order: view.order.order }]));
+      const lines = Object.entries(stored).map(([name, value]) => `  ${JSON.stringify(name)}: ${JSON.stringify(value)}`);
+      writeFileSync(fileURLToPath(new URL("./device-figure-order.json", import.meta.url)), `{\n${lines.join(",\n")}\n}\n`);
+      return;
+    }
+    expect(views.filter((view) => !view.order.stored).map((view) => view.order.name)).toEqual([]);
+  });
 
   it("port가 적힌 연결만 단자에 꽂힌 것으로 보인다", () => {
     const figure = { id: "스위처", aliases: { "SDI IN1": "SDI INPUTS 1" } };

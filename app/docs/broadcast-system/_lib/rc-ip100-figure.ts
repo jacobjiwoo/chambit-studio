@@ -155,6 +155,7 @@ function rearPanel(sc: Scene) {
 function build(view: ViewKey): DeviceView {
   const front = view === "front";
   const sc = scene({
+    name: "rc-ip100",
     view,
     width: 760,
     height: front ? 470 : 380,
