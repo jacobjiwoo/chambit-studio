@@ -472,13 +472,6 @@ function build(view: ViewKey): DeviceView {
   );
 }
 
-const ALIASES: Record<string, string> = {
-  ...Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8].map((n) => [`SDI IN${n}`, sdiIn(n)])),
-  ...Object.fromEntries([1, 2, 3, 4, 5].map((n) => [`SDI OUT${n}`, sdiOut(n)])),
-  "DVI IN": "DVI-D IN",
-  "DVI OUT": "DVI-D OUT",
-};
-
 export const AV_HS410_FIGURE: DeviceFigure = {
   id: "영상 스위처",
   model: "Panasonic AV-HS410",
@@ -486,5 +479,5 @@ export const AV_HS410_FIGURE: DeviceFigure = {
   caveat: "매뉴얼의 그림과 치수를 보고 단순화해 그렸다. 패널이 기울어진 각도와 앞쪽 높이는 매뉴얼에 없어 추정이다. 옵션 슬롯은 비워 그렸다.",
   views: [build("front"), build("back")],
   ports: AV_HS410_PORTS,
-  aliases: ALIASES,
+  aliases: {},
 };

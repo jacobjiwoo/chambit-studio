@@ -147,16 +147,16 @@ const equipmentDefs = [
     purpose:
       "모든 영상 원본이 처음 들어오는 곳. 카메라·PC 화면 선택 및 전환. 여기서 고른 화면(PGM)에 CG가 합쳐져 LED 스크린·온라인 송출·녹화 등으로 나감. 예배 소리는 여기서 섞지 않음(소리는 오디오 임베더에서 합쳐짐)",
     ports: [
-      '입력(SDI 8 + DVI 1): SDI IN1~4 = CAM1~4, SDI IN5 = CAM5(버튼 "CP"), SDI IN6 = CAM6(버튼 "강단"), SDI IN7 = CG KEY, SDI IN8 = CG FILL, DVI IN = CG PC',
-      "출력: SDI 5 + DVI 1, AUX1~4. SDI OUT5 = 5층 로비, DVI OUT = 멀티뷰 화면",
+      '입력(SDI 8 + DVI 1): SDI INPUTS 1~4 = CAM1~4, SDI INPUTS 5 = CAM5(버튼 "CP"), SDI INPUTS 6 = CAM6(버튼 "강단"), SDI INPUTS 7 = CG KEY, SDI INPUTS 8 = CG FILL, DVI-D IN = CG PC',
+      "출력: SDI 5 + DVI 1, AUX1~4. SDI OUTPUTS 5 = 5층 로비, DVI-D OUT = 멀티뷰 화면",
     ],
     notes:
-      "CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인. SDI IN1~8 배치는 사용자 확인(2026-11-08). SDI OUT으로 나가는 곳: 5층 로비, 본당, 자모실, 2층 소예배실, 오르엘홀, 영유아부 등(사용자 확인, 2026-11-09).",
+      "CG 켜기/끄기는 DSK ON 버튼. 버튼 CP·강단 대응은 사용자 확인. SDI INPUTS 1~8 배치는 사용자 확인(2026-11-08). SDI OUT으로 나가는 곳: 5층 로비, 본당, 자모실, 2층 소예배실, 오르엘홀, 영유아부 등(사용자 확인, 2026-11-09).",
     toConfirm: [
       { cell: "purpose", what: "각 출력 할당", priority: 6 },
       {
         cell: "notes",
-        what: "SDI OUT1~4의 단자별 연결처, 나가는 곳이 단자보다 많을 때의 분배 방식",
+        what: "SDI OUTPUTS 1~4의 단자별 연결처, 나가는 곳이 단자보다 많을 때의 분배 방식",
         priority: 6,
       },
       { cell: "notes", what: '"CP" 뜻', priority: 13 },
@@ -170,7 +170,7 @@ const equipmentDefs = [
     part: "영상·온라인 송출",
     model: "NEXT-0102SPC4K (HDMI 1:2)",
     location: "",
-    purpose: "영상 스위처 DVI OUT의 멀티뷰 화면을 방송실 TV와 미니박스로 나눠 보냄",
+    purpose: "영상 스위처 DVI-D OUT의 멀티뷰 화면을 방송실 TV와 미니박스로 나눠 보냄",
     toConfirm: [{ cell: "location", what: "위치" }],
   },
   {
@@ -681,7 +681,7 @@ export const connections: readonly Connection[] = [
 
   // 영상·온라인 송출
   {
-    from: { id: "영상 스위처", port: "DVI OUT" },
+    from: { id: "영상 스위처", port: "DVI-D OUT" },
     to: { id: "HDMI 분배기" },
     signal: "DVI",
     detail: "멀티뷰 화면",
@@ -714,7 +714,7 @@ export const connections: readonly Connection[] = [
     toConfirm: [],
   },
   {
-    from: { id: "영상 스위처", port: "SDI OUT5" },
+    from: { id: "영상 스위처", port: "SDI OUTPUTS 5" },
     to: { id: "5층 로비" },
     signal: "SDI",
     evidence: "사용자 확인",
@@ -772,7 +772,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM1·CAM2", unit: "CAM1" },
-    to: { id: "영상 스위처", port: "SDI IN1" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 1" },
     signal: "SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -780,7 +780,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM1·CAM2", unit: "CAM2" },
-    to: { id: "영상 스위처", port: "SDI IN2" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 2" },
     signal: "SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -788,7 +788,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM3·CAM4", unit: "CAM3" },
-    to: { id: "영상 스위처", port: "SDI IN3" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 3" },
     signal: "SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -796,7 +796,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM3·CAM4", unit: "CAM4" },
-    to: { id: "영상 스위처", port: "SDI IN4" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 4" },
     signal: "SDI",
     evidence: "사용자 확인",
     layers: ["video"], unconfirmed: false,
@@ -804,7 +804,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM5·CAM6", unit: "CAM5" },
-    to: { id: "영상 스위처", port: "SDI IN5" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 5" },
     signal: "SDI",
     detail: '버튼 "CP"',
     evidence: "사용자 확인",
@@ -813,7 +813,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CAM5·CAM6", unit: "CAM6" },
-    to: { id: "영상 스위처", port: "SDI IN6" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 6" },
     signal: "SDI",
     detail: '버튼 "강단"',
     evidence: "사용자 확인",
@@ -881,7 +881,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CG PC 문자발생기 보드", port: "FILL Out" },
-    to: { id: "영상 스위처", port: "SDI IN8" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 8" },
     signal: "SDI",
     detail: "CG FILL, HD-SDI",
     evidence: "사용자 확인",
@@ -890,7 +890,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CG PC 문자발생기 보드", port: "KEY Out" },
-    to: { id: "영상 스위처", port: "SDI IN7" },
+    to: { id: "영상 스위처", port: "SDI INPUTS 7" },
     signal: "SDI",
     detail: "CG KEY, HD-SDI",
     evidence: "사용자 확인",
@@ -899,7 +899,7 @@ export const connections: readonly Connection[] = [
   },
   {
     from: { id: "CG PC" },
-    to: { id: "영상 스위처", port: "DVI IN" },
+    to: { id: "영상 스위처", port: "DVI-D IN" },
     signal: "DVI",
     detail: "PC 화면, 디스플레이 확장 모드",
     evidence: "사용자 확인",
