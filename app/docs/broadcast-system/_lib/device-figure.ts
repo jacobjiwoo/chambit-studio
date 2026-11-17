@@ -106,7 +106,7 @@ export interface DeviceFigure {
   /** 매뉴얼의 단자 이름. `system.ts`의 `port`가 여기 있어야 한다 */
   ports: string[];
   /**
-   * `system.ts`가 아직 다른 표기로 적은 단자 이름 → 매뉴얼 이름. 데이터를 매뉴얼 표기로 고치면 비운다.
+   * `system.ts`가 다른 표기로 적은 단자 이름 → 매뉴얼 이름. 장비에 인쇄된 글자가 매뉴얼의 이름과 다를 때만 쓴다(RC-IP100의 `LAN` → `LAN terminal`). 그 밖에는 데이터를 매뉴얼 이름으로 적고 비워 둔다.
    */
   aliases: Record<string, string>;
 }
