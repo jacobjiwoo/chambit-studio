@@ -63,6 +63,7 @@ Label: `wayfinder:map`
   - **장비 목록표 행과 신호 흐름도 자세히의 "생김새 보기" 버튼이 같은 dialog를 연다.** 장비별 페이지는 만들지 않는다. 휴대폰 너비에서 단자 이름이 읽혀야 한다.
   - **AV-HS410 그림과 공통 틀이 들어갔다.** 틀은 `_lib/device-figure.ts`, 그림 모음과 단자 대조는 `_lib/device-figures.ts`다. 패널 기울기는 매뉴얼에 없어 추정이다. 페이지 크기가 장비마다 gzip 200KB쯤 늘어, 07 전에 그림을 늦게 받을지 정한다. [06](issues/06-device-figure-av-hs410.md) Answer.
   - **그리는 순서는 저장해 둔다.** 앞뒤 순서를 재는 데 20초쯤 걸려 테스트와 개발 서버가 느려졌다. `_lib/device-figure-order.json`에 지문과 순서를 두고, 그림을 고치면 `UPDATE_FIGURE_ORDER=1 pnpm test`로 고친다. [09](issues/09-figure-order-cache.md) Answer.
+  - **그림은 dialog를 열 때 받는다.** 2026-11-18. 장비가 늘면 페이지가 그만큼 커져서다. 빌드 때 장비마다 `device-figures/<slug>.json`을 만들고 페이지에는 이름 목록만 싣는다. 장비 목록표가 gzip 323KB → 114KB가 됐다. [10](issues/10-device-figure-lazy-load.md) Answer.
   - **3종이 들어갔다: AV-HS410, RC-IP100, HELO Plus.** 단자 부품(BNC, D-sub, RJ-45 등)은 `_lib/device-connectors.ts`를 같이 쓴다. 세 장비가 다 들어간 장비 목록표 페이지는 gzip 323KB다. 나머지 확정 모델 18종은 사람이 3종을 실물과 비교한 뒤 정한다. [07](issues/07-device-figure-rc-ip100.md), [08](issues/08-device-figure-helo-plus.md) Answer.
 
 ## Tickets
@@ -78,6 +79,7 @@ Label: `wayfinder:map`
 | [07](issues/07-device-figure-rc-ip100.md) | RC-IP100 생김새 그림 | 06 |
 | [08](issues/08-device-figure-helo-plus.md) | HELO Plus 생김새 그림 | 06 |
 | [09](issues/09-figure-order-cache.md) | 장비 그림의 그리는 순서 저장 | 06 |
+| [10](issues/10-device-figure-lazy-load.md) | 장비 그림을 dialog를 열 때 받기 | 06 |
 
 ```
 01 ─┬─ 02
@@ -85,7 +87,9 @@ Label: `wayfinder:map`
     └─ 05 (확인 필요 2·3번이 풀린 뒤)
 04 (따로)
 06 ─┬─ 07
-    └─ 08
+    ├─ 08
+    ├─ 09
+    └─ 10
 ```
 
 01과 04를 동시에 돌린다. 01이 끝나면 02와 03을 동시에 돌린다. 02와 03은 둘 다 장비 목록표 페이지를 만지니 티켓마다 적은 "건드리지 않는 것"을 지킨다.

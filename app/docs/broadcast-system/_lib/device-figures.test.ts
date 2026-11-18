@@ -1,10 +1,11 @@
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
 import * as A from "./anatomy/audit.mjs";
 import { settleView, type StoredOrder } from "./device-figure";
+import { figureFileName, figureSvgs } from "./device-figure-files";
 import { DEVICE_FIGURE_IDS } from "./device-figure-ids";
 import { DEVICE_FIGURES, pluggedInto, portNameOf, portsInData } from "./device-figures";
 import { equipment } from "./system";
@@ -17,6 +18,20 @@ describe("장비 생김새 그림", () => {
   it("그림의 장비 id가 모두 장비 데이터에 있다", () => {
     const ids = equipment.map((item) => item.id);
     for (const figure of DEVICE_FIGURES) expect(ids).toContain(figure.id);
+  });
+
+  it("그림 파일 이름이 겹치지 않고 모듈 이름 `<slug>-figure.ts`와 같다", () => {
+    const names = DEVICE_FIGURES.map(figureFileName);
+    expect(new Set(names).size).toBe(names.length);
+    for (const figure of DEVICE_FIGURES) {
+      expect(figure.slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(existsSync(fileURLToPath(new URL(`./${figure.slug}-figure.ts`, import.meta.url))), figure.slug).toBe(true);
+    }
+  });
+
+  it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 그림 파일에 시점마다 SVG가 있다", (_, figure) => {
+    const svgs = figureSvgs(figure);
+    for (const view of figure.views) expect(svgs[view.key]).toBe(view.svg);
   });
 
   it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 앞·뒤 두 시점이 있고 처음은 앞이다", (_, figure) => {

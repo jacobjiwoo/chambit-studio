@@ -192,6 +192,7 @@ function build(view: ViewKey): DeviceView {
 
 export const RC_IP100_FIGURE: DeviceFigure = {
   id: "PTZ 컨트롤러",
+  slug: "rc-ip100",
   model: "Canon RC-IP100",
   source: "Canon RC-IP100 User Manual (Basic) 21·23쪽",
   caveat: "매뉴얼의 그림과 치수를 보고 단순화해 그렸다. 버튼에 인쇄된 글자와 터치 패널 화면은 매뉴얼 그림에 없어 그리지 않았다.",
