@@ -198,6 +198,7 @@ function build(view: ViewKey): DeviceView {
 
 export const HELO_PLUS_FIGURE: DeviceFigure = {
   id: "백업 송출 장비",
+  slug: "helo-plus",
   model: "AJA HELO Plus",
   source: "AJA HELO Plus Installation and Operation Guide v2.1r3 12·15·100쪽",
   caveat: "매뉴얼의 사진과 치수를 보고 단순화해 그렸다. 부품의 가로 자리는 비스듬히 찍힌 사진에서 재서 몇 mm쯤 어긋날 수 있다.",

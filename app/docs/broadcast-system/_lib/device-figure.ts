@@ -97,6 +97,8 @@ export function settleView(view: Pick<DeviceView, "recorder" | "P">) {
 export interface DeviceFigure {
   /** `system.ts`의 장비 id */
   id: string;
+  /** 그림 파일 이름. 모듈 이름 `<slug>-figure.ts`와 같다. dialog가 `device-figures/<slug>.json`으로 그림을 받는다 */
+  slug: string;
   model: string;
   /** 그림의 근거 문서 */
   source: string;
