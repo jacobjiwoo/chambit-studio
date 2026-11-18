@@ -80,6 +80,18 @@ Label: `wayfinder:map`
 | [08](issues/08-device-figure-helo-plus.md) | HELO Plus 생김새 그림 | 06 |
 | [09](issues/09-figure-order-cache.md) | 장비 그림의 그리는 순서 저장 | 06 |
 | [10](issues/10-device-figure-lazy-load.md) | 장비 그림을 dialog를 열 때 받기 | 06 |
+| [11](issues/11-device-figure-mini-converter-audio-to-sdi.md) | Blackmagic Mini Converter Audio to SDI 생김새 그림 | 10 |
+| [12](issues/12-device-figure-dac-8p.md) | Datavideo DAC-8P 생김새 그림 | 10 |
+| [13](issues/13-device-figure-x8e.md) | Colorlight X8E 생김새 그림 | 10 |
+| [14](issues/14-device-figure-da-6.md) | Drawmer DA-6 생김새 그림 | 10 |
+| [15](issues/15-device-figure-qlxd4.md) | Shure QLXD4 생김새 그림 | 10 |
+| [16](issues/16-device-figure-ua844-swb.md) | Shure UA844+SWB 생김새 그림 | 10, 15 |
+| [17](issues/17-device-figure-nwbm-200hd.md) | Nextwill NWBM-200HD 생김새 그림 | 10 |
+| [18](issues/18-device-figure-ns-8sw.md) | LEEM NS-8SW 생김새 그림 | 10 |
+| [19](issues/19-device-figure-dc-2448.md) | Botex DC-2448 생김새 그림 | 10 |
+| [20](issues/20-device-figure-mp103usb.md) | Numark MP103USB 생김새 그림 | 10 |
+| [21](issues/21-device-figure-smart-ups-c1000.md) | APC Smart-UPS C1000 생김새 그림 | 10 |
+| [22](issues/22-device-figure-av100.md) | 세계전원(WE) Sound Clinic AV100 생김새 그림 | 10 |
 
 ```
 01 ─┬─ 02
@@ -89,7 +101,8 @@ Label: `wayfinder:map`
 06 ─┬─ 07
     ├─ 08
     ├─ 09
-    └─ 10
+    └─ 10 ─┬─ 11–14, 17–22 (서로 따로)
+           └─ 15 ─ 16
 ```
 
 01과 04를 동시에 돌린다. 01이 끝나면 02와 03을 동시에 돌린다. 02와 03은 둘 다 장비 목록표 페이지를 만지니 티켓마다 적은 "건드리지 않는 것"을 지킨다.
