@@ -8,9 +8,10 @@ import { AV_HS410_FIGURE } from "./av-hs410-figure";
 import type { DeviceFigure } from "./device-figure";
 import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
+import { SMART_UPS_C1000_FIGURE } from "./smart-ups-c1000-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, SMART_UPS_C1000_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {
