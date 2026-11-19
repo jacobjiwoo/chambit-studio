@@ -97,6 +97,11 @@ export function settleView(view: Pick<DeviceView, "recorder" | "P">) {
 export interface DeviceFigure {
   /** `system.ts`의 장비 id */
   id: string;
+  /**
+   * 같은 그림을 쓰는 다른 장비 id. 같은 모델의 장비 행이 여럿일 때 쓴다(무선 마이크 수신기 1~4와 5~6).
+   * 장비마다 "생김새 보기" 버튼이 같은 그림 파일을 열고, 꽂힌 상대는 장비마다 따로 찾는다.
+   */
+  sharedWith?: string[];
   /** 그림 파일 이름. 모듈 이름 `<slug>-figure.ts`와 같다. dialog가 `device-figures/<slug>.json`으로 그림을 받는다 */
   slug: string;
   model: string;
