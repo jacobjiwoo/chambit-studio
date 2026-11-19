@@ -5,12 +5,13 @@
  * `port`가 빈 연결은 보이지 않는다. 추정으로 꽂힌 자리를 그리지 않기 위해서다.
  */
 import { AV_HS410_FIGURE } from "./av-hs410-figure";
+import { DC_2448_FIGURE } from "./dc-2448-figure";
 import type { DeviceFigure } from "./device-figure";
 import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, DC_2448_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {

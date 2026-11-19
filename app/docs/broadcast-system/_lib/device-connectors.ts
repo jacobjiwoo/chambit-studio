@@ -65,3 +65,39 @@ export function roundJack(sc: Scene, on: Plane, at: number[], base: number, r: n
     extra: sc.line(sc.ringOn(on, at, r * 0.5, base + 1.6), { tone: "lo" }) + sc.dots(on, [at], base + 1.6, { size: 0.5 }),
   });
 }
+
+/** 보는 사람의 오른쪽이 장비 X의 어느 쪽인지. 뒷면(법선이 뒤)에서는 -X가 오른쪽이다 */
+const rightOf = (on: Plane) => (on.normal[1] > 0.5 ? -1 : 1);
+
+/** XLR 3핀 암 단자(패널용): 둥근 몸통, 핀 구멍 셋, 위쪽 PUSH 걸쇠, 대각선의 나사 둘 */
+export function xlrFemale(sc: Scene, on: Plane, [X, s]: number[], base: number, spot: string) {
+  const right = rightOf(on);
+  // 핀 자리는 앞에서 본 모양 그대로다. 1번이 오른쪽 위, 2번이 왼쪽 위, 3번이 아래
+  const pins = [[3.4, 3.2], [-3.4, 3.2], [0, -2.6]].map(([dx, ds]) => [X + right * dx, s + ds]);
+  sc.round("xlr.body", on, [X, s], 11, [base, base + 2.4], { tone: "mid" }, {
+    spot,
+    extra:
+      sc.line(sc.ringOn(on, [X, s], 8.6, base + 2.4), { tone: "lo" }) +
+      sc.line(pins.map((pin) => sc.ringOn(on, pin, 1.1, base + 2.4)).join(""), { tone: "lo" }) +
+      sc.textOn(on, [X + right * 3.4, s + 5.2], "1", { size: 1.6, h: base + 2.45 }) +
+      sc.textOn(on, [X - right * 3.4, s + 5.2], "2", { size: 1.6, h: base + 2.45 }),
+  });
+  sc.box("xlr.latch", on, [X - 3.6, X + 3.6], [s + 11.6, s + 15], [base, base + 1.2], { tone: "mid" }, {
+    r: 1.2,
+    spot,
+    extra: sc.textOn(on, [X, s + 12.7], "PUSH", { size: 1.6, h: base + 1.25 }),
+  });
+  return screw(sc, on, [X - right * 8.5, s + 12.3], base) + screw(sc, on, [X + right * 8.9, s - 7.6], base);
+}
+
+/** DIN 5핀 단자(MIDI 등): 둥근 테, 위쪽 홈, 반원으로 늘어선 핀 다섯 */
+export function din5(sc: Scene, on: Plane, [X, s]: number[], base: number, spot: string, name = "din") {
+  const pins = [180, 225, 270, 315, 0].map((degrees) => [X + 3.6 * Math.cos((degrees * Math.PI) / 180), s + 3.6 * Math.sin((degrees * Math.PI) / 180)]);
+  sc.round(`${name}.rim`, on, [X, s], 8.4, [base, base + 1.8], { tone: "mid" }, {
+    spot,
+    extra:
+      sc.line(sc.ringOn(on, [X, s], 6.6, base + 1.8), { tone: "lo" }) +
+      sc.line(sc.rectOn(on, [X - 1, X + 1], [s + 4.4, s + 6], base + 1.8), { tone: "lo" }) +
+      sc.dots(on, pins, base + 1.8, { size: 0.55 }),
+  });
+}
