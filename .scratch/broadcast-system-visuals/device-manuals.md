@@ -8,6 +8,7 @@
 | PTZ 컨트롤러 | Canon RC-IP100 | [User Manual (Basic)](https://gdlp01.c-wss.com/gds/4/0300041534/01/rcip10sm-e.pdf) BIE-7291-000 (2021, 24쪽) | 각부 명칭 21, 치수 23 |
 | 백업 송출 장비 | AJA HELO Plus | [Installation and Operation Guide v2.1r3](https://www.aja.com/support/item-download/10154/AJA_HELO-Plus_Manual_v2.1r3.pdf) (2026-01-06, 115쪽) | 앞면 12–14, 뒷면 15–16, 치수 100 |
 | 무선 마이크 수신기 1~4, 무선 마이크 수신기 5~6 | Shure QLXD4 | [QLX-D Wireless System user manual](https://pubs.shure.com/view/guide/QLXD/en-US.pdf) 8.2판 (2025-H, 60쪽. 2026-11-18에 읽음) | 바닥 발 7, 앞·뒷면 11–12, 치수 47 |
+| 안테나 분배기 A, 안테나 분배기 B | Shure UA844+SWB | [UA844SWB User Guide](https://pubs.shure.com/view/guide/UA844/en-US.pdf) 27A21406 (Rev. 2, 2013, 6쪽. 2026-11-18에 읽음) | 치수 2, 앞·뒷면 3 |
 
 ## 읽으며 확인한 것
 
@@ -15,6 +16,7 @@
 - **RC-IP100** — 350 × 182 × 110mm. 뒷면은 왼쪽부터 Power switch, Wire Clamp, `DC 12V`, `LAN`, `SERVICE`, `TALLY`(D-sub 9), `SETTING` switch, `SERIAL`(RS-422)이다. `SERIAL`은 `LAN`과 같은 RJ-45 모양이다.
 - **HELO Plus** — 215.9 × 139.7 × 25.9mm. 뒷면은 왼쪽부터 `AUDIO IN`, `AUDIO OUT`, `SDI IN`, `SDI OUT`, `HDMI IN`, `HDMI OUT`, `USB CONFIG`, `LAN`, `PWR`이다. 앞면은 `RECORD`, `STREAM`, `AUDIO LEVEL`, reset, `USB STORAGE`, `SD CARD`, `POWER STATUS`다.
 - **QLXD4** — 41 × 197 × 151mm(H × W × D). 앞면은 매뉴얼 ①–⑩: `Display`, `Arrow Buttons`, `Enter Button`, `Sync Button`, `Power Switch`, `Audio LED`, `Menu Button`, `RF LED`, `IR Window`, `Sync LED`. 뒷면은 뒤에서 본 왼쪽부터 `Power Cord Strain Relief`, `Power Supply Jack`, `Ethernet Port`, `Receiver Reset`, antenna B, `Mic/Line Switch`, `XLR Audio Output`, `1/4" Instrument/Auxiliary Output`, antenna A다. 매뉴얼은 두 BNC를 묶어 `Antenna Connectors`라 부르고, 단자 옆에 `antenna A`·`antenna B`로 인쇄돼 있어 그림에서는 `Antenna Connector A`·`B`로 나눴다. mic / line 스위치는 XLR 출력에만 걸린다(39쪽 문제 해결). 바닥 발 4개는 사용자가 붙이는 부품이다.
+- **UA844SWB** — 45 × 483 × 172mm(H × W × D), 1U 랙. 앞면은 매뉴얼 ①·②·③·⑩: `Antenna A Connector`(앞에서 왼쪽), `Power Indicator`, `Antenna B Connector`(오른쪽), `Power Switch`. 전원 스위치는 나라에 따라 없는 장비도 있다(2쪽 Note). 뒷면은 뒤에서 본 왼쪽부터 `RF Input, Antenna B`, `RF Output B Connectors`(BNC 넷), `14 to 18 Vdc Power Input`, `14 to 18 Vdc Power Output`(넷), `RF Output A Connectors`(BNC 넷), `RF Input, Antenna A`다. 안테나 입력 옆에 `12V ⎓ OUT 150mA CLASS 2`가 인쇄돼 있다. DC 출력은 모두 합쳐 2.5A까지다. 뒷몸통의 폭은 매뉴얼에 없다.
 
 ## 아직 못 한 것
 
