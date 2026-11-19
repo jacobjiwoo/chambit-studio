@@ -7,17 +7,23 @@ import * as A from "./anatomy/audit.mjs";
 import { settleView, type StoredOrder } from "./device-figure";
 import { figureFileName, figureSvgs } from "./device-figure-files";
 import { DEVICE_FIGURE_IDS } from "./device-figure-ids";
-import { DEVICE_FIGURES, pluggedInto, portNameOf, portsInData } from "./device-figures";
+import { DEVICE_FIGURES, figureIds, pluggedInto, portNameOf, portsInData } from "./device-figures";
 import { equipment } from "./system";
+
+/** 그림을 쓰는 장비마다 `[장비 id, 그림]`. 그림 하나를 여러 장비가 같이 쓰면 장비마다 하나다 */
+const FIGURE_USERS = DEVICE_FIGURES.flatMap((figure) => figureIds(figure).map((id) => [id, figure] as const));
+/** SVG 속성에 적힌 모양. 이름에 `&`나 `"`가 있으면 바뀌어 적힌다 */
+const attribute = (name: string) => name.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
 
 describe("장비 생김새 그림", () => {
   it("그림이 있는 장비 id 목록이 그림 모음과 같다", () => {
-    expect(DEVICE_FIGURES.map((figure) => figure.id)).toEqual([...DEVICE_FIGURE_IDS]);
+    expect(FIGURE_USERS.map(([id]) => id)).toEqual([...DEVICE_FIGURE_IDS]);
   });
 
-  it("그림의 장비 id가 모두 장비 데이터에 있다", () => {
+  it("그림의 장비 id가 모두 장비 데이터에 있고 두 그림에 겹치지 않는다", () => {
     const ids = equipment.map((item) => item.id);
-    for (const figure of DEVICE_FIGURES) expect(ids).toContain(figure.id);
+    for (const [id] of FIGURE_USERS) expect(ids).toContain(id);
+    expect(new Set(FIGURE_USERS.map(([id]) => id)).size).toBe(FIGURE_USERS.length);
   });
 
   it("그림 파일 이름이 겹치지 않고 모듈 이름 `<slug>-figure.ts`와 같다", () => {
@@ -43,18 +49,24 @@ describe("장비 생김새 그림", () => {
     const names = figure.views.flatMap((view) => view.spots.filter((spot) => spot.kind === "port").map((spot) => spot.name));
     expect(names).toEqual(figure.ports);
     for (const view of figure.views) {
-      for (const spot of view.spots.filter((entry) => entry.kind === "port")) expect(view.svg).toContain(`data-spot="${spot.name.replace(/&/g, "&amp;")}"`);
+      for (const spot of view.spots.filter((entry) => entry.kind === "port")) expect(view.svg).toContain(`data-spot="${attribute(spot.name)}"`);
     }
   });
 
   it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 이름 목록의 구역·단자가 모두 그림 속에 있다", (_, figure) => {
     for (const view of figure.views) {
-      for (const spot of view.spots) expect(view.svg, `${view.key}: ${spot.name}`).toContain(`data-spot="${spot.name.replace(/&/g, "&amp;")}"`);
+      for (const spot of view.spots) expect(view.svg, `${view.key}: ${spot.name}`).toContain(`data-spot="${attribute(spot.name)}"`);
     }
   });
 
-  it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 연결 데이터의 port가 모두 매뉴얼의 단자 이름이다", (_, figure) => {
-    for (const port of portsInData(figure.id)) expect(figure.ports, `port "${port}"`).toContain(portNameOf(figure, port));
+  it.each(FIGURE_USERS)("%s: 연결 데이터의 port가 모두 매뉴얼의 단자 이름이다", (id, figure) => {
+    for (const port of portsInData(id)) expect(figure.ports, `port "${port}"`).toContain(portNameOf(figure, port));
+  });
+
+  it.each(FIGURE_USERS)("%s: 꽂힌 상대를 모두 그림의 단자에 단다", (id, figure) => {
+    const back = figure.views.find((view) => view.key === "back")!;
+    const names = back.spots.map((spot) => spot.name);
+    for (const name of Object.keys(pluggedInto({ id, aliases: figure.aliases }))) expect(names).toContain(name);
   });
 
   it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 표기 대응표는 매뉴얼의 단자만 가리킨다", (_, figure) => {
@@ -82,6 +94,19 @@ describe("장비 생김새 그림", () => {
       return;
     }
     expect(views.filter((view) => !view.order.stored).map((view) => view.order.name)).toEqual([]);
+  });
+
+  it("그림을 같이 쓰는 장비는 꽂힌 상대를 장비마다 따로 찾는다", () => {
+    const figure = { id: "수신기 1", sharedWith: ["수신기 2"], aliases: { 출력: "XLR OUT" } };
+    const links = [
+      { from: { id: "수신기 1", port: "XLR OUT" }, to: { id: "콘솔" } },
+      { from: { id: "수신기 2", port: "출력" }, to: { unknown: "미상" } },
+    ];
+    expect(figureIds(figure)).toEqual(["수신기 1", "수신기 2"]);
+    expect(figureIds(figure).map((id) => pluggedInto({ id, aliases: figure.aliases }, links))).toEqual([
+      { "XLR OUT": [{ direction: "out", other: "콘솔" }] },
+      { "XLR OUT": [{ direction: "out", other: "미상" }] },
+    ]);
   });
 
   it("port가 적힌 연결만 단자에 꽂힌 것으로 보인다", () => {
