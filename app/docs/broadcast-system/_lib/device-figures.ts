@@ -24,6 +24,8 @@ export function figureIds(figure: Pick<DeviceFigure, "id" | "sharedWith">): stri
 }
 export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, DC_2448_FIGURE];
 export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MP103USB_FIGURE];
+import { SMART_UPS_C1000_FIGURE } from "./smart-ups-c1000-figure";
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, SMART_UPS_C1000_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {
