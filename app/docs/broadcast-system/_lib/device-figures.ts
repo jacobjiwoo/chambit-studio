@@ -11,9 +11,10 @@ import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
 import { MINI_CONVERTER_AUDIO_TO_SDI_FIGURE } from "./mini-converter-audio-to-sdi-figure";
 import { QLXD4_FIGURE } from "./qlxd4-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
+import { UA844_SWB_FIGURE } from "./ua844-swb-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MINI_CONVERTER_AUDIO_TO_SDI_FIGURE, DA_6_FIGURE, QLXD4_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MINI_CONVERTER_AUDIO_TO_SDI_FIGURE, DA_6_FIGURE, QLXD4_FIGURE, UA844_SWB_FIGURE];
 
 /** 그 그림을 쓰는 장비 id 모두. 첫째가 `id`다 */
 export function figureIds(figure: Pick<DeviceFigure, "id" | "sharedWith">): string[] {
