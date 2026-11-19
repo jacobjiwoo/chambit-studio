@@ -262,8 +262,8 @@ function rearPanel(sc: Scene) {
   sc.box("rear.face", REAR, [SKIN, WIDTH - SKIN], [1.2, TALL - SKIN], [0, FACE], { tone: "lo", crease: "none" }, { extra: printed.join("") + notch });
 
   /* 3. BALANCED OUTPUT(XLR) R·L, 4. LINE OUT(RCA) L·R, 5. DIGITAL OUT(RCA) */
-  C.xlr(sc, REAR, [rx(91.95), rz(114.56)], FACE, "BALANCED OUTPUT", 11.2);
-  C.xlr(sc, REAR, [rx(117.29), rz(114.56)], FACE, "BALANCED OUTPUT", 11.2);
+  C.xlr(sc, REAR, [rx(91.95), rz(114.56)], FACE, "BALANCED OUTPUT");
+  C.xlr(sc, REAR, [rx(117.29), rz(114.56)], FACE, "BALANCED OUTPUT");
   C.rca(sc, REAR, [rx(145.14), rz(108.16)], FACE, "LINE OUT");
   C.rca(sc, REAR, [rx(145.14), rz(119.09)], FACE, "LINE OUT");
   C.rca(sc, REAR, [rx(166.26), rz(119.25)], FACE, "DIGITAL OUT");
