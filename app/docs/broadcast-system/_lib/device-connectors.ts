@@ -144,3 +144,14 @@ export function din5(sc: Scene, on: Plane, [X, s]: number[], base: number, spot:
       sc.line(sc.ringOn(on, [X, s], 6.6, base + 1.8), { tone: "lo" }) +
       sc.line(sc.rectOn(on, [X - 1, X + 1], [s + 4.4, s + 6], base + 1.8), { tone: "lo" }) +
       sc.dots(on, pins, base + 1.8, { size: 0.55 }),
+/** XLR 단자(패널용): 둥근 받침과 낮은 몸통, 안쪽 테와 핀 셋 */
+export function xlr(sc: Scene, on: Plane, [X, s]: number[], base: number, spot: string, r = 11) {
+  const pins = [[-3, 1.6], [3, 1.6], [0, -3]].map(([dx, ds]) => [X + dx, s + ds]);
+  sc.round("xlr.flange", on, [X, s], r, [base, base + 1.4], { tone: "mid" }, { spot });
+  sc.round("xlr.shell", on, [X, s], r * 0.76, [base + 1.4, base + 4], { tone: "mid" }, {
+    extra: sc.line(sc.ringOn(on, [X, s], r * 0.6, base + 4), { tone: "lo" }) + sc.dots(on, pins, base + 4, { size: 0.55 }),
+/** RCA 단자: 받침 테와 몸통, 가운데 핀 구멍 */
+export function rca(sc: Scene, on: Plane, at: number[], base: number, spot: string) {
+  sc.round("rca.flange", on, at, 5.4, [base, base + 1], { tone: "mid" }, { spot });
+  sc.round("rca.barrel", on, at, 4, [base + 1, base + 8], { tone: "mid" }, {
+    extra: sc.line(sc.ringOn(on, at, 1.6, base + 8), { tone: "lo" }) + sc.dots(on, [at], base + 8, { size: 0.5 }),

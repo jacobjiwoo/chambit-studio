@@ -12,6 +12,7 @@
 | 무선 마이크 수신기 1~4, 무선 마이크 수신기 5~6 | Shure QLXD4 | [QLX-D Wireless System user manual](https://pubs.shure.com/view/guide/QLXD/en-US.pdf) 8.2판 (2025-H, 60쪽. 2026-11-18에 읽음) | 바닥 발 7, 앞·뒷면 11–12, 치수 47 |
 | 안테나 분배기 A, 안테나 분배기 B | Shure UA844+SWB | [UA844SWB User Guide](https://pubs.shure.com/view/guide/UA844/en-US.pdf) 27A21406 (Rev. 2, 2013, 6쪽. 2026-11-18에 읽음) | 치수 2, 앞·뒷면 3 |
 | 조명 콘솔 | Botex DC-2448 Light Operator | [User Manual](https://fast-images.static-thomann.de/pics/atg/atgdata/document/manual/216405_c_216405_v2_en_online.pdf) Thomann, ID 216405 V2 (2024-01-11, 32쪽) | 윗면 10–12, 뒷면 13, 사양 27–28 |
+| CD/USB 플레이어 | Numark MP103USB | [Quickstart Guide v1.2](https://www.numark.com/images/product_downloads/mp103usb___quickstart_guide___v1.2.pdf) (2011, 24쪽. 마지막 쪽 표기는 "MANUAL VERSION 1.0") | 앞면 4–5, 뒷면 6, 치수 23 |
 
 ## 읽으며 확인한 것
 
@@ -23,6 +24,7 @@
 - **QLXD4** — 41 × 197 × 151mm(H × W × D). 앞면은 매뉴얼 ①–⑩: `Display`, `Arrow Buttons`, `Enter Button`, `Sync Button`, `Power Switch`, `Audio LED`, `Menu Button`, `RF LED`, `IR Window`, `Sync LED`. 뒷면은 뒤에서 본 왼쪽부터 `Power Cord Strain Relief`, `Power Supply Jack`, `Ethernet Port`, `Receiver Reset`, antenna B, `Mic/Line Switch`, `XLR Audio Output`, `1/4" Instrument/Auxiliary Output`, antenna A다. 매뉴얼은 두 BNC를 묶어 `Antenna Connectors`라 부르고, 단자 옆에 `antenna A`·`antenna B`로 인쇄돼 있어 그림에서는 `Antenna Connector A`·`B`로 나눴다. mic / line 스위치는 XLR 출력에만 걸린다(39쪽 문제 해결). 바닥 발 4개는 사용자가 붙이는 부품이다.
 - **UA844SWB** — 45 × 483 × 172mm(H × W × D), 1U 랙. 앞면은 매뉴얼 ①·②·③·⑩: `Antenna A Connector`(앞에서 왼쪽), `Power Indicator`, `Antenna B Connector`(오른쪽), `Power Switch`. 전원 스위치는 나라에 따라 없는 장비도 있다(2쪽 Note). 뒷면은 뒤에서 본 왼쪽부터 `RF Input, Antenna B`, `RF Output B Connectors`(BNC 넷), `14 to 18 Vdc Power Input`, `14 to 18 Vdc Power Output`(넷), `RF Output A Connectors`(BNC 넷), `RF Input, Antenna A`다. 안테나 입력 옆에 `12V ⎓ OUT 150mA CLASS 2`가 인쇄돼 있다. DC 출력은 모두 합쳐 2.5A까지다. 뒷몸통의 폭은 매뉴얼에 없다.
 - **DC-2448** — 716 × 80 × 267mm(W × H × D, 27쪽). 읽은 날은 2026-11-19다. 뒷면은 뒤에서 본 왼쪽부터 `POWER`, `DC IN`, `MIDI THRU`·`OUT`·`IN`(DIN 5핀), `DMX OUT`(3핀 XLR), `AUDIO`(RCA), `REMOTE`(6.35mm 스테레오 잭), `FOG MACHINE`(DIN 5핀)이다. 윗면에 인쇄된 이름은 "SCENE SETTER-48 / DC-2448 48CH Dimmer Console"이다. 옆모습 그림은 없다. 뒷면 그림 비율로 재면 몸통 높이가 약 47mm라 사양의 80mm와 다르다. 28쪽은 DMX 입력(XLR 수 단자)도 있다고 적지만 13쪽 뒷면 그림과 단자 목록에는 `DMX OUT`만 있다. 9쪽은 9V 어댑터라 하고 27쪽 사양은 12–20V라 해서 서로 다르다.
+- **MP103USB** — 483 × 269 × 89mm(W × D × H, 23쪽). 매뉴얼 앞·뒷면 그림에는 랙 귀가 없고 앞면 그림의 가로:세로가 약 4.7:1이라, 가로 483mm(19인치)는 랙 귀를 포함한 값으로 보인다. 뒷면에 인쇄된 단자 이름은 `BALANCED OUTPUT`(XLR, R·L), `LINE OUT`(RCA, L·R), `DIGITAL OUT`(RCA, S/PDIF)이다. 목록(6쪽)에서는 `BALANCED OUTPUTS (XLR)`, `LINE OUTPUTS (RCA)`, `DIGITAL OUTPUT`, `VOLTAGE SELECTOR`(115V 60Hz·230V 50Hz), `POWER PLUG CONNECTOR`(인쇄된 이름 없음)로 부른다. 앞면은 번호 1–25(4–5쪽): `POWER SWITCH`, `EJECT`, `USB`, `SOURCE`, `FOLDER`, `TRACK KNOB`, `PLAY / PAUSE`, `CUE`, `SCRATCH`, `SEARCH`, `REVERSE`, `BRAKE`, `JOG WHEEL`, `LOOP IN`, `LOOP OUT`, `RELOOP`, `PROGRAM`, `SINGLE`, `TIME`, `PITCH`, `PITCH FADER`, `PITCH BEND -/+`, `MASTER TEMPO`, `TAP`, `LCD`.
 
 ## 아직 못 한 것
 

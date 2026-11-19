@@ -11,6 +11,7 @@ import type { DeviceFigure } from "./device-figure";
 import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
 import { MINI_CONVERTER_AUDIO_TO_SDI_FIGURE } from "./mini-converter-audio-to-sdi-figure";
 import { QLXD4_FIGURE } from "./qlxd4-figure";
+import { MP103USB_FIGURE } from "./mp103usb-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
 import { UA844_SWB_FIGURE } from "./ua844-swb-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
@@ -22,6 +23,7 @@ export function figureIds(figure: Pick<DeviceFigure, "id" | "sharedWith">): stri
   return [figure.id, ...(figure.sharedWith ?? [])];
 }
 export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, DC_2448_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MP103USB_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {
