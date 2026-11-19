@@ -7,10 +7,11 @@
 import { AV_HS410_FIGURE } from "./av-hs410-figure";
 import type { DeviceFigure } from "./device-figure";
 import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
+import { MINI_CONVERTER_AUDIO_TO_SDI_FIGURE } from "./mini-converter-audio-to-sdi-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MINI_CONVERTER_AUDIO_TO_SDI_FIGURE];
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {

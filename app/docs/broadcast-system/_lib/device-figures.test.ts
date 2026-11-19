@@ -38,11 +38,13 @@ describe("장비 생김새 그림", () => {
     expect(figure.views.map((view) => view.key)).toEqual(["front", "back"]);
   });
 
-  it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 매뉴얼의 단자가 모두 뒤 그림에 이름과 함께 그려져 있다", (_, figure) => {
-    const back = figure.views.find((view) => view.key === "back")!;
-    const names = back.spots.filter((spot) => spot.kind === "port").map((spot) => spot.name);
+  // 단자는 대개 뒤 그림에 있지만, 두 끝에 나뉜 장비(Mini Converter)는 앞·뒤에 나눠 그린다
+  it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 매뉴얼의 단자가 모두 그림에 이름과 함께 그려져 있다", (_, figure) => {
+    const names = figure.views.flatMap((view) => view.spots.filter((spot) => spot.kind === "port").map((spot) => spot.name));
     expect(names).toEqual(figure.ports);
-    for (const name of figure.ports) expect(back.svg).toContain(`data-spot="${name}"`);
+    for (const view of figure.views) {
+      for (const spot of view.spots.filter((entry) => entry.kind === "port")) expect(view.svg).toContain(`data-spot="${spot.name.replace(/&/g, "&amp;")}"`);
+    }
   });
 
   it.each(DEVICE_FIGURES.map((figure) => [figure.id, figure] as const))("%s: 이름 목록의 구역·단자가 모두 그림 속에 있다", (_, figure) => {
