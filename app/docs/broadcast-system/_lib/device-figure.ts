@@ -97,6 +97,13 @@ export function settleView(view: Pick<DeviceView, "recorder" | "P">) {
 export interface DeviceFigure {
   /** `system.ts`의 장비 id */
   id: string;
+  /**
+   * 같은 그림을 쓰는 다른 장비 id. 같은 모델의 장비 행이 여럿일 때 쓴다(무선 마이크 수신기 1~4와 5~6).
+   * 장비마다 "생김새 보기" 버튼이 같은 그림 파일을 열고, 꽂힌 상대는 장비마다 따로 찾는다.
+   */
+  sharedWith?: string[];
+  /** 그림 파일 이름. 모듈 이름 `<slug>-figure.ts`와 같다. dialog가 `device-figures/<slug>.json`으로 그림을 받는다 */
+  slug: string;
   model: string;
   /** 그림의 근거 문서 */
   source: string;
@@ -119,6 +126,8 @@ export interface Plane {
   normal: Point3;
   /** 오르막 방향(장비 좌표) */
   rise: Point3;
+  /** 첫 번째 값(`X`)이 늘어나는 방향(장비 좌표). 없으면 장비의 X축이다 */
+  across?: Point3;
 }
 
 /**
@@ -134,6 +143,20 @@ export function plane(y0: number, z0: number, degrees: number, flip = false): Pl
     rise,
     normal,
     at: (X, s, h = 0) => [X + normal[0] * h, y0 + cos * s + normal[1] * h, z0 + sin * s + normal[2] * h],
+  };
+}
+
+/**
+ * 장비의 왼쪽·오른쪽 끝(X = `x0`)에 선 면. 단자가 긴 상자의 양 끝에 있는 장비(Mini Converter 등)에 쓴다.
+ * `outward`가 1이면 +X를 본다. 첫 번째 값은 그 면을 마주 본 사람의 왼쪽 → 오른쪽 거리라,
+ * +X 면에서는 장비의 Y이고 -X 면에서는 -Y다. 두 번째 값은 높이다.
+ */
+export function endPlane(x0: number, outward: 1 | -1): Plane {
+  return {
+    rise: [0, 0, 1],
+    normal: [outward, 0, 0],
+    across: [0, outward, 0],
+    at: (u, s, h = 0) => [x0 + outward * h, outward * u, s],
   };
 }
 
@@ -222,7 +245,7 @@ export function scene({ name, view, width, height, azimuth, elevation, pad = 28,
   /** 평면 위에 선 상자. `X0..X1`, `s0..s1`이 바닥이고 `h0..h1`이 높이다 */
   function box(name: string, on: Plane, [X0, X1]: number[], [s0, s1]: number[], [h0, h1]: number[], style: Style = {}, options: PartOptions & { r?: number; steps?: number } = {}) {
     const centre = on.at((X0 + X1) / 2, (s0 + s1) / 2, 0);
-    const F = frame(centre, on.normal, [1, 0, 0]);
+    const F = frame(centre, on.normal, on.across ?? [1, 0, 0]);
     const polygon = roundRect(Math.abs(X1 - X0), Math.abs(s1 - s0), options.r ?? 0, options.steps ?? 2);
     const shape = R.solid(A.prism(F as never, polygon, h0, h1, { name }));
     put(name, on.at((X0 + X1) / 2, (s0 + s1) / 2, (h0 + h1) / 2), S(G.prismOf(F as never, polygon, h0, h1, P as never), style) + (options.extra ?? ""), [shape], options);
@@ -233,7 +256,7 @@ export function scene({ name, view, width, height, azimuth, elevation, pad = 28,
   function post(name: string, on: Plane, points: number[][], [h0, h1]: number[], style: Style = {}, options: PartOptions = {}) {
     const cx = points.reduce((sum, [X]) => sum + X, 0) / points.length;
     const cs = points.reduce((sum, [, s]) => sum + s, 0) / points.length;
-    const F = frame(on.at(cx, cs, 0), on.normal, [1, 0, 0]);
+    const F = frame(on.at(cx, cs, 0), on.normal, on.across ?? [1, 0, 0]);
     const polygon = points.map(([X, s]) => local(F, on.at(X, s, 0)));
     const shape = R.solid(A.prism(F as never, polygon, h0, h1, { name }));
     put(name, on.at(cx, cs, (h0 + h1) / 2), S(G.prismOf(F as never, polygon, h0, h1, P as never), style) + (options.extra ?? ""), [shape], options);
@@ -241,7 +264,7 @@ export function scene({ name, view, width, height, azimuth, elevation, pad = 28,
 
   /** 평면 위에 선 원기둥 */
   function round(name: string, on: Plane, [X, s]: number[], r: number, [h0, h1]: number[], style: Style = {}, options: PartOptions = {}) {
-    const F = frame(on.at(X, s, 0), on.normal, [1, 0, 0]);
+    const F = frame(on.at(X, s, 0), on.normal, on.across ?? [1, 0, 0]);
     const shape = R.solid(A.disc(F as never, h0, h1, r, { name }));
     put(name, on.at(X, s, (h0 + h1) / 2), S(G.disc(h0, h1, r, F as never, P as never, {}), style) + (options.extra ?? ""), [shape], options);
     return F;
@@ -249,7 +272,7 @@ export function scene({ name, view, width, height, azimuth, elevation, pad = 28,
 
   /** 평면에서 돌려 깎은 부품. `profile`은 `[높이, 반지름]`이다 */
   function turned(name: string, on: Plane, [X, s]: number[], profile: number[][], style: Style = {}, options: PartOptions & { ribs?: number[] } = {}) {
-    const F = frame(on.at(X, s, 0), on.normal, [1, 0, 0]);
+    const F = frame(on.at(X, s, 0), on.normal, on.across ?? [1, 0, 0]);
     const meta = { radius: null, name };
     const shape = R.solid(A.solid(F as never, profile, meta));
     const mid = (profile[0][0] + profile[profile.length - 1][0]) / 2;
@@ -272,7 +295,7 @@ export function scene({ name, view, width, height, azimuth, elevation, pad = 28,
   /** 평면 위의 꺾은선. 꼭짓점은 `[X, s]`다 */
   const lineOn = (on: Plane, points: number[][], h = 0, closed = false) => k.pathOf(points.map(([X, s]) => at(on.at(X, s, h))), closed) as string;
   const rectOn = (on: Plane, [X0, X1]: number[], [s0, s1]: number[], h = 0) => lineOn(on, [[X0, s0], [X1, s0], [X1, s1], [X0, s1]], h, true);
-  const ringOn = (on: Plane, [X, s]: number[], r: number, h = 0) => G.circleOf(frame(on.at(X, s, 0), on.normal, [1, 0, 0]) as never, h, r, P as never) as string;
+  const ringOn = (on: Plane, [X, s]: number[], r: number, h = 0) => G.circleOf(frame(on.at(X, s, 0), on.normal, on.across ?? [1, 0, 0]) as never, h, r, P as never) as string;
   const line = (d: string, style: Record<string, unknown> = {}) => k.lineSvg(d, style) as string;
   const dots = (on: Plane, points: number[][], h = 0, style: Record<string, unknown> = {}) => k.dotsSvg(points.map(([X, s]) => at(on.at(X, s, h))), { size: 0.5, ...style }) as string;
 

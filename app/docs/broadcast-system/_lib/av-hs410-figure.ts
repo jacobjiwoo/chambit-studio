@@ -474,6 +474,7 @@ function build(view: ViewKey): DeviceView {
 
 export const AV_HS410_FIGURE: DeviceFigure = {
   id: "영상 스위처",
+  slug: "av-hs410",
   model: "Panasonic AV-HS410",
   source: "Panasonic AV-HS410 Operating Instructions, Basics 17–27쪽",
   caveat: "매뉴얼의 그림과 치수를 보고 단순화해 그렸다. 패널이 기울어진 각도와 앞쪽 높이는 매뉴얼에 없어 추정이다. 옵션 슬롯은 비워 그렸다.",

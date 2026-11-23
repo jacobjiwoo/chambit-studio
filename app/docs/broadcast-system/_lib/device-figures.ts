@@ -5,12 +5,24 @@
  * `port`가 빈 연결은 보이지 않는다. 추정으로 꽂힌 자리를 그리지 않기 위해서다.
  */
 import { AV_HS410_FIGURE } from "./av-hs410-figure";
+import { DA_6_FIGURE } from "./da-6-figure";
+import { DC_2448_FIGURE } from "./dc-2448-figure";
 import type { DeviceFigure } from "./device-figure";
 import { HELO_PLUS_FIGURE } from "./helo-plus-figure";
+import { MINI_CONVERTER_AUDIO_TO_SDI_FIGURE } from "./mini-converter-audio-to-sdi-figure";
+import { MP103USB_FIGURE } from "./mp103usb-figure";
+import { QLXD4_FIGURE } from "./qlxd4-figure";
 import { RC_IP100_FIGURE } from "./rc-ip100-figure";
+import { SMART_UPS_C1000_FIGURE } from "./smart-ups-c1000-figure";
+import { UA844_SWB_FIGURE } from "./ua844-swb-figure";
 import { connections, type AnyEndpoint, type AnyLink } from "./system";
 
-export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE];
+export const DEVICE_FIGURES: readonly DeviceFigure[] = [AV_HS410_FIGURE, RC_IP100_FIGURE, HELO_PLUS_FIGURE, MINI_CONVERTER_AUDIO_TO_SDI_FIGURE, DA_6_FIGURE, QLXD4_FIGURE, UA844_SWB_FIGURE, DC_2448_FIGURE, MP103USB_FIGURE, SMART_UPS_C1000_FIGURE];
+
+/** 그 그림을 쓰는 장비 id 모두. 첫째가 `id`다 */
+export function figureIds(figure: Pick<DeviceFigure, "id" | "sharedWith">): string[] {
+  return [figure.id, ...(figure.sharedWith ?? [])];
+}
 
 /** 단자에 꽂힌 상대 하나 */
 export interface Plugged {

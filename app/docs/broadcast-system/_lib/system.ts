@@ -112,7 +112,10 @@ const equipmentDefs = [
     location: "음향 콘솔 아래",
     purpose: "정전 시 배터리로 전원 유지",
     notes: "켜는 순서 ③. 위에 Furman 전원 장치 있음",
-    toConfirm: [{ cell: "connections", what: "음향 콘솔 외 공급 장비", priority: 11 }],
+    toConfirm: [
+      { cell: "connections", what: "음향 콘솔 외 공급 장비", priority: 11 },
+      { cell: "model", what: "정확한 모델 번호(뒷면 라벨)" },
+    ],
   },
   {
     id: "음향 파워 컨디셔너",
