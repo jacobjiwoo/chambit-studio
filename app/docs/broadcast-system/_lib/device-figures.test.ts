@@ -64,8 +64,8 @@ describe("장비 생김새 그림", () => {
   });
 
   it.each(FIGURE_USERS)("%s: 꽂힌 상대를 모두 그림의 단자에 단다", (id, figure) => {
-    const back = figure.views.find((view) => view.key === "back")!;
-    const names = back.spots.map((spot) => spot.name);
+    // 단자가 앞·뒤 양쪽 끝에 나뉜 장비(오디오 임베더)도 있어 모든 시점을 본다
+    const names = figure.views.flatMap((view) => view.spots.map((spot) => spot.name));
     for (const name of Object.keys(pluggedInto({ id, aliases: figure.aliases }))) expect(names).toContain(name);
   });
 
