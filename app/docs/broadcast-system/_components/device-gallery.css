@@ -1,0 +1,44 @@
+/* 장비 그림 모아 보기. 색은 anatomy 토큰을 따른다 */
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  background: none;
+}
+.gallery-grid > li { margin: 0; padding: 0; }
+
+.gallery-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  border: 0;
+  background: var(--anatomy-page);
+  color: var(--anatomy-text);
+  box-shadow: 0 0 0 1px var(--anatomy-lo);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.gallery-card:hover { box-shadow: 0 0 0 1.5px var(--anatomy-lit); }
+.gallery-card:focus-visible { outline: 2px solid var(--anatomy-lit); outline-offset: 2px; }
+
+.gallery-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 8px;
+  background: var(--anatomy-card);
+}
+.gallery-art .iso-svg { max-height: 100%; }
+.gallery-wait { color: var(--anatomy-muted); font-size: 12px; }
+
+.gallery-name { color: var(--anatomy-strong); font-size: 14px; font-weight: 600; }
+.gallery-model { color: var(--anatomy-muted); font-family: var(--anatomy-mono); font-size: 12px; }
+.gallery-also { color: var(--anatomy-muted); font-size: 12px; }
